@@ -3,11 +3,11 @@
 
 namespace Rpurinton\Ash;
 
-$uptime = shell_exec("uptime");
-$host_fqdn = shell_exec("hostname");
-$host_name = shell_exec("hostname -s");
-$user_id = shell_exec("whoami");
-$working_dir = shell_exec("pwd");
+$uptime = trim(shell_exec("uptime"));
+$host_fqdn = trim(shell_exec("hostname"));
+$host_name = trim(shell_exec("hostname -s"));
+$user_id = trim(shell_exec("whoami"));
+$working_dir = trim(shell_exec("pwd"));
 $working_folder = basename($working_dir);
 $prompt = "(ash) [$user_id@$host_name $working_folder]# ";
 
