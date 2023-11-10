@@ -44,6 +44,7 @@ class Ash
             'host_name' => trim(shell_exec("hostname -s")),
             'user_id' => trim(shell_exec("whoami")),
             'working_dir' => trim(shell_exec("pwd")),
+            'home_dir' => trim(shell_exec("echo ~")),
         ];
         $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
         if ($this->debug) {
