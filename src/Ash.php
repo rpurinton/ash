@@ -48,7 +48,6 @@ class Ash
             echo "uptime: {$this->sys_info['uptime']}\nhost_fqdn: {$this->sys_info['host_fqdn']}\nhost_name: {$this->sys_info['host_name']}\nuser_id: {$this->sys_info['user_id']}\nworking_dir: {$this->sys_info['working_dir']}\nworking_folder: {$this->sys_info['working_folder']}\n";
         }
     }
-
     private function run()
     {
         $prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
@@ -64,23 +63,38 @@ class Ash
                 continue;
             }
             if (substr($input, 0, 3) == "cd ") {
-                $target_dir = substr($input, 3);
-                if (is_dir($target_dir)) {
-                    chdir($target_dir);
-                    $this->set_system_info();
-                    continue;
-                } else {
-                    echo ("(ash) Error: Directory not found: $target_dir\n");
-                    continue;
-                }
+                $this->change_directory(substr($input, 3));
+                continue;
             }
-            echo (print_r($this->proc_exec([
-                "command" => $input,
-                "cwd" => $this->sys_info['working_dir'],
-                "env_vars" => [],
-                "options" => [],
-            ]), true));
+            echo $this->execute_command($input);
         }
+    }
+
+    private function change_directory($target_dir)
+    {
+        if ($target_dir == "~") {
+            $target_dir = trim(shell_exec("echo ~"));
+        }
+        if ($target_dir == "-") {
+            $target_dir = $this->sys_info['last_dir'];
+        }
+        if (is_dir($target_dir)) {
+            $this->sys_info['last_dir'] = $this->sys_info['working_dir'];
+            chdir($target_dir);
+            $this->set_system_info();
+        } else {
+            echo "(ash) Error: Directory not found: $target_dir\n";
+        }
+    }
+
+    private function execute_command($command)
+    {
+        return print_r($this->proc_exec([
+            "command" => $command,
+            "cwd" => $this->sys_info['working_dir'],
+            "env_vars" => [],
+            "options" => [],
+        ]), true);
     }
 
     private function proc_exec(array $input): array
