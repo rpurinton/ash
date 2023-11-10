@@ -4,42 +4,52 @@ namespace Rpurinton\Ash;
 
 class Ash
 {
-    private $uptime;
-    private $host_fqdn;
-    private $host_name;
-    private $user_id;
-    private $working_dir;
-    private $working_folder;
+    private $sys_info;
     private $debug;
 
     public function __construct()
     {
-        global $argv;
-        foreach ($argv as $arg) switch (substr($arg, 0, 2)) {
-            case "/v":
-                die("ash version 0.0.1 rpurinton 2023\n");
-            case "/h":
-                die(shell_exec("cat " . __DIR__ . "/../README.md") . "\n");
-            case "/l":
-                die(shell_exec("cat " . __DIR__ . "/../LICENSE") . "\n");
-            case "/c":
-                die(shell_exec("cat " . __DIR__ . "/../CREDITS") . "\n");
-            case "/d":
-                $this->debug = true;
-                break;
-        }
-        $this->uptime = trim(shell_exec("uptime"));
-        $this->host_fqdn = trim(shell_exec("hostname"));
-        $this->host_name = trim(shell_exec("hostname -s"));
-        $this->user_id = trim(shell_exec("whoami"));
-        $this->working_dir = trim(shell_exec("pwd"));
-        $this->working_folder = basename($this->working_dir);
-        $this->working_folder = $this->working_folder == "" ? "/" : $this->working_folder;
-        if ($this->debug) echo "uptime: $this->uptime\nhost_fqdn: $this->host_fqdn\nhost_name: $this->host_name\nuser_id: $this->user_id\nworking_dir: $this->working_dir\nworking_folder: $this->working_folder\n";
+        $this->parse_args();
+        $this->set_system_info();
         $this->run();
     }
 
-    public function run()
+    private function parse_args()
+    {
+        global $argv;
+        foreach ($argv as $arg) {
+            switch (substr($arg, 0, 2)) {
+                case "/v":
+                    die("ash version 0.0.1 rpurinton 2023\n");
+                case "/h":
+                    die(shell_exec("cat " . __DIR__ . "/../README.md") . "\n");
+                case "/l":
+                    die(shell_exec("cat " . __DIR__ . "/../LICENSE") . "\n");
+                case "/c":
+                    die(shell_exec("cat " . __DIR__ . "/../CREDITS") . "\n");
+                case "/d":
+                    $this->debug = true;
+                    break;
+            }
+        }
+    }
+
+    private function set_system_info()
+    {
+        $this->sys_info = [
+            'uptime' => trim(shell_exec("uptime")),
+            'host_fqdn' => trim(shell_exec("hostname")),
+            'host_name' => trim(shell_exec("hostname -s")),
+            'user_id' => trim(shell_exec("whoami")),
+            'working_dir' => trim(shell_exec("pwd")),
+        ];
+        $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
+        if ($this->debug) {
+            echo "uptime: {$this->sys_info['uptime']}\nhost_fqdn: {$this->sys_info['host_fqdn']}\nhost_name: {$this->sys_info['host_name']}\nuser_id: {$this->sys_info['user_id']}\nworking_dir: {$this->sys_info['working_dir']}\nworking_folder: {$this->sys_info['working_folder']}\n";
+        }
+    }
+
+    private function run()
     {
         $prompt = "ash# ";
 
@@ -50,8 +60,46 @@ class Ash
             if ($input == "exit") {
                 break;
             }
-            $output = shell_exec($input);
-            echo $output;
+            if ($input == "") {
+                continue;
+            }
+            echo (print_r($this->proc_exec([
+                "command" => $input,
+                "cwd" => $this->sys_info['working_dir'],
+                "env_vars" => [],
+                "options" => [],
+            ]), true));
         }
+    }
+
+    private function proc_exec(array $input): array
+    {
+        if ($this->debug) echo ("(ash) proc_exec(" . print_r($input, true) . ")\n");
+        // Use proc_open() instead of shell_exec(): proc_open() is a more secure way to execute shell commands from PHP. It allows you to specify the environment variables, working directory, and other options for the command.  
+        $descriptorspec = [
+            0 => ["pipe", "r"], // stdin
+            1 => ["pipe", "w"], // stdout
+            2 => ["pipe", "w"], // stderr
+        ];
+        $pipes = [];
+        $process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
+        if (is_resource($process)) {
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            proc_close($process);
+            $result = [
+                "stdout" => $stdout,
+                "stderr" => $stderr,
+            ];
+            if ($this->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
+            return $result;
+        }
+        return [
+            "stdout" => "",
+            "stderr" => "Error (ash): proc_open() failed.",
+        ];
     }
 }
