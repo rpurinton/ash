@@ -4,11 +4,13 @@ namespace Rpurinton\Ash;
 
 class Ash
 {
-    private $sys_info;
-    private $debug;
+    private $sys_info = [];
+    private $debug = false;
+    private $running_process = null;
 
     public function __construct()
     {
+        pcntl_signal(SIGINT, $this->ctrl_c(...));
         $this->parse_args();
         $this->set_system_info();
         $this->run();
@@ -48,15 +50,28 @@ class Ash
             echo "uptime: {$this->sys_info['uptime']}\nhost_fqdn: {$this->sys_info['host_fqdn']}\nhost_name: {$this->sys_info['host_name']}\nuser_id: {$this->sys_info['user_id']}\nworking_dir: {$this->sys_info['working_dir']}\nworking_folder: {$this->sys_info['working_folder']}\n";
         }
     }
+
+    private function ctrl_c($signal)
+    {
+        if ($this->debug) echo "(ash) ctrl_c($signal)\n";
+        if ($this->running_process) {
+            echo "\n(ash) Killing running process...\n";
+            posix_kill($this->running_process, SIGKILL);
+            $this->running_process = null;
+        } else {
+            echo "\n(ash) Exiting...\n";
+            exit(0);
+        }
+    }
+
     private function run()
     {
         $prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
-
         while (true) {
             $input = readline($prompt);
             readline_add_history($input);
             $input = trim($input);
-            if ($input == "exit") {
+            if ($input == "exit" || $input == "quit") {
                 break;
             }
             if ($input == "") {
@@ -106,14 +121,14 @@ class Ash
             2 => ["pipe", "w"], // stderr
         ];
         $pipes = [];
-        $process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
-        if (is_resource($process)) {
+        $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
+        if (is_resource($this->running_process)) {
             $stdout = stream_get_contents($pipes[1]);
             $stderr = stream_get_contents($pipes[2]);
             fclose($pipes[0]);
             fclose($pipes[1]);
             fclose($pipes[2]);
-            $exit_code = proc_close($process);
+            $exit_code = proc_close($this->running_process);
             $result = [
                 "stdout" => $stdout,
                 "stderr" => $stderr,
