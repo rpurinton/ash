@@ -51,7 +51,7 @@ class Ash
 
     private function run()
     {
-        $prompt = "ash# ";
+        $prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
 
         while (true) {
             $input = readline($prompt);
@@ -62,6 +62,17 @@ class Ash
             }
             if ($input == "") {
                 continue;
+            }
+            if (substr($input, 0, 3) == "cd ") {
+                $target_dir = substr($input, 3);
+                if (is_dir($target_dir)) {
+                    chdir($target_dir);
+                    $this->set_system_info();
+                    continue;
+                } else {
+                    echo ("(ash) Error: Directory not found: $target_dir\n");
+                    continue;
+                }
             }
             echo (print_r($this->proc_exec([
                 "command" => $input,
