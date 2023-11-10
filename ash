@@ -3,21 +3,16 @@
 
 namespace Rpurinton\ash;
 
-foreach ($argv as $arg) switch ($arg) {
+foreach ($argv as $arg) switch (substr($arg, 0, 2)) {
     case "/v":
-    case "/version":
         die("ash version 0.0.1 rpurinton 2023\n");
     case "/h":
-    case "/help":
         die(shell_exec("cat " . __DIR__ . "/README.md"));
     case "/l":
-    case "/license":
         die(shell_exec("cat " . __DIR__ . "/LICENSE"));
     case "/c":
-    case "/credits":
         die(shell_exec("cat " . __DIR__ . "/CREDITS"));
     case "/d":
-    case "/debug":
         $debug = true;
         break;
 }
