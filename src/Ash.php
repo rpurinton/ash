@@ -100,7 +100,6 @@ class Ash
     private function proc_exec(array $input): array
     {
         if ($this->debug) echo ("(ash) proc_exec(" . print_r($input, true) . ")\n");
-        // Use proc_open() instead of shell_exec(): proc_open() is a more secure way to execute shell commands from PHP. It allows you to specify the environment variables, working directory, and other options for the command.  
         $descriptorspec = [
             0 => ["pipe", "r"], // stdin
             1 => ["pipe", "w"], // stdout
@@ -114,17 +113,19 @@ class Ash
             fclose($pipes[0]);
             fclose($pipes[1]);
             fclose($pipes[2]);
-            proc_close($process);
+            $exit_code = proc_close($process);
             $result = [
                 "stdout" => $stdout,
                 "stderr" => $stderr,
+                "exit_code" => $exit_code,
             ];
-            //if ($this->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
+            if ($this->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
             return $result;
         }
         return [
             "stdout" => "",
             "stderr" => "Error (ash): proc_open() failed.",
+            "exit_code" => -1,
         ];
     }
 }
