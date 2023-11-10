@@ -7,11 +7,11 @@ foreach ($argv as $arg) switch (substr($arg, 0, 2)) {
     case "/v":
         die("ash version 0.0.1 rpurinton 2023\n");
     case "/h":
-        die(shell_exec("cat " . __DIR__ . "/README.md"));
+        die(shell_exec("cat " . __DIR__ . "/README.md") . "\n");
     case "/l":
-        die(shell_exec("cat " . __DIR__ . "/LICENSE"));
+        die(shell_exec("cat " . __DIR__ . "/LICENSE") . "\n");
     case "/c":
-        die(shell_exec("cat " . __DIR__ . "/CREDITS"));
+        die(shell_exec("cat " . __DIR__ . "/CREDITS") . "\n");
     case "/d":
         $debug = true;
         break;
