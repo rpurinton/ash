@@ -3,14 +3,24 @@
 
 namespace Rpurinton\ash;
 
-$options = getopt("", ["version", "help", "license", "credits", "debug"]);
-
-if (isset($options["version"])) die("ash version 0.0.1 rpurinton 2023\n");
-if (isset($options["help"])) die(shell_exec("cat " . __DIR__ . "/README.md"));
-if (isset($options["license"])) die(shell_exec("cat " . __DIR__ . "/LICENSE"));
-if (isset($options["credits"])) die(shell_exec("cat " . __DIR__ . "/CREDITS"));
-
-$debug = isset($options["debug"]);
+foreach ($argv as $arg) switch ($arg) {
+    case "/v":
+    case "/version":
+        die("ash version 0.0.1 rpurinton 2023\n");
+    case "/h":
+    case "/help":
+        die(shell_exec("cat " . __DIR__ . "/README.md"));
+    case "/l":
+    case "/license":
+        die(shell_exec("cat " . __DIR__ . "/LICENSE"));
+    case "/c":
+    case "/credits":
+        die(shell_exec("cat " . __DIR__ . "/CREDITS"));
+    case "/d":
+    case "/debug":
+        $debug = true;
+        break;
+}
 
 $uptime = trim(shell_exec("uptime"));
 $host_fqdn = trim(shell_exec("hostname"));
