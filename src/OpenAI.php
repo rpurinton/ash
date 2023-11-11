@@ -138,7 +138,7 @@ class OpenAI
         $full_response = "";
         $function_call = null;
         if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("(ash) ");
+        echo ("(ash)\t");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
@@ -195,6 +195,7 @@ class OpenAI
                         $output = mb_substr($line, 0, $space_pos);
                         $output = str_replace("\n", "\n(ash)\t", $output);
                         $output = str_replace("\\e", "\e", $output);
+                        $output = trim($output);
                         echo ("$output\n(ash)\t");
                         $line = mb_substr($line, $space_pos + 1);
                         $line_char_count = mb_strlen($line);
