@@ -40,8 +40,9 @@ class OpenAI
             for ($i = 0; $i < $model_count; $i++) {
                 $prompt .= "(ash) [$i] {$this->models[$i]}\n";
             }
-            $prompt .= "(ash) Enter the number of the model to use: ";
-            $model_index = (int) readline($prompt);
+            $prompt .= "(ash) Enter the number of the model to use (default: 0 ({$this->models[0]})): ";
+            $model_index = readline($prompt);
+            if ($model_index == "") $model_index = 0;
 
             // Check if the selected model is valid
             if (isset($this->models[$model_index])) {
