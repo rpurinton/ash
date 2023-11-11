@@ -232,52 +232,11 @@ class Ash
 
     private function execute_command($command)
     {
-        return print_r($this->proc_exec([
+        return print_r($this->openai->proc_exec([
             "command" => $command,
             "cwd" => $this->sys_info['working_dir'],
             "env_vars" => [],
             "options" => [],
         ]), true);
-    }
-
-    private function proc_exec(array $input): array
-    {
-        if ($this->debug) echo ("(ash) proc_exec(" . print_r($input, true) . ")\n");
-        $descriptorspec = [
-            0 => ["pipe", "r"], // stdin
-            1 => ["pipe", "w"], // stdout
-            2 => ["pipe", "w"], // stderr
-        ];
-        $pipes = [];
-        try {
-            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
-        } catch (\Exception $e) {
-            return [
-                "stdout" => "",
-                "stderr" => "Error (ash): proc_open() failed: " . $e->getMessage(),
-                "exit_code" => -1,
-            ];
-        }
-        if (is_resource($this->running_process)) {
-            $stdout = stream_get_contents($pipes[1]);
-            $stderr = stream_get_contents($pipes[2]);
-            fclose($pipes[0]);
-            fclose($pipes[1]);
-            fclose($pipes[2]);
-            $exit_code = proc_close($this->running_process);
-            $this->running_process = null;
-            $result = [
-                "stdout" => $stdout,
-                "stderr" => $stderr,
-                "exit_code" => $exit_code,
-            ];
-            //if ($this->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
-            return $result;
-        }
-        return [
-            "stdout" => "",
-            "stderr" => "Error (ash): proc_open() failed.",
-            "exit_code" => -1,
-        ];
     }
 }

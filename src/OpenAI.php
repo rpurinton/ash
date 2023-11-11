@@ -12,6 +12,8 @@ class OpenAI
     private $max_tokens = null;
     private $history = [];
     private $base_prompt = null;
+    private $running_process = null;
+
 
     public function __construct(private $ash)
     {
@@ -145,7 +147,7 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual color control symbols."];
         if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
-        $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include ``` or any other markdown formatting. This is just a text-CLI."];
+        $messages[] = ["role" => "system", "content" => "Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI."];
         $messages[] = ["role" => "user", "content" => $input];
         $prompt = [
             "model" => $this->model,
@@ -178,5 +180,47 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         }
         if ($this->ash->debug) echo ("(ash) Response complete.\n");
         echo ("\n\n");
+    }
+
+
+    public function proc_exec(array $input): array
+    {
+        if ($this->ash->debug) echo ("(ash) proc_exec(" . print_r($input, true) . ")\n");
+        $descriptorspec = [
+            0 => ["pipe", "r"], // stdin
+            1 => ["pipe", "w"], // stdout
+            2 => ["pipe", "w"], // stderr
+        ];
+        $pipes = [];
+        try {
+            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
+        } catch (\Exception $e) {
+            return [
+                "stdout" => "",
+                "stderr" => "Error (ash): proc_open() failed: " . $e->getMessage(),
+                "exit_code" => -1,
+            ];
+        }
+        if (is_resource($this->running_process)) {
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $exit_code = proc_close($this->running_process);
+            $this->running_process = null;
+            $result = [
+                "stdout" => $stdout,
+                "stderr" => $stderr,
+                "exit_code" => $exit_code,
+            ];
+            if ($this->ash->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
+            return $result;
+        }
+        return [
+            "stdout" => "",
+            "stderr" => "Error (ash): proc_open() failed.",
+            "exit_code" => -1,
+        ];
     }
 }
