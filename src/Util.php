@@ -18,6 +18,12 @@ class Util
         } catch (\Exception $e) {
             echo ("(ash) Error: " . print_r($e, true) . "\n");
             $count = 0;
+        } catch (\Error $e) {
+            echo ("(ash) Error: " . print_r($e, true) . "\n");
+            $count = 0;
+        } catch (\Throwable $e) {
+            echo ("(ash) Error: " . print_r($e, true) . "\n");
+            $count = 0;
         }
         return $count;
     }
