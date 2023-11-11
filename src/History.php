@@ -4,7 +4,7 @@ namespace Rpurinton\Ash;
 
 class History
 {
-    private $historyFile = __DIR__ . '/conf.d/history.jsonl';
+    private $historyFile = shell_exec("echo ~") . "/.ash_history.jsonl";
     private $history = [];
 
     public function __construct(private $util)
@@ -19,9 +19,8 @@ class History
 
     public function loadHistory()
     {
-        $history_file = __DIR__ . "/conf.d/history.jsonl";
-        if (file_exists($history_file)) {
-            $history_jsonl = file_get_contents($history_file);
+        if (file_exists($this->historyFile)) {
+            $history_jsonl = file_get_contents($this->historyFile);
             $history_jsonl = explode("\n", $history_jsonl);
             foreach ($history_jsonl as $history_json) {
                 if ($history_json == "") continue;
@@ -37,8 +36,7 @@ class History
     {
         $message["tokens"] = $this->util->tokenCount($message["content"]);
         $this->history[] = $message;
-        $message_json = json_encode($message);
-        file_put_contents(__DIR__ . "/conf.d/history.jsonl", $message_json . "\n", FILE_APPEND);
+        file_put_contents($this->historyFile, json_encode($message) . "\n", FILE_APPEND);
     }
 
     public function getHistory($num_tokens)
@@ -62,6 +60,6 @@ class History
     public function clearHistory()
     {
         $this->history = [];
-        file_put_contents(__DIR__ . "/conf.d/history.jsonl", "");
+        file_put_contents($this->historyFile, "");
     }
 }
