@@ -30,7 +30,7 @@ class Ash
         $this->run();
     }
 
-    private function save_config()
+    public function save_config()
     {
         file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
     }
