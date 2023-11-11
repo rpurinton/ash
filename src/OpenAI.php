@@ -13,19 +13,57 @@ class OpenAI
     private $history = [];
     private $base_prompt = null;
     private $running_process = null;
+    private $encoder = null;
 
 
     public function __construct(private $ash)
     {
+        $this->encoder = new \TikToken\Encoder();
         $this->client = \OpenAI::client($this->ash->config['openai_api_key']);
         $models = $this->client->models()->list()->data;
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->select_model();
         $this->select_max_tokens();
         $this->base_prompt = file_get_contents(__DIR__ . "/base_prompt.txt");
+        $this->load_history();
         $this->welcome_message();
     }
 
+    public function token_count($input)
+    {
+        try {
+            $count = count($this->encoder->encode($input));
+        } catch (\Exception $e) {
+            if ($this->ash->debug) echo ("(ash) Error: " . $e->getMessage() . "\n");
+            $count = 0;
+        }
+        return $count;
+    }
+
+    public function __destruct()
+    {
+        if ($this->running_process) {
+            proc_terminate($this->running_process);
+            $this->running_process = null;
+        }
+    }
+
+    public function load_history()
+    {
+        $history_file = __DIR__ . "/conf.d/history.json";
+        if (file_exists($history_file)) {
+            $this->history = json_decode(file_get_contents($history_file), true);
+        } else {
+            $this->history = [];
+        }
+    }
+
+    public function save_message($message)
+    {
+        $this->history[] = $message;
+        $message_json = json_encode($message);
+        file_put_contents(__DIR__ . "/conf.d/history.json", $message_json . "\n", FILE_APPEND);
+    }
 
     public function select_model($force = false)
     {
