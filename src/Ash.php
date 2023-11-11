@@ -166,6 +166,26 @@ class Ash
             case "config":
                 $this->initial_config();
                 return "";
+            case "color":
+                $this->config["color_support"] = !$this->config["color_support"];
+                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                if ($this->config["color_support"]) return "(ash) Color support enabled.\n";
+                else return "(ash) Color support disabled.\n";
+            case "emoji":
+                $this->config["emoji_support"] = !$this->config["emoji_support"];
+                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                if ($this->config["emoji_support"]) return "(ash) Emoji support enabled.\n";
+                else return "(ash) Emoji support disabled.\n";
+            case "openai-key":
+                $open_ai_api_key = "";
+                while (true) {
+                    $open_ai_api_key = readline("(ash) Enter your OpenAI API key: ");
+                    if (strlen($open_ai_api_key) == 51 && substr($open_ai_api_key, 0, 3) == "sk-") break;
+                    echo "(ash) Error: Invalid API key.\n";
+                }
+                $this->config["open_ai_api_key"] = $open_ai_api_key;
+                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                return "(ash) OpenAI API key updated.\n";
         }
         if (substr($input, 0, 3) == "cd ") {
             $this->change_directory(substr($input, 3));
