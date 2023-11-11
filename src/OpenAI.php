@@ -154,6 +154,8 @@ class OpenAI
             else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         }
+        $line_char_count = 0;
+        $line = "";
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
             $finish_reason = $reply["finish_reason"];
@@ -166,6 +168,17 @@ class OpenAI
             } else if (isset($reply["delta"]["content"])) {
                 $delta_content = $reply["delta"]["content"];
                 $full_response .= $delta_content;
+                $line .= $delta_content;
+                $line_char_count = strlen($line);
+                if (strpos($line, "\n") !== false) {
+                    $line = substr($line, strrpos($line, "\n") + 1);
+                    $line_char_count = strlen($line);
+                }
+                if ($line_char_count > 64 && substr($line, -1) == " ") {
+                    echo ("\n(ash) ");
+                    $line_char_count = 0;
+                    $line = "";
+                }
                 echo ($delta_content);
             }
         }
