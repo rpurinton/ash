@@ -129,6 +129,7 @@ class Ash
             'uptime' => trim(shell_exec("uptime")),
             'free_mh' => trim(shell_exec("free -mh")),
             'df_h' => trim(shell_exec("df -h")),
+            'who_u' => trim(shell_exec("who -u")),
             'user_id' => trim(shell_exec("whoami")),
             'home_dir' => trim(shell_exec("echo ~")),
             'last_dir' => isset($this->sys_info['last_dir']) ? $this->sys_info['last_dir'] : trim(shell_exec("pwd")),
