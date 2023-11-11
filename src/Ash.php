@@ -20,10 +20,10 @@ class Ash
         $this->parse_args();
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         if (!file_exists(__DIR__ . '/conf.d/config.json')) $this->initial_config();
+        $this->config = json_decode(file_get_contents(__DIR__ . '/conf.d/config.json'), true);
         if ($this->debug) echo "(ash) config: " . print_r($this->config, true) . "\n";
         $this->set_system_info();
         if ($this->debug) echo "(ash) sys_info: " . print_r($this->sys_info, true) . "\n";
-        $this->config = json_decode(file_get_contents(__DIR__ . '/conf.d/config.json'), true);
         require_once(__DIR__ . "/OpenAI.php");
         $this->openai = new OpenAI();
         $this->run();
