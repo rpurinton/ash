@@ -2,44 +2,31 @@
 
 namespace Rpurinton\Ash;
 
-require_once(__DIR__ . "/vendor/autoload.php");
-
 class OpenAI
 {
     private $client = null;
     private $models = [];
     private $model = null;
-    private $max_tokens = null;
-    private $history = [];
-    private $base_prompt = null;
-    private $base_tokens = 0;
+    private $maxTokens = null;
+    private $basePrompt = null;
+    private $baseTokens = 0;
     private $running_process = null;
     private $encoder = null;
-
+    private $util = null;
+    public $history = null;
 
     public function __construct(private $ash)
     {
-        $this->encoder = new \TikToken\Encoder();
+        $this->util = new Util();
+        $this->history = new History($this->util);
         $this->client = \OpenAI::client($this->ash->config['openai_api_key']);
         $models = $this->client->models()->list()->data;
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
-        $this->select_model();
-        $this->select_max_tokens();
-        $this->base_prompt = file_get_contents(__DIR__ . "/base_prompt.txt");
-        $this->base_tokens = $this->token_count($this->base_prompt);
-        $this->load_history();
-        $this->welcome_message();
-    }
-
-    public function token_count($input)
-    {
-        try {
-            $count = count($this->encoder->encode($input));
-        } catch (\Exception $e) {
-            if ($this->ash->debug) echo ("(ash) Error: " . $e->getMessage() . "\n");
-            $count = 0;
-        }
-        return $count;
+        $this->selectModel();
+        $this->selectMaxTokens();
+        $this->basePrompt = file_get_contents(__DIR__ . "/base_prompt.txt");
+        $this->baseTokens = $this->util->tokenCount($this->basePrompt);
+        $this->welcomeMessage();
     }
 
     public function __destruct()
@@ -50,55 +37,7 @@ class OpenAI
         }
     }
 
-    public function load_history()
-    {
-        $history_file = __DIR__ . "/conf.d/history.jsonl";
-        if (file_exists($history_file)) {
-            $history_jsonl = file_get_contents($history_file);
-            $history_jsonl = explode("\n", $history_jsonl);
-            foreach ($history_jsonl as $history_json) {
-                if ($history_json == "") continue;
-                $history = json_decode($history_json, true);
-                if (!is_null($history)) $this->history[] = $history;
-            }
-        } else {
-            $this->history = [];
-        }
-    }
-
-    public function save_message($message)
-    {
-        $message["tokens"] = $this->token_count($message["content"]);
-        $this->history[] = $message;
-        $message_json = json_encode($message);
-        file_put_contents(__DIR__ . "/conf.d/history.jsonl", $message_json . "\n", FILE_APPEND);
-    }
-
-    public function get_history($num_tokens)
-    {
-        $rev_history = array_reverse($this->history);
-        $token_count = 0;
-        $result = [];
-        foreach ($rev_history as $message) {
-            $token_count += $message["tokens"];
-            if ($token_count <= $num_tokens) {
-                unset($message["tokens"]);
-                $result[] = $message;
-            } else {
-                $token_count -= $message["tokens"];
-                break;
-            }
-        }
-        return array_reverse($result);
-    }
-
-    public function clear_history()
-    {
-        $this->history = [];
-        file_put_contents(__DIR__ . "/conf.d/history.jsonl", "");
-    }
-
-    public function select_model($force = false)
+    public function selectModel($force = false)
     {
         // Check if openai_model is set in the config
         if (!$force && isset($this->ash->config['openai_model'])) {
@@ -133,57 +72,55 @@ class OpenAI
         }
     }
 
-    public function select_max_tokens($force = false)
+    public function selectMaxTokens($force = false)
     {
-        // Check if openai_max_tokens is set in the config
-        if (!$force && isset($this->ash->config['openai_max_tokens'])) {
-            $this->max_tokens = $this->ash->config['openai_max_tokens'];
+
+        if (!$force && isset($this->ash->config['openAIMaxTokens'])) {
+            $this->maxTokens = $this->ash->config['openAIMaxTokens'];
             return;
         }
 
-        // Prompt the user to select a max_tokens value
         while (true) {
             $prompt = "(ash) Please select the maximum tokens you want use for any single request (default: 4096, range [2048-131072]): ";
             $max_tokens = readline($prompt);
             if ($max_tokens == "") $max_tokens = 4096;
 
-            // Check if the selected max_tokens value is valid
             if (is_numeric($max_tokens) && $max_tokens >= 2048 && $max_tokens <= 131072) {
-                $this->max_tokens = $max_tokens;
-                $this->ash->config['openai_max_tokens'] = $this->max_tokens;
+                $this->maxTokens = $max_tokens;
+                $this->ash->config->setOpenAITokens($this->maxTokens);
                 $this->ash->save_config();
                 return;
             }
 
-            echo "(ash) Invalid max_tokens value. Please try again.\n";
+            echo "(ash) Invalid max tokens value. Please try again.\n";
         }
     }
 
-    public function welcome_message()
+    public function welcomeMessage()
     {
-        $messages[] = ["role" => "system", "content" => $this->base_prompt];
-        $response_space = round($this->max_tokens * 0.1, 0);
-        $history_space = $this->max_tokens - $this->base_tokens - $response_space;
-        $messages = array_merge($messages, $this->get_history($history_space));
-        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
-        $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
+        $messages[] = ["role" => "system", "content" => $this->basePrompt];
+        $response_space = round($this->maxTokens * 0.1, 0);
+        $history_space = $this->maxTokens - $this->baseTokens - $response_space;
+        $messages = array_merge($messages, $this->history->getHistory($history_space));
+        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sysInfo['host_fqdn'] . ", but people can call you " . $this->ash->sysInfo['host_name'] . " for short."];
+        $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sysInfo, true)];
         if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
         if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
-        $login_message = "User just started a new ash session from : " . $this->ash->sys_info["who_u"];
-        $messages[] = ["role" => "system", "content" => $login_message . "\nPlease run any functions you want before we get started then write a welcome message from you (" . $this->ash->sys_info['host_name'] . ") to " . $this->ash->sys_info['user_id'] . "."];
+        $login_message = "User just started a new ash session from : " . $this->ash->sysInfo["who_u"];
+        $messages[] = ["role" => "system", "content" => $login_message . "\nPlease run any functions you want before we get started then write a welcome message from you (" . $this->ash->sysInfo['host_name'] . ") to " . $this->ash->sysInfo['user_id'] . "."];
         $login_message = ["role" => "system", "content" => $login_message];
-        $this->save_message($login_message);
+        $this->history->saveMessage($login_message);
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
         $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include and ``` or markdown formatting. This is just a text-CLI."];
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,
-            "max_tokens" => $this->max_tokens,
+            "max_tokens" => $this->maxTokens,
             "temperature" => 0.1,
             "top_p" => 0.1,
             "frequency_penalty" => 0.0,
             "presence_penalty" => 0.0,
-            "functions" => $this->get_functions(),
+            "functions" => $this->getFunctions(),
         ];
         $full_response = "";
         $function_call = null;
@@ -212,27 +149,27 @@ class OpenAI
     public function user_message($input)
     {
         $user_message = ["role" => "user", "content" => $input];
-        $this->save_message($user_message);
-        $messages[] = ["role" => "system", "content" => $this->base_prompt];
+        $this->history->saveMessage($user_message);
+        $messages[] = ["role" => "system", "content" => $this->basePrompt];
 
-        $dynamic_prompt = "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short. Here is the current situation: " . print_r($this->ash->sys_info, true);
-        if ($this->ash->config['emoji_support']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
+        $dynamic_prompt = "Your full name is " . $this->ash->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo['hostName'] . " for short. Here is the current situation: " . print_r($this->ash->sysInfo, true);
+        if ($this->ash->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
         $dynamic_prompt .= "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages. Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI.\n";
-        if ($this->ash->config['color_support']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
+        if ($this->ash->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
-        $dynamic_tokens = $this->token_count($dynamic_prompt);
-        $response_space = round($this->max_tokens * 0.1, 0);
-        $history_space = $this->max_tokens - $this->base_tokens - $dynamic_tokens - $response_space;
-        $messages = array_merge($messages, $this->get_history($history_space));
+        $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
+        $response_space = round($this->maxTokens * 0.1, 0);
+        $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
+        $messages = array_merge($messages, $this->history->getHistory($history_space));
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,
-            "max_tokens" => $this->max_tokens,
+            "max_tokens" => $this->maxTokens,
             "temperature" => 0.1,
             "top_p" => 0.1,
             "frequency_penalty" => 0.0,
             "presence_penalty" => 0.0,
-            "functions" => $this->get_functions(),
+            "functions" => $this->getFunctions(),
         ];
         $full_response = "";
         $function_call = null;
@@ -258,7 +195,7 @@ class OpenAI
             $arguments = json_decode($full_response, true);
         } else {
             $assistant_message = ["role" => "assistant", "content" => $full_response];
-            $this->save_message($assistant_message);
+            $this->history->saveMessage($assistant_message);
         }
         echo ("\n\n");
         if ($this->ash->debug) {
@@ -267,7 +204,7 @@ class OpenAI
         }
     }
 
-    private function get_functions()
+    private function getFunctions()
     {
         exec('ls ' . __DIR__ . '/functions.d/*.json', $functions);
         $result = [];
@@ -285,7 +222,7 @@ class OpenAI
         ];
         $pipes = [];
         try {
-            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sys_info['working_dir'], $input['env'] ?? []);
+            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo['working_dir'], $input['env'] ?? []);
         } catch (\Exception $e) {
             return [
                 "stdout" => "",
