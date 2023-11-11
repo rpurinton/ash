@@ -17,10 +17,10 @@ class Ash
             echo "(ash) Error: This program is for Linux only.\n";
             exit(1);
         }
+        $this->parse_args();
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         if (!file_exists(__DIR__ . '/conf.d/config.json')) $this->initial_config();
         $this->config = json_decode(file_get_contents(__DIR__ . '/conf.d/config.json'), true);
-        $this->parse_args();
         require_once(__DIR__ . "/OpenAI.php");
         $this->openai = new OpenAI();
         $this->run();
@@ -89,6 +89,14 @@ class Ash
                 case "/d":
                     $this->debug = true;
                     echo "(ash) Debug mode enabled.\n";
+                    break;
+                case "/r":
+                    $this->install_dependencies();
+                    break;
+                case "/x":
+                    // delete the conf.d directory and vendor directory
+                    unlink(__DIR__ . "/conf.d");
+                    unlink(__DIR__ . "/vendor");
                     break;
             }
         }
