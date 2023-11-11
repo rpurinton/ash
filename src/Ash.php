@@ -54,7 +54,7 @@ class Ash
     private function ctrl_c($signal)
     {
         if ($this->debug) echo "(ash) ctrl_c($signal)\n";
-        if ($this->running_process) {
+        if (!is_null($this->running_process)) {
             echo "\n(ash) Killing running process...\n";
             posix_kill($this->running_process, SIGKILL);
             $this->running_process = null;
