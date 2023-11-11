@@ -12,6 +12,7 @@ class OpenAI
     private $max_tokens = null;
     private $history = [];
     private $base_prompt = null;
+    private $base_tokens = 0;
     private $running_process = null;
     private $encoder = null;
 
@@ -25,6 +26,7 @@ class OpenAI
         $this->select_model();
         $this->select_max_tokens();
         $this->base_prompt = file_get_contents(__DIR__ . "/base_prompt.txt");
+        $this->base_tokens = $this->token_count($this->base_prompt);
         $this->load_history();
         $this->welcome_message();
     }
@@ -60,9 +62,28 @@ class OpenAI
 
     public function save_message($message)
     {
+        $message["tokens"] = $this->token_count($message["content"]);
         $this->history[] = $message;
         $message_json = json_encode($message);
         file_put_contents(__DIR__ . "/conf.d/history.json", $message_json . "\n", FILE_APPEND);
+    }
+
+    public function get_history($num_tokens)
+    {
+        $rev_history = array_reverse($this->history);
+        $token_count = 0;
+        $result = [];
+        foreach ($rev_history as $message) {
+            $token_count += $message["tokens"];
+            if ($token_count <= $num_tokens) {
+                unset($message["tokens"]);
+                $result[] = $message;
+            } else {
+                $token_count -= $message["tokens"];
+                break;
+            }
+        }
+        return array_reverse($result);
     }
 
     public function select_model($force = false)
@@ -129,16 +150,11 @@ class OpenAI
     public function welcome_message()
     {
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
+        $response_space = round($this->max_tokens * 0.1, 0);
+        $history_space = $this->max_tokens - $this->base_tokens - $response_space;
+        $messages = array_merge($messages, $this->get_history($history_space));
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
-        $messages[] = ["role" => "system", "content" => "The welcome message should include things like your name and purpose - A brief identifier of the server, such as 'Welcome to XYZs Server!'
-Contact information (if known)- In case of issues, provide a point of contact, like 'For support, contact XYZ at 555-555-5555',
-a terms of use - A short statement like 'Use of this server is subject to company policies and regulations.',
-System status or load - you could include CPU, RAM usage, or uptime to inform the user about the current server state, warn if resources are low
-Security reminders - Like Remember: Don't share your credentials or leave sessions unattended.
-Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
-Last login information (if known) - To remind users of their last session, useful for security.
-Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled."];
         if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
         if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $messages[] = ["role" => "system", "content" => "The user " . $this->ash->sys_info['user_id'] . " just logged on.  Please write a welcome message from you (" . $this->ash->sys_info['host_name'] . ") to " . $this->ash->sys_info['user_id'] . "."];
@@ -179,14 +195,18 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
 
     public function user_message($input)
     {
+        $user_message = ["role" => "user", "content" => $input];
+        $this->save_message($user_message);
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
+        $response_space = round($this->max_tokens * 0.1, 0);
+        $history_space = $this->max_tokens - $this->base_tokens - $response_space;
+        $messages = array_merge($messages, $this->get_history($history_space));
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
         if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual color control symbols."];
         if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
         $messages[] = ["role" => "system", "content" => "Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI."];
-        $messages[] = ["role" => "user", "content" => $input];
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,

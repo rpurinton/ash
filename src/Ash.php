@@ -132,6 +132,7 @@ class Ash
             'who_u' => trim(shell_exec("who -u")),
             'term_color_support' => $this->config['color_support'] ? "yes" : "no",
             'term_emoji_support' => $this->config['emoji_support'] ? "✅" : "no",
+            'current_date' => trim(shell_exec("date")),
             'user_id' => trim(shell_exec("whoami")),
             'home_dir' => trim(shell_exec("echo ~")),
             'last_dir' => isset($this->sys_info['last_dir']) ? $this->sys_info['last_dir'] : trim(shell_exec("pwd")),
