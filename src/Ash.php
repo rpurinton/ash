@@ -63,7 +63,7 @@ class Ash
             "emoji_support" => $emoji_support
         ];
         if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
-        file_put_contents(__DIR__ . '/conf.d/openai.json', json_encode($this->config, JSON_PRETTY_PRINT));
+        file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
     }
 
     private function ctrl_c($signo)
