@@ -13,6 +13,12 @@ class Util
 
     public function tokenCount($input)
     {
-        return count($this->encoder->encode($input));
+        try {
+            $count = count($this->encoder->encode($input));
+        } catch (\Exception $e) {
+            echo ("(ash) Error: " . print_r($e, true) . "\n");
+            $count = 0;
+        }
+        return $count;
     }
 }
