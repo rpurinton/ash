@@ -162,6 +162,9 @@ class Ash
             case "exit":
             case "quit":
                 exit(0);
+            case "bash":
+                passthru("/bin/bash");
+                return "";
             case "help":
                 return file_get_contents(__DIR__ . "/../README.md") . "\n";
             case "sys_info":
