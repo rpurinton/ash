@@ -20,7 +20,7 @@ class OpenAI
         $this->history = new History($this->util);
         $this->client = \OpenAI::client($this->ash->config->config['openaiApiKey']);
         $models = $this->client->models()->list()->data;
-        foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
+        foreach ($models as $model) if (mb_substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->selectModel();
         $this->selectMaxTokens();
         passthru("clear");
@@ -169,7 +169,7 @@ class OpenAI
                 $delta_content = $reply["delta"]["content"];
                 $full_response .= $delta_content;
                 $line .= $delta_content;
-                $line_char_count = strlen($line);
+                $line_char_count = mb_strlen($line);
                 $debug_info = [
                     "full_response" => $full_response,
                     "line" => $line,
@@ -178,8 +178,8 @@ class OpenAI
                 ];
                 echo ("debug 1: " . print_r($debug_info, true) . "\n");
                 if (strpos($line, "\n") !== false) {
-                    $line = substr($line, strrpos($line, "\n") + 1);
-                    $line_char_count = strlen($line);
+                    $line = mb_substr($line, mb_strrpos($line, "\n") + 1);
+                    $line_char_count = mb_strlen($line);
                 }
                 $debug_info = [
                     "full_response" => $full_response,
@@ -188,7 +188,7 @@ class OpenAI
                     "delta_content" => $delta_content,
                 ];
                 echo ("debug 2: " . print_r($debug_info, true) . "\n");
-                if ($line_char_count > 64 && substr($line, -1) == " ") {
+                if ($line_char_count > 64 && mb_substr($line, -1) == " ") {
                     echo ("\n(ash) ");
                     $line_char_count = 0;
                     $line = "";
