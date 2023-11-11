@@ -157,6 +157,7 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
             "top_p" => 0.1,
             "frequency_penalty" => 0.0,
             "presence_penalty" => 0.0,
+            "functions" => $this->get_functions(),
         ];
         $full_response = "";
         $function_call = null;
@@ -182,6 +183,13 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         echo ("\n\n");
     }
 
+    private function get_functions()
+    {
+        exec('ls ' . __DIR__ . '/functions.d/*.json', $functions);
+        $result = [];
+        foreach ($functions as $function) $result[] = json_decode(file_get_contents($function), true);
+        return $result;
+    }
 
     public function proc_exec(array $input): array
     {
@@ -193,7 +201,7 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         ];
         $pipes = [];
         try {
-            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
+            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sys_info['working_dir'], $input['env'] ?? []);
         } catch (\Exception $e) {
             return [
                 "stdout" => "",

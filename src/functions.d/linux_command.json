@@ -1,0 +1,43 @@
+{
+    "name": "linux_command",
+    "description": "run any safe linux command (only run a single line command at a time. you can join multiple commands like 'cd /proc && cat cpuinfo' for example if able, otherwise you will can run subsequent commands on the next go around. Only run commands which terminate for example don't run any commands which run indefinitely or require further human interaction like 'top'  instead use 'top -bn1' to get the output and exit. use -y or -f when appropriate to bypass user prompts like d you want to continue (Y/n) if they are supported by the particular commands.  remember this is CentOS 9 x86_64.  don't run any commands which would wipe the server or break the operating system!",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "command": {
+                "type": "string",
+                "description": "the exact command line to be executed"
+            },
+            "working_directory": {
+                "type": "string",
+                "optional": true,
+                "description": "the full path to the desired working directory where the command will be executed"
+            },
+            "environment_vars": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "the name of the environment variable"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "the value to set for the environment variable"
+                        }
+                    },
+                    "required": [
+                        "key",
+                        "value"
+                    ]
+                },
+                "optional": true,
+                "description": "an array of environment variables to set before running the command"
+            }
+        },
+        "required": [
+            "command"
+        ]
+    }
+}
