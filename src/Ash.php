@@ -10,9 +10,12 @@ class Ash
 
     public function __construct()
     {
+        // handle CTRL-C (terminate running process and exit)
         pcntl_signal(SIGINT, function ($signo) {
-            if ($this->running_process) proc_terminate($this->running_process);
-            die("(ash) Exiting...\n");
+            if ($this->running_process) {
+                proc_terminate($this->running_process);
+            }
+            exit;
         });
         $this->parse_args();
         $this->set_system_info();
