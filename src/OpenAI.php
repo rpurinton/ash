@@ -130,6 +130,6 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
             }
         }
         if ($this->ash->debug) echo ("(ash) Response complete.\n");
-        echo ("\n");
+        echo ("\n\n");
     }
 }
