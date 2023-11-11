@@ -138,6 +138,9 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
+        $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include it."];
+        if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc."];
+        if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $messages[] = ["role" => "user", "content" => $input];
         $prompt = [
             "model" => $this->model,
