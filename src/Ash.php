@@ -21,6 +21,7 @@ class Ash
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         if (!file_exists(__DIR__ . '/conf.d/config.json')) $this->initial_config();
         $this->config = json_decode(file_get_contents(__DIR__ . '/conf.d/config.json'), true);
+        $this->debug = $this->debug || $this->config['debug'];
         if ($this->debug) echo "(ash) config: " . print_r($this->config, true) . "\n";
         $this->set_system_info();
         if ($this->debug) echo "(ash) sys_info: " . print_r($this->sys_info, true) . "\n";
@@ -161,6 +162,8 @@ class Ash
                 return print_r($this->sys_info, true) . "\n";
             case "debug":
                 $this->debug = !$this->debug;
+                $this->config['debug'] = $this->debug;
+                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
                 if ($this->debug) return "(ash) Debug mode enabled.\n";
                 else return "(ash) Debug mode disabled.\n";
             case "config":
