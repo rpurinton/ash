@@ -12,6 +12,7 @@ class Ash
     public function __construct()
     {
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
+        require_once(__DIR__ . "/OpenAI.php");
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         $this->parse_args();
         $this->run();
