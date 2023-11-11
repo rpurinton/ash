@@ -189,8 +189,8 @@ class OpenAI
                     $output = $this->markdownToEscapeCodes($output);
                     echo ("$output\n(ash)\t");
                 } else {
-                    if (mb_strlen($line) > 60) {
-                        $wrapped_text = wordwrap($line, 60, "\n", true);
+                    if (mb_strlen($line) > 70) {
+                        $wrapped_text = wordwrap($line, 70, "\n", true);
                         $line_break_pos = mb_strrpos($wrapped_text, "\n");
                         $output = mb_substr($wrapped_text, 0, $line_break_pos);
                         $line = mb_substr($wrapped_text, $line_break_pos + 1);
@@ -223,19 +223,30 @@ class OpenAI
 
     private function markdownToEscapeCodes($text)
     {
-        // look for text wrapped in ** xxx **
-        $text = preg_replace("/\*\*(.*?)\*\*/", "\e[1m$1\e[0m", $text);
-        // look for text wrapped in * xxx *
-        $text = preg_replace("/\*(.*?)\*/", "\e[3m$1\e[0m", $text);
-        // look for text wrapped in _ xxx _
-        $text = preg_replace("/\_(.*?)\_/", "\e[3m$1\e[0m", $text);
-        // look for text wrapped in ~ xxx ~
-        $text = preg_replace("/\~(.*?)\~/", "\e[9m$1\e[0m", $text);
-        // look for text wrapped in ` xxx `
-        $text = preg_replace("/\`(.*?)\`/", "\e[7m$1\e[0m", $text);
-        // look for text wrapped in ``` xxx ```
-        $text = preg_replace("/\`\`\`(.*?)\`\`\`/", "\e[7m$1\e[0m", $text);
-        return $text;
+        if ($this->ash->config->config['colorSupport']) {
+            // look for text wrapped in ** xxx **
+            $text = preg_replace("/\*\*(.*?)\*\*/", "\e[1m$1\e[0m", $text);
+            // look for text wrapped in * xxx *
+            $text = preg_replace("/\*(.*?)\*/", "\e[3m$1\e[0m", $text);
+            // look for text wrapped in _ xxx _
+            $text = preg_replace("/\_(.*?)\_/", "\e[3m$1\e[0m", $text);
+            // look for text wrapped in ~ xxx ~
+            $text = preg_replace("/\~(.*?)\~/", "\e[9m$1\e[0m", $text);
+            // look for text wrapped in ` xxx `
+            $text = preg_replace("/\`(.*?)\`/", "\e[7m$1\e[0m", $text);
+            // look for text wrapped in ``` xxx ```
+            $text = preg_replace("/\`\`\`(.*?)\`\`\`/", "\e[7m$1\e[0m", $text);
+            return $text;
+        } else {
+            // strip out markdown characters
+            $text = preg_replace("/\*\*(.*?)\*\*/", "$1", $text);
+            $text = preg_replace("/\*(.*?)\*/", "$1", $text);
+            $text = preg_replace("/\_(.*?)\_/", "$1", $text);
+            $text = preg_replace("/\~(.*?)\~/", "$1", $text);
+            $text = preg_replace("/\`(.*?)\`/", "$1", $text);
+            $text = preg_replace("/\`\`\`(.*?)\`\`\`/", "$1", $text);
+            return $text;
+        }
     }
 
     private function getFunctions()
