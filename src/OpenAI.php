@@ -6,11 +6,10 @@ require_once(__DIR__ . "/vendor/autoload.php");
 
 class OpenAI
 {
-    private $config = [];
     private $client = null;
 
-    public function __construct()
+    public function __construct(private $ash)
     {
-        //$this->config = json_decode(file_get_contents(__DIR__ . '/conf.d/openai.json'), true);
+        $this->client = \OpenAI::client($this->ash->config['openai_api_key']);
     }
 }

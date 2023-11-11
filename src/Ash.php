@@ -9,7 +9,7 @@ class Ash
     private bool $debug = false;
     private $running_process = null;
     private $openai = null;
-    private $config = [];
+    public $config = [];
 
     public function __construct()
     {
@@ -26,7 +26,7 @@ class Ash
         $this->set_system_info();
         if ($this->debug) echo "(ash) sys_info: " . print_r($this->sys_info, true) . "\n";
         require_once(__DIR__ . "/OpenAI.php");
-        $this->openai = new OpenAI();
+        $this->openai = new OpenAI($this);
         $this->run();
     }
 
@@ -47,10 +47,10 @@ class Ash
     public function initial_config()
     {
         echo ("(ash) Initial configuration wizard...\n");
-        $open_ai_api_key = "";
+        $openai_api_key = "";
         while (true) {
-            $open_ai_api_key = readline("(ash) Enter your OpenAI API key: ");
-            if (strlen($open_ai_api_key) == 51 && substr($open_ai_api_key, 0, 3) == "sk-") break;
+            $openai_api_key = readline("(ash) Enter your OpenAI API key: ");
+            if (strlen($openai_api_key) == 51 && substr($openai_api_key, 0, 3) == "sk-") break;
             echo "(ash) Error: Invalid API key.\n";
         }
         $color_support = readline("(ash) Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
@@ -67,7 +67,7 @@ class Ash
         if ($debug == "y") $debug = true;
         else $debug = false;
         $this->config = [
-            "open_ai_api_key" => $open_ai_api_key,
+            "openai_api_key" => $openai_api_key,
             "color_support" => $color_support,
             "emoji_support" => $emoji_support,
             "debug" => $debug,
@@ -186,13 +186,13 @@ class Ash
                 if ($this->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
                 else return "(ash) Emoji support disabled.\n";
             case "openai-key":
-                $open_ai_api_key = "";
+                $openai_api_key = "";
                 while (true) {
-                    $open_ai_api_key = readline("(ash) Enter your OpenAI API key: ");
-                    if (strlen($open_ai_api_key) == 51 && substr($open_ai_api_key, 0, 3) == "sk-") break;
+                    $openai_api_key = readline("(ash) Enter your OpenAI API key: ");
+                    if (strlen($openai_api_key) == 51 && substr($openai_api_key, 0, 3) == "sk-") break;
                     echo "(ash) Error: Invalid API key.\n";
                 }
-                $this->config["open_ai_api_key"] = $open_ai_api_key;
+                $this->config["openai_api_key"] = $openai_api_key;
                 file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
                 return "(ash) OpenAI API key updated.\n";
         }
