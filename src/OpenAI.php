@@ -191,7 +191,7 @@ class OpenAI
                 if ($line_char_count > 64) {
                     $space_pos = mb_strrpos($line, " ");
                     if ($space_pos !== false) {
-                        echo ("\n(ash) ");
+                        echo ("\n(ash)\t");
                         $line = mb_substr($line, $space_pos + 1);
                         $line_char_count = mb_strlen($line);
                     }
