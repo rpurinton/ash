@@ -29,6 +29,8 @@ class SysInfo
             'uptime' => trim(shell_exec("uptime")),
             'free-mh' => trim(shell_exec("free -mh")),
             'df-h' => trim(shell_exec("df -h")),
+            'failedServices' => trim(shell_exec("systemctl --failed")),
+            'listeningPorts' => trim(shell_exec("ss -tunalp")),
             'emergencyContact' => 'not set',
             'who-u' => trim(shell_exec("who -u")),
             'ashEmailAddress' => 'not set',
