@@ -10,7 +10,10 @@ class Ash
 
     public function __construct()
     {
-        pcntl_signal(SIGINT, $this->ctrl_c(...));
+        pcntl_signal(SIGINT, function ($signo) {
+            if ($this->running_process) proc_terminate($this->running_process);
+            die("(ash) Exiting...\n");
+        });
         $this->parse_args();
         $this->set_system_info();
         $this->run();
@@ -49,19 +52,6 @@ class Ash
         ];
         $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
         if ($this->debug) echo ("(ash) set_system_info() result: " . print_r($this->sys_info, true) . "\n");
-    }
-
-    private function ctrl_c($signal)
-    {
-        if ($this->debug) echo "(ash) ctrl_c($signal)\n";
-        if (!is_null($this->running_process)) {
-            echo "\n(ash) Killing running process...\n";
-            posix_kill($this->running_process, SIGKILL);
-            $this->running_process = null;
-        } else {
-            echo "\n(ash) Exiting...\n";
-            exit(0);
-        }
     }
 
     private function run()
