@@ -1,2 +1,3 @@
 src/conf.d
+src/composer.lock
 src/vendor
