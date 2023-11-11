@@ -100,13 +100,37 @@ class OpenAI
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true)];
         if ($this->ash->config->config['colorSupport']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
+        else $messages[] = ["role" => "system", "content" => "Terminal color support disabled. Do not send color codes!"];
         if ($this->ash->config->config['emojiSupport']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
+        else $messages[] = ["role" => "system", "content" => "Emoji support disabled. Do not send emoji!"];
         $login_message = "User just started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"];
         $messages[] = ["role" => "system", "content" => $login_message . "\nPlease run any functions you want before we get started then write a welcome message from you (" . $this->ash->sysInfo->sysInfo['hostName'] . ") to " . $this->ash->sysInfo->sysInfo['userId'] . "."];
         $login_message = ["role" => "system", "content" => $login_message];
         $this->history->saveMessage($login_message);
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
         $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include and ``` or markdown formatting. This is just a text-CLI."];
+        $this->handlePromptAndResponse($messages);
+    }
+
+    public function userMessage($input)
+    {
+        $user_message = ["role" => "user", "content" => $input];
+        $this->history->saveMessage($user_message);
+        $messages[] = ["role" => "system", "content" => $this->basePrompt];
+        $dynamic_prompt = "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short. Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true);
+        if ($this->ash->config->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
+        $dynamic_prompt .= "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages. Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI.\n";
+        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
+        $messages[] = ["role" => "system", "content" => $dynamic_prompt];
+        $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
+        $response_space = round($this->maxTokens * 0.1, 0);
+        $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
+        $messages = array_merge($messages, $this->history->getHistory($history_space));
+        $this->handlePromptAndResponse($messages, $input);
+    }
+
+    private function handlePromptAndResponse($messages, $input = null)
+    {
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,
@@ -124,75 +148,18 @@ class OpenAI
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
-            echo ("(ash) Error: " . $e->getMessage() . "\n");
             if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         } catch (\Error $e) {
-            echo ("(ash) Error: " . $e->getMessage() . "\n");
             if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         } catch (\Throwable $e) {
-            echo ("(ash) Error: " . $e->getMessage() . "\n");
             if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         }
-        foreach ($stream as $response) {
-            $reply = $response->choices[0]->toArray();
-            $finish_reason = $reply["finish_reason"];
-            if (isset($reply["delta"]["function_call"]["name"])) {
-                $function_call = $reply["delta"]["function_call"]["name"];
-                echo ("✅ Running $function_call...\n");
-            }
-            if ($function_call) {
-                if (isset($reply["delta"]["function_call"]["arguments"])) $full_response .= $reply["delta"]["function_call"]["arguments"];
-            } else if (isset($reply["delta"]["content"])) {
-                $delta_content = $reply["delta"]["content"];
-                $full_response .= $delta_content;
-                echo ($delta_content);
-            }
-        }
-        if ($function_call) {
-            $arguments = json_decode($full_response, true);
-        } else {
-            $assistant_message = ["role" => "assistant", "content" => $full_response];
-            $this->history->saveMessage($assistant_message);
-        }
-        echo ("\n\n");
-        if ($this->ash->debug) {
-            if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
-            else echo ("(ash) Response complete.\n");
-        }
-    }
-
-    public function userMessage($input)
-    {
-        $user_message = ["role" => "user", "content" => $input];
-        $this->history->saveMessage($user_message);
-        $messages[] = ["role" => "system", "content" => $this->basePrompt];
-        $dynamic_prompt = "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short. Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true);
-        if ($this->ash->config->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
-        $dynamic_prompt .= "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages. Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI.\n";
-        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
-        $messages[] = ["role" => "system", "content" => $dynamic_prompt];
-        $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
-        $response_space = round($this->maxTokens * 0.1, 0);
-        $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
-        $messages = array_merge($messages, $this->history->getHistory($history_space));
-        $prompt = [
-            "model" => $this->model,
-            "messages" => $messages,
-            "max_tokens" => $this->maxTokens,
-            "temperature" => 0.1,
-            "top_p" => 0.1,
-            "frequency_penalty" => 0.0,
-            "presence_penalty" => 0.0,
-            "functions" => $this->getFunctions(),
-        ];
-        $full_response = "";
-        $function_call = null;
-        if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("(ash) ");
-        $stream = $this->client->chat()->createStreamed($prompt);
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
             $finish_reason = $reply["finish_reason"];
