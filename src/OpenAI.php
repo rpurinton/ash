@@ -120,5 +120,7 @@ class OpenAI
                 echo ($delta_content);
             }
         }
+        if ($this->ash->debug) echo ("(ash) Response complete.\n");
+        echo ("\n");
     }
 }
