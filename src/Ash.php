@@ -67,22 +67,34 @@ class Ash
             $input = readline($this->prompt);
             readline_add_history($input);
             $input = trim($input);
-            if ($input == "exit" || $input == "quit") {
-                break;
-            }
-            if ($input == "sys_info") {
-                echo print_r($this->sys_info, true) . "\n";
-                continue;
-            }
-            if ($input == "") {
-                continue;
-            }
-            if (substr($input, 0, 3) == "cd ") {
-                $this->change_directory(substr($input, 3));
+            if ($this->debug) echo ("(ash) input: $input\n");
+            $internal_command_result = $this->internal_commands($input);
+            if ($internal_command_result !== false) {
+                echo $internal_command_result;
                 continue;
             }
             echo $this->execute_command($input);
         }
+    }
+
+    private function internal_commands($input)
+    {
+        switch ($input) {
+            case "":
+                return "";
+            case "exit":
+            case "quit":
+                exit(0);
+            case "help":
+                return file_get_contents(__DIR__ . "/../README.md") . "\n";
+            case "sys_info":
+                return print_r($this->sys_info, true) . "\n";
+        }
+        if (substr($input, 0, 3) == "cd ") {
+            $this->change_directory(substr($input, 3));
+            return "";
+        }
+        return false;
     }
 
     private function change_directory($target_dir)
