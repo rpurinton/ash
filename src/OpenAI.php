@@ -23,6 +23,7 @@ class OpenAI
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->selectModel();
         $this->selectMaxTokens();
+        passthru("clear");
         $this->basePrompt = file_get_contents(__DIR__ . "/base_prompt.txt");
         $this->baseTokens = $this->util->tokenCount($this->basePrompt);
         $this->welcomeMessage();

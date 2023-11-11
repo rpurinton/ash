@@ -39,7 +39,6 @@ class Ash
 
     private function run()
     {
-        passthru("clear");
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->sysInfo->refresh();
