@@ -40,8 +40,8 @@ class OpenAI
     public function selectModel($force = false)
     {
         // Check if openai_model is set in the config
-        if (!$force && isset($this->ash->config->config['openAIModel'])) {
-            $model_id = $this->ash->config->config['openAIModel'];
+        if (!$force && isset($this->ash->config->config['openaiModel'])) {
+            $model_id = $this->ash->config->config['openaiModel'];
             // Check if the model is in the list of models
             if (in_array($model_id, $this->models)) {
                 $this->model = $model_id;
@@ -74,8 +74,8 @@ class OpenAI
     public function selectMaxTokens($force = false)
     {
 
-        if (!$force && isset($this->ash->config->config['openAIMaxTokens'])) {
-            $this->maxTokens = $this->ash->config->config['openAIMaxTokens'];
+        if (!$force && isset($this->ash->config->config['openaiTokens'])) {
+            $this->maxTokens = $this->ash->config->config['openaiTokens'];
             return;
         }
 
