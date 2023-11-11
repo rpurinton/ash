@@ -19,6 +19,7 @@ class Ash
         }
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         if (!file_exists(__DIR__ . '/conf.d/config.json')) $this->initial_config();
+        $this->config = json_decode(file_get_contents(__DIR__ . '/conf.d/config.json'), true);
         $this->parse_args();
         require_once(__DIR__ . "/OpenAI.php");
         $this->openai = new OpenAI();
@@ -118,7 +119,8 @@ class Ash
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->set_system_info();
-            $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
+            if ($this->config['color_support']) $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} \e[35m{$this->sys_info['working_folder']}]\e[0m (ash)# ";
+            else $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
             $input = readline($this->prompt);
             readline_add_history($input);
             $input = trim($input);
