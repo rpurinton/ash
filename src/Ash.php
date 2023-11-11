@@ -21,7 +21,7 @@ class Ash
     private function install_dependencies()
     {
         echo "(ash) Installing dependencies...";
-        $this->proc_exec([
+        print_r($this->proc_exec([
             "command" => "composer install",
             "cwd" => __DIR__,
             "env_vars" => [
@@ -29,7 +29,7 @@ class Ash
                 "COMPOSER_NO_INTERACTION" => "1",
             ],
             "options" => [],
-        ]);
+        ]));
         echo "done.\n";
     }
 
