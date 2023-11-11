@@ -64,7 +64,7 @@ class Configuration
         if ($debug == "y") $debug = true;
         else $debug = false;
         $this->config = [
-            "openAIApiKey" => $openAIApiKey,
+            "openaiApiKey" => $openAIApiKey,
             "colorSupport" => $color_support,
             "emojiSupport" => $emoji_support,
             "debug" => $debug,
@@ -81,31 +81,31 @@ class Configuration
 
     public function setColorSupport($colorSupport)
     {
-        $this->config['color_support'] = $colorSupport;
+        $this->config['colorSupport'] = $colorSupport;
         $this->saveConfig();
     }
 
     public function setEmojiSupport($emojiSupport)
     {
-        $this->config['emoji_support'] = $emojiSupport;
+        $this->config['emojiSupport'] = $emojiSupport;
         $this->saveConfig();
     }
 
     public function setOpenAIKey($openaiApiKey)
     {
-        $this->config['openAIApiKey'] = $openaiApiKey;
+        $this->config['openaiApiKey'] = $openaiApiKey;
         $this->saveConfig();
     }
 
     public function setOpenAIModel($openaiModel)
     {
-        $this->config['openai_model'] = $openaiModel;
+        $this->config['openaiModel'] = $openaiModel;
         $this->saveConfig();
     }
 
     public function setOpenAITokens($openaiTokens)
     {
-        $this->config['openai_tokens'] = $openaiTokens;
+        $this->config['openaiTokens'] = $openaiTokens;
         $this->saveConfig();
     }
 }
