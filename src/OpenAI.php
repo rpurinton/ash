@@ -102,6 +102,7 @@ class OpenAI
             "presence_penalty" => 0.0,
         ];
         $full_response = "";
+        $function_call = null;
         $stream = $this->client->chat()->createStreamed($prompt);
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
