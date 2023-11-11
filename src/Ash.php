@@ -16,6 +16,7 @@ class Ash
             if ($this->running_process) {
                 proc_terminate($this->running_process);
             }
+            echo $this->prompt;
             exit;
         });
         $this->parse_args();
