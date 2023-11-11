@@ -52,9 +52,15 @@ class OpenAI
 
     public function load_history()
     {
-        $history_file = __DIR__ . "/conf.d/history.json";
+        $history_file = __DIR__ . "/conf.d/history.jsonl";
         if (file_exists($history_file)) {
-            $this->history = json_decode(file_get_contents($history_file), true);
+            $history_jsonl = file_get_contents($history_file);
+            $history_jsonl = explode("\n", $history_jsonl);
+            foreach ($history_jsonl as $history_json) {
+                if ($history_json == "") continue;
+                $history = json_decode($history_json, true);
+                if (!is_null($history)) $this->history[] = $history;
+            }
         } else {
             $this->history = [];
         }
@@ -65,7 +71,7 @@ class OpenAI
         $message["tokens"] = $this->token_count($message["content"]);
         $this->history[] = $message;
         $message_json = json_encode($message);
-        file_put_contents(__DIR__ . "/conf.d/history.json", $message_json . "\n", FILE_APPEND);
+        file_put_contents(__DIR__ . "/conf.d/history.jsonl", $message_json . "\n", FILE_APPEND);
     }
 
     public function get_history($num_tokens)
