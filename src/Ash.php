@@ -60,8 +60,8 @@ class Ash
 
     private function run()
     {
-        $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
         while (true) {
+            $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
             $input = readline($this->prompt);
             readline_add_history($input);
             $input = trim($input);
@@ -82,7 +82,7 @@ class Ash
     private function change_directory($target_dir)
     {
         if ($target_dir == "~") {
-            $target_dir = trim(shell_exec("echo ~"));
+            $target_dir = $this->sys_info['home_dir'];
         }
         if ($target_dir == "-") {
             $target_dir = $this->sys_info['last_dir'];
