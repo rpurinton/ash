@@ -57,6 +57,7 @@ class Ash
             'working_dir' => trim(shell_exec("pwd")),
             'home_dir' => trim(shell_exec("echo ~")),
             'ip_addr' => trim(shell_exec("ip addr | grep inet")),
+            'hosts' => trim(shell_exec("cat /etc/hosts")),
         ];
         $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
         if ($this->debug) echo ("(ash) set_system_info() result: " . print_r($this->sys_info, true) . "\n");
