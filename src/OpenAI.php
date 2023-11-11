@@ -64,7 +64,6 @@ class OpenAI
             if (isset($this->models[$model_index])) {
                 $this->model = $this->models[$model_index];
                 $this->ash->config->setOpenAIModel($this->model);
-                $this->ash->save_config();
                 return;
             }
 
@@ -88,7 +87,6 @@ class OpenAI
             if (is_numeric($max_tokens) && $max_tokens >= 2048 && $max_tokens <= 131072) {
                 $this->maxTokens = $max_tokens;
                 $this->ash->config->setOpenAITokens($this->maxTokens);
-                $this->ash->save_config();
                 return;
             }
 
