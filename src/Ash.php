@@ -9,6 +9,7 @@ class Ash
     private bool $debug = false;
     private $running_process = null;
     private $openai = null;
+    private $config = [];
 
     public function __construct()
     {
@@ -18,6 +19,7 @@ class Ash
         }
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
+        if (!file_exists(__DIR__ . '/conf.d/config.json')) $this->initial_config();
         $this->parse_args();
         require_once(__DIR__ . "/OpenAI.php");
         $this->openai = new OpenAI();
@@ -38,6 +40,32 @@ class Ash
         echo "done.\n";
     }
 
+    public function initial_config()
+    {
+        echo ("(ash) Initial configuration wizard...\n");
+        $open_ai_api_key = "";
+        while (true) {
+            $open_ai_api_key = readline("(ash) Enter your OpenAI API key: ");
+            if (preg_match("/^sk-[a-zA-Z0-9]{32}$/", $open_ai_api_key)) break;
+            echo "(ash) Error: Invalid API key format.\n";
+        }
+        $color_support = readline("(ash) Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
+        $color_support = strtolower($color_support);
+        if ($color_support == "y" || $color_support == "") $color_support = true;
+        else $color_support = false;
+        $emoji_support = readline("(ash) Enable emoji support? ✅ [Y/n]: ");
+        $emoji_support = strtolower($emoji_support);
+        if ($emoji_support == "y" || $emoji_support == "") $emoji_support = true;
+        else $emoji_support = false;
+        $this->config = [
+            "open_ai_api_key" => $open_ai_api_key,
+            "color_support" => $color_support,
+            "emoji_support" => $emoji_support
+        ];
+        if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
+        file_put_contents(__DIR__ . '/conf.d/openai.json', json_encode($this->config, JSON_PRETTY_PRINT));
+    }
+
     private function ctrl_c($signo)
     {
         if ($this->running_process) proc_terminate($this->running_process);
@@ -56,7 +84,8 @@ class Ash
                 case "/l":
                     die(shell_exec("cat " . __DIR__ . "/../LICENSE") . "\n");
                 case "/c":
-                    die(shell_exec("cat " . __DIR__ . "/../CREDITS") . "\n");
+                    $this->initial_config();
+                    break;
                 case "/d":
                     $this->debug = true;
                     echo "(ash) Debug mode enabled.\n";
@@ -83,7 +112,6 @@ class Ash
             'working_dir' => trim(shell_exec("pwd")),
         ];
         $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
-        if ($this->debug) echo ("(ash) set_system_info() result: " . print_r($this->sys_info, true) . "\n");
     }
 
     private function run()
@@ -120,6 +148,9 @@ class Ash
                 $this->debug = !$this->debug;
                 if ($this->debug) return "(ash) Debug mode enabled.\n";
                 else return "(ash) Debug mode disabled.\n";
+            case "config":
+                $this->initial_config();
+                return "";
         }
         if (substr($input, 0, 3) == "cd ") {
             $this->change_directory(substr($input, 3));
