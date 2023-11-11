@@ -4,8 +4,9 @@ namespace Rpurinton\Ash;
 
 class Ash
 {
-    private $sys_info = [];
-    private $debug = false;
+    private string $prompt = "";
+    private array $sys_info = [];
+    private bool $debug = false;
     private $running_process = null;
 
     public function __construct()
@@ -59,9 +60,9 @@ class Ash
 
     private function run()
     {
-        $prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
+        $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
         while (true) {
-            $input = readline($prompt);
+            $input = readline($this->prompt);
             readline_add_history($input);
             $input = trim($input);
             if ($input == "exit" || $input == "quit") {
