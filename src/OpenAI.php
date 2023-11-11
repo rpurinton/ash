@@ -94,7 +94,7 @@ class OpenAI
         $messages[] = ["role" => "system", "content" => "The welcome message should include things like your name and purpose - A brief identifier of the server, such as 'Welcome to XYZs Server!'
 Contact information (if known)- In case of issues, provide a point of contact, like 'For support, contact XYZ at 555-555-5555',
 a terms of use - A short statement like 'Use of this server is subject to company policies and regulations.',
-System status or load - you could include CPU, RAM usage, or uptime to inform the user about the current server state.
+System status or load - you could include CPU, RAM usage, or uptime to inform the user about the current server state, warn if resources are low
 Security reminders - Like Remember: Don't share your credentials or leave sessions unattended.
 Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
 Last login information (if known) - To remind users of their last session, useful for security.
