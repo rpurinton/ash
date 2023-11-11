@@ -239,6 +239,9 @@ class OpenAI
         }
         if ($function_call) {
             $arguments = json_decode($full_response, true);
+        } else {
+            $assistant_message = ["role" => "assistant", "content" => $full_response];
+            $this->save_message($assistant_message);
         }
         if ($this->ash->debug) {
             if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
