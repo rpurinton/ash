@@ -183,6 +183,7 @@ class OpenAI
             "top_p" => 0.1,
             "frequency_penalty" => 0.0,
             "presence_penalty" => 0.0,
+            "functions" => $this->get_functions(),
         ];
         $full_response = "";
         $function_call = null;
