@@ -21,7 +21,7 @@ class Ash
     private function install_dependencies()
     {
         echo "(ash) Installing dependencies...";
-        $cmd = "cd " . __DIR__ . " && export COMPOSER_ALLOW_SUPERUSER=1 && export COMPOSER_NO_INTERACTION=1 && composer install";
+        $cmd = "cd " . __DIR__ . " && export COMPOSER_ALLOW_SUPERUSER=1 && export COMPOSER_NO_INTERACTION=1 && composer install 2>&1";
         exec($cmd, $output, $exit_code);
         if ($exit_code != 0) {
             echo "failed.\n";
@@ -145,7 +145,15 @@ class Ash
             2 => ["pipe", "w"], // stderr
         ];
         $pipes = [];
-        $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
+        try {
+            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'], $input['env_vars'], $input['options']);
+        } catch (\Exception $e) {
+            return [
+                "stdout" => "",
+                "stderr" => "Error (ash): proc_open() failed: " . $e->getMessage(),
+                "exit_code" => -1,
+            ];
+        }
         if (is_resource($this->running_process)) {
             $stdout = stream_get_contents($pipes[1]);
             $stderr = stream_get_contents($pipes[2]);
