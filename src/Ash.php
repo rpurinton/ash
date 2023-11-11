@@ -45,8 +45,8 @@ class Ash
         $open_ai_api_key = "";
         while (true) {
             $open_ai_api_key = readline("(ash) Enter your OpenAI API key: ");
-            if (preg_match("/^sk-[a-zA-Z0-9]{32}$/", $open_ai_api_key)) break;
-            echo "(ash) Error: Invalid API key format.\n";
+            if (strlen($open_ai_api_key) == 51 && substr($open_ai_api_key, 0, 3) == "sk-") break;
+            echo "(ash) Error: Invalid API key.\n";
         }
         $color_support = readline("(ash) Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
         $color_support = strtolower($color_support);
