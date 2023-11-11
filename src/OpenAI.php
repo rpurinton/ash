@@ -91,7 +91,7 @@ class OpenAI
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
-        $messages[] = ["role" => "system", "content" => "The user " . $this->ash->sys_info['user_name'] . " just logged on.  Please write a welcome message."];
+        $messages[] = ["role" => "system", "content" => "The user " . $this->ash->sys_info['user_id'] . " just logged on.  Please write a welcome message from you (" . $this->ash->sys_info['host_name'] . ") to " . $this->ash->sys_info['user_id'] . "."];
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,
@@ -103,6 +103,7 @@ class OpenAI
         ];
         $full_response = "";
         $function_call = null;
+        if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
         $stream = $this->client->chat()->createStreamed($prompt);
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
