@@ -10,8 +10,7 @@ class OpenAI
     private $maxTokens = null;
     private $basePrompt = null;
     private $baseTokens = 0;
-    private $running_process = null;
-    private $encoder = null;
+    public $runningProcess = null;
     private $util = null;
     public $history = null;
 
@@ -31,10 +30,7 @@ class OpenAI
 
     public function __destruct()
     {
-        if ($this->running_process) {
-            proc_terminate($this->running_process);
-            $this->running_process = null;
-        }
+        if ($this->runningProcess) proc_terminate($this->runningProcess);
     }
 
     public function selectModel($force = false)
@@ -228,7 +224,7 @@ class OpenAI
         ];
         $pipes = [];
         try {
-            $this->running_process = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo->sysInfo['working_dir'], $input['env'] ?? []);
+            $this->runningProcess = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo->sysInfo['working_dir'], $input['env'] ?? []);
         } catch (\Exception $e) {
             return [
                 "stdout" => "",
@@ -236,18 +232,18 @@ class OpenAI
                 "exit_code" => -1,
             ];
         }
-        if (is_resource($this->running_process)) {
+        if (is_resource($this->runningProcess)) {
             $stdout = stream_get_contents($pipes[1]);
             $stderr = stream_get_contents($pipes[2]);
             fclose($pipes[0]);
             fclose($pipes[1]);
             fclose($pipes[2]);
-            $exit_code = proc_close($this->running_process);
-            $this->running_process = null;
+            $exitCode = proc_close($this->runningProcess);
+            $this->runningProcess = null;
             $result = [
                 "stdout" => $stdout,
                 "stderr" => $stderr,
-                "exit_code" => $exit_code,
+                "exitCode" => $exitCode,
             ];
             if ($this->ash->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
             return $result;
@@ -255,7 +251,7 @@ class OpenAI
         return [
             "stdout" => "",
             "stderr" => "Error (ash): proc_open() failed.",
-            "exit_code" => -1,
+            "exitCode" => -1,
         ];
     }
 }

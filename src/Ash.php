@@ -6,8 +6,7 @@ class Ash
 {
     private string $prompt = "";
     public bool $debug = false;
-    private $running_process = null;
-    private $openai = null;
+    public $openai = null;
     public $config = null;
     public $commands = null;
     public $sysInfo = null;
@@ -34,7 +33,7 @@ class Ash
 
     private function ctrl_c($signo)
     {
-        if ($this->running_process) proc_terminate($this->running_process);
+        if ($this->openai->runningProcess) proc_terminate($this->openai->runningProcess);
         echo "\n";
     }
 
