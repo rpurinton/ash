@@ -183,7 +183,7 @@ class Ash
             case "emoji":
                 $this->config["emoji_support"] = !$this->config["emoji_support"];
                 file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
-                if ($this->config["emoji_support"]) return "(ash) Emoji support enabled.\n";
+                if ($this->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
                 else return "(ash) Emoji support disabled.\n";
             case "openai-key":
                 $open_ai_api_key = "";
