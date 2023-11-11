@@ -9,6 +9,7 @@ require_once(__DIR__ . "/History.php");
 require_once(__DIR__ . "/Commands.php");
 require_once(__DIR__ . "/Composer.php");
 require_once(__DIR__ . "/ParseArgs.php");
+require_once(__DIR__ . "/SysInfo.php");
 
 class Configuration
 {
