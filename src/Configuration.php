@@ -64,9 +64,9 @@ class Configuration
         if ($debug == "y") $debug = true;
         else $debug = false;
         $this->config = [
-            "openai_api_key" => $openai_api_key,
-            "color_support" => $color_support,
-            "emoji_support" => $emoji_support,
+            "openAIApiKey" => $openai_api_key,
+            "colorSupport" => $color_support,
+            "emojiSupport" => $emoji_support,
             "debug" => $debug,
         ];
         if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
