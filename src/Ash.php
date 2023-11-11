@@ -70,6 +70,10 @@ class Ash
             if ($input == "exit" || $input == "quit") {
                 break;
             }
+            if ($input == "sys_info") {
+                echo print_r($this->sys_info, true) . "\n";
+                continue;
+            }
             if ($input == "") {
                 continue;
             }
