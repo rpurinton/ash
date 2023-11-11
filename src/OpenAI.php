@@ -19,7 +19,7 @@ class OpenAI
     {
         $this->util = new Util();
         $this->history = new History($this->util);
-        $this->client = \OpenAI::client($this->ash->config['openai_api_key']);
+        $this->client = \OpenAI::client($this->ash->config->config['openai_api_key']);
         $models = $this->client->models()->list()->data;
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->selectModel();
@@ -40,8 +40,8 @@ class OpenAI
     public function selectModel($force = false)
     {
         // Check if openai_model is set in the config
-        if (!$force && isset($this->ash->config['openai_model'])) {
-            $model_id = $this->ash->config['openai_model'];
+        if (!$force && isset($this->ash->config->config['openai_model'])) {
+            $model_id = $this->ash->config->config['openai_model'];
             // Check if the model is in the list of models
             if (in_array($model_id, $this->models)) {
                 $this->model = $model_id;
@@ -63,7 +63,7 @@ class OpenAI
             // Check if the selected model is valid
             if (isset($this->models[$model_index])) {
                 $this->model = $this->models[$model_index];
-                $this->ash->config['openai_model'] = $this->model;
+                $this->ash->config->config['openai_model'] = $this->model;
                 $this->ash->save_config();
                 return;
             }
@@ -75,8 +75,8 @@ class OpenAI
     public function selectMaxTokens($force = false)
     {
 
-        if (!$force && isset($this->ash->config['openAIMaxTokens'])) {
-            $this->maxTokens = $this->ash->config['openAIMaxTokens'];
+        if (!$force && isset($this->ash->config->config['openAIMaxTokens'])) {
+            $this->maxTokens = $this->ash->config->config['openAIMaxTokens'];
             return;
         }
 
@@ -104,8 +104,8 @@ class OpenAI
         $messages = array_merge($messages, $this->history->getHistory($history_space));
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sysInfo['host_fqdn'] . ", but people can call you " . $this->ash->sysInfo['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sysInfo, true)];
-        if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
-        if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
+        if ($this->ash->config->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
+        if ($this->ash->config->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $login_message = "User just started a new ash session from : " . $this->ash->sysInfo["who_u"];
         $messages[] = ["role" => "system", "content" => $login_message . "\nPlease run any functions you want before we get started then write a welcome message from you (" . $this->ash->sysInfo['host_name'] . ") to " . $this->ash->sysInfo['user_id'] . "."];
         $login_message = ["role" => "system", "content" => $login_message];
@@ -153,9 +153,9 @@ class OpenAI
         $messages[] = ["role" => "system", "content" => $this->basePrompt];
 
         $dynamic_prompt = "Your full name is " . $this->ash->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo['hostName'] . " for short. Here is the current situation: " . print_r($this->ash->sysInfo, true);
-        if ($this->ash->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
+        if ($this->ash->config->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
         $dynamic_prompt .= "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages. Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI.\n";
-        if ($this->ash->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
+        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $response_space = round($this->maxTokens * 0.1, 0);
