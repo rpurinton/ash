@@ -243,11 +243,11 @@ class OpenAI
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->save_message($assistant_message);
         }
+        echo ("\n\n");
         if ($this->ash->debug) {
             if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
             else echo ("(ash) Response complete.\n");
         }
-        echo ("\n\n");
     }
 
     private function get_functions()
