@@ -6,7 +6,7 @@ class Ash
 {
     private string $prompt = "";
     public array $sys_info = [];
-    private bool $debug = false;
+    public bool $debug = false;
     private $running_process = null;
     private $openai = null;
     public $config = [];
@@ -28,6 +28,11 @@ class Ash
         require_once(__DIR__ . "/OpenAI.php");
         $this->openai = new OpenAI($this);
         $this->run();
+    }
+
+    private function save_config()
+    {
+        file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
     }
 
     private function install_dependencies()
@@ -73,7 +78,7 @@ class Ash
             "debug" => $debug,
         ];
         if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
-        file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+        $this->save_config();
     }
 
     private function ctrl_c($signo)
@@ -172,7 +177,7 @@ class Ash
             case "debug":
                 $this->debug = !$this->debug;
                 $this->config['debug'] = $this->debug;
-                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                $this->save_config();
                 if ($this->debug) return "(ash) Debug mode enabled.\n";
                 else return "(ash) Debug mode disabled.\n";
             case "config":
@@ -180,12 +185,12 @@ class Ash
                 return "";
             case "color":
                 $this->config["color_support"] = !$this->config["color_support"];
-                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                $this->save_config();
                 if ($this->config["color_support"]) return "(ash) Color support enabled.\n";
                 else return "(ash) Color support disabled.\n";
             case "emoji":
                 $this->config["emoji_support"] = !$this->config["emoji_support"];
-                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                $this->save_config();
                 if ($this->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
                 else return "(ash) Emoji support disabled.\n";
             case "openai-key":
@@ -196,7 +201,7 @@ class Ash
                     echo "(ash) Error: Invalid API key.\n";
                 }
                 $this->config["openai_api_key"] = $openai_api_key;
-                file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
+                $this->save_config();
                 return "(ash) OpenAI API key updated.\n";
         }
         if (substr($input, 0, 3) == "cd ") {
