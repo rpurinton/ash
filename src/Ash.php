@@ -54,17 +54,23 @@ class Ash
             echo "(ash) Error: Invalid API key.\n";
         }
         $color_support = readline("(ash) Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
-        $color_support = strtolower($color_support);
+        $color_support = strtolower(substr($color_support, 0, 1));
         if ($color_support == "y" || $color_support == "") $color_support = true;
         else $color_support = false;
         $emoji_support = readline("(ash) Enable emoji support? ✅ [Y/n]: ");
-        $emoji_support = strtolower($emoji_support);
+        $emoji_support = strtolower(substr($emoji_support, 0, 1));
         if ($emoji_support == "y" || $emoji_support == "") $emoji_support = true;
         else $emoji_support = false;
+
+        $debug = readline("(ash) Enable debug mode? [y/N]: ");
+        $debug = strtolower(substr($debug, 0, 1));
+        if ($debug == "y") $debug = true;
+        else $debug = false;
         $this->config = [
             "open_ai_api_key" => $open_ai_api_key,
             "color_support" => $color_support,
-            "emoji_support" => $emoji_support
+            "emoji_support" => $emoji_support,
+            "debug" => $debug,
         ];
         if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
         file_put_contents(__DIR__ . '/conf.d/config.json', json_encode($this->config, JSON_PRETTY_PRINT));
