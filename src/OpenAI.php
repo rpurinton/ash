@@ -104,6 +104,7 @@ class OpenAI
         $full_response = "";
         $function_call = null;
         if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
+        echo ("(ash) ");
         $stream = $this->client->chat()->createStreamed($prompt);
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
