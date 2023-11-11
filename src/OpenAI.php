@@ -204,7 +204,7 @@ class OpenAI
                 ];
                 //echo ("debug 3: " . print_r($debug_info, true) . "\n");
                 echo ($delta_content);
-                echo ("================================\n");
+                //echo ("================================\n");
             }
         }
         if ($function_call) {
