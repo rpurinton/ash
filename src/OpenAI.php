@@ -132,4 +132,43 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         if ($this->ash->debug) echo ("(ash) Response complete.\n");
         echo ("\n\n");
     }
+
+    public function user_message($input)
+    {
+        $messages[] = ["role" => "system", "content" => $this->base_prompt];
+        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
+        $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
+        $messages[] = ["role" => "user", "content" => $input];
+        $prompt = [
+            "model" => $this->model,
+            "messages" => $messages,
+            "max_tokens" => $this->max_tokens,
+            "temperature" => 0.1,
+            "top_p" => 0.1,
+            "frequency_penalty" => 0.0,
+            "presence_penalty" => 0.0,
+        ];
+        $full_response = "";
+        $function_call = null;
+        if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
+        echo ("(ash) ");
+        $stream = $this->client->chat()->createStreamed($prompt);
+        foreach ($stream as $response) {
+            $reply = $response->choices[0]->toArray();
+            $finish_reason = $reply["finish_reason"];
+            if (isset($reply["delta"]["function_call"]["name"])) {
+                $function_call = $reply["delta"]["function_call"]["name"];
+                echo ("✅ Running $function_call...\n");
+            }
+            if ($function_call) {
+                if (isset($reply["delta"]["function_call"]["arguments"])) $full_response .= $reply["delta"]["function_call"]["arguments"];
+            } else if (isset($reply["delta"]["content"])) {
+                $delta_content = $reply["delta"]["content"];
+                $full_response .= $delta_content;
+                echo ($delta_content);
+            }
+        }
+        if ($this->ash->debug) echo ("(ash) Response complete.\n");
+        echo ("\n\n");
+    }
 }
