@@ -8,6 +8,7 @@ class Util
 
     public function __construct()
     {
+        ini_set('memory_limit', '512M');
         $this->encoder = new \TikToken\Encoder();
     }
 
