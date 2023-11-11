@@ -129,6 +129,7 @@ class Ash
             fclose($pipes[1]);
             fclose($pipes[2]);
             $exit_code = proc_close($this->running_process);
+            $this->running_process = null;
             $result = [
                 "stdout" => $stdout,
                 "stderr" => $stderr,
