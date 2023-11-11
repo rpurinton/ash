@@ -3,6 +3,7 @@
 namespace Rpurinton\Ash;
 
 require_once(__DIR__ . "/vendor/autoload.php");
+require_once(__DIR__ . "/OpenAI.php");
 
 class Ash
 {
@@ -13,17 +14,16 @@ class Ash
 
     public function __construct()
     {
-        // handle CTRL-C (terminate running process and exit)
-        pcntl_signal(SIGINT, function ($signo) {
-            if ($this->running_process) {
-                proc_terminate($this->running_process);
-            }
-            echo $this->prompt;
-            exit;
-        });
+        pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         $this->parse_args();
         $this->set_system_info();
         $this->run();
+    }
+
+    private function ctrl_c($signo)
+    {
+        if ($this->running_process) proc_terminate($this->running_process);
+        echo "\n";
     }
 
     private function parse_args()
