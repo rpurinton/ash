@@ -204,15 +204,16 @@ class OpenAI
         $user_message = ["role" => "user", "content" => $input];
         $this->save_message($user_message);
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
+
+        $dynamic_prompt = "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short. Here is the current situation: " . print_r($this->ash->sys_info, true);
+        if ($this->ash->config['color_support']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual color control symbols.\n";
+        if ($this->ash->config['emoji_support']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
+        $dynamic_prompt .= "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages. Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI.\n";
+        $messages[] = ["role" => "system", "content" => $dynamic_prompt];
+        $dynamic_tokens = $this->token_count($dynamic_prompt);
         $response_space = round($this->max_tokens * 0.1, 0);
-        $history_space = $this->max_tokens - $this->base_tokens - $response_space;
+        $history_space = $this->max_tokens - $this->base_tokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->get_history($history_space));
-        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
-        $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
-        if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual color control symbols."];
-        if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
-        $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
-        $messages[] = ["role" => "system", "content" => "Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI."];
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,
