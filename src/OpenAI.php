@@ -92,6 +92,12 @@ class OpenAI
         return array_reverse($result);
     }
 
+    public function clear_history()
+    {
+        $this->history = [];
+        file_put_contents(__DIR__ . "/conf.d/history.jsonl", "");
+    }
+
     public function select_model($force = false)
     {
         // Check if openai_model is set in the config

@@ -174,6 +174,10 @@ class Ash
             case "bash":
                 passthru(trim(shell_exec("which bash")));
                 return "";
+            case "clear":
+                $this->openai->clear_history();
+                passthru("clear");
+                return "";
             case "help":
                 return file_get_contents(__DIR__ . "/../README.md") . "\n";
             case "sys_info":
