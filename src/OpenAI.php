@@ -140,8 +140,17 @@ class OpenAI
                 echo ($delta_content);
             }
         }
-        if ($this->ash->debug) echo ("(ash) Response complete.\n");
+        if ($function_call) {
+            $arguments = json_decode($full_response, true);
+        } else {
+            $assistant_message = ["role" => "assistant", "content" => $full_response];
+            $this->history->saveMessage($assistant_message);
+        }
         echo ("\n\n");
+        if ($this->ash->debug) {
+            if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
+            else echo ("(ash) Response complete.\n");
+        }
     }
 
     public function userMessage($input)

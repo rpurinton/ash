@@ -8,12 +8,12 @@ class Util
 
     public function __construct()
     {
-        ini_set('memory_limit', '512M');
         $this->encoder = new \TikToken\Encoder();
     }
 
     public function tokenCount($input)
     {
+        echo ("(ash) token_count input: $input\n");
         try {
             $count = count($this->encoder->encode($input));
         } catch (\Exception $e) {
