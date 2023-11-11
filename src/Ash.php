@@ -158,7 +158,7 @@ class Ash
                 echo $internal_command_result;
                 continue;
             }
-            echo $this->execute_command($input);
+            $this->openai->user_message($input);
         }
     }
 
