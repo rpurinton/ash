@@ -36,12 +36,12 @@ class Commands
                 $this->ash->config->initialConfig();
                 return "";
             case "color":
-                $this->ash->config->setColorSupport(!$this->ash->config["color_support"]);
-                if ($this->ash->config["color_support"]) return "(ash) Color support enabled.\n";
+                $this->ash->config->setColorSupport(!$this->ash->config->config["color_support"]);
+                if ($this->ash->config->config["color_support"]) return "(ash) Color support enabled.\n";
                 else return "(ash) Color support disabled.\n";
             case "emoji":
-                $this->ash->config->setEmojiSupport(!$this->ash->config["emoji_support"]);
-                if ($this->ash->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
+                $this->ash->config->setEmojiSupport(!$this->ash->config->config["emoji_support"]);
+                if ($this->ash->config->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
                 else return "(ash) Emoji support disabled.\n";
             case "openai-key":
                 $openai_api_key = "";
