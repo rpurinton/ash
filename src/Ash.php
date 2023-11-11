@@ -2,8 +2,6 @@
 
 namespace Rpurinton\Ash;
 
-require_once(__DIR__ . "/Configuration.php");
-
 class Ash
 {
     private string $prompt = "";
@@ -21,6 +19,7 @@ class Ash
             exit(1);
         }
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) (new Composer())->install_dependencies($this->debug);
+        require_once(__DIR__ . "/Configuration.php");
         $this->config = new Configuration();
         (new ParseArgs)->parseArgs($this);
         $this->debug = $this->debug || $this->config->config['debug'];
