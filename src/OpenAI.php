@@ -173,24 +173,41 @@ class OpenAI
                 if ($this->ash->debug) echo ("(ash) ✅ Running $function_call...\n");
             }
             if ($function_call) {
-                if (isset($reply["delta"]["function_call"]["arguments"])) $full_response .= $reply["delta"]["function_call"]["arguments"];
+                if (isset($reply["delta"]["function_call"]["arguments"])) {
+                    $full_response .= $reply["delta"]["function_call"]["arguments"];
+                }
             } else if (isset($reply["delta"]["content"])) {
                 $delta_content = $reply["delta"]["content"];
                 $full_response .= $delta_content;
                 $line .= $delta_content;
-                $wrapped_lines = explode("\n", wordwrap($line, 60, "\n", true));
-                foreach ($wrapped_lines as $wrapped_line) {
-                    $output = trim($wrapped_line);
+                $line_break_pos = mb_strrpos($line, "\n");
+                if ($line_break_pos !== false) {
+                    $output = mb_substr($line, 0, $line_break_pos);
+                    $line = mb_substr($line, $line_break_pos + 1);
                     $output = str_replace("\n", "\n(ash)\t", $output);
                     $output = str_replace("\\e", "\e", $output);
                     echo ("$output\n(ash)\t");
+                } else {
+                    if (mb_strlen($line) > 60) {
+                        $wrapped_text = wordwrap($line, 60, "\n", true);
+                        $line_break_pos = mb_strrpos($wrapped_text, "\n");
+                        $output = mb_substr($wrapped_text, 0, $line_break_pos);
+                        $line = mb_substr($wrapped_text, $line_break_pos + 1);
+                        $output = str_replace("\n", "\n(ash)\t", $output);
+                        $output = str_replace("\\e", "\e", $output);
+                        echo ("$output\n(ash)\t");
+                    }
                 }
-                $line = "";
             }
         }
         if ($function_call) {
             $arguments = json_decode($full_response, true);
         } else {
+            if ($line != "") {
+                $output = str_replace("\n", "\n(ash)\t", $line);
+                $output = str_replace("\\e", "\e", $output);
+                echo ("$output");
+            }
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->history->saveMessage($assistant_message);
         }
