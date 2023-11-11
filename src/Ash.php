@@ -50,6 +50,7 @@ class Ash
         $this->sys_info = [
             'release' => trim(shell_exec("cat /etc/*release")),
             'uptime' => trim(shell_exec("uptime")),
+            'uname_a' => trim(shell_exec("uname -a")),
             'host_fqdn' => trim(shell_exec("hostname")),
             'host_name' => trim(shell_exec("hostname -s")),
             'user_id' => trim(shell_exec("whoami")),
