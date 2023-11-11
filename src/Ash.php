@@ -5,7 +5,7 @@ namespace Rpurinton\Ash;
 class Ash
 {
     private string $prompt = "";
-    private array $sys_info = [];
+    public array $sys_info = [];
     private bool $debug = false;
     private $running_process = null;
     private $openai = null;
