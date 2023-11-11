@@ -191,7 +191,11 @@ class OpenAI
                 if ($line_char_count > 64) {
                     $space_pos = mb_strrpos($line, " ");
                     if ($space_pos !== false) {
-                        echo ("\n(ash)\t");
+                        $full_response .= "\n";
+                        $output = mb_substr($line, 0, $space_pos);
+                        $output = str_replace("\n", "\n(ash)\t", $output);
+                        $output = str_replace("\\e", "\e", $output);
+                        echo ("$output\n(ash)\t");
                         $line = mb_substr($line, $space_pos + 1);
                         $line_char_count = mb_strlen($line);
                     }
@@ -203,7 +207,6 @@ class OpenAI
                     "delta_content" => $delta_content,
                 ];
                 //echo ("debug 3: " . print_r($debug_info, true) . "\n");
-                echo ($delta_content);
                 //echo ("================================\n");
             }
         }
