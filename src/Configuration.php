@@ -21,11 +21,6 @@ class Configuration
         $this->loadConfig();
     }
 
-    public function __toArray()
-    {
-        return $this->config;
-    }
-
     private function loadConfig()
     {
         if (!file_exists($this->configFilePath)) {

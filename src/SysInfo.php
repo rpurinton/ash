@@ -4,7 +4,7 @@ namespace Rpurinton\Ash;
 
 class SysInfo
 {
-    private $sysInfo = [];
+    public $sysInfo = [];
 
     public function __construct(private $ash)
     {
