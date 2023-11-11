@@ -99,11 +99,11 @@ Security reminders - Like Remember: Don't share your credentials or leave sessio
 Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
 Last login information (if known) - To remind users of their last session, useful for security.
 Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled."];
-        $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include and ``` or markdown formatting."];
         if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
         if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $messages[] = ["role" => "system", "content" => "The user " . $this->ash->sys_info['user_id'] . " just logged on.  Please write a welcome message from you (" . $this->ash->sys_info['host_name'] . ") to " . $this->ash->sys_info['user_id'] . "."];
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
+        $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include and ``` or markdown formatting. This is just a text-CLI."];
         $prompt = [
             "model" => $this->model,
             "messages" => $messages,
@@ -142,10 +142,10 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
-        $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include it."];
         if ($this->ash->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual color control symbols."];
         if ($this->ash->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
+        $messages[] = ["role" => "system", "content" => "Markdown support disabled, don't include ``` or any other markdown formatting. This is just a text-CLI."];
         $messages[] = ["role" => "user", "content" => $input];
         $prompt = [
             "model" => $this->model,
