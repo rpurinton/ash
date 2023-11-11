@@ -11,7 +11,7 @@ class Util
         $this->encoder = new \TikToken\Encoder();
     }
 
-    public function tokenCount($input)
+    public function tokenCount(string $input): int
     {
         echo ("(ash) token_count input: $input\n");
         try {
