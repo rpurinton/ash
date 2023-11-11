@@ -170,16 +170,38 @@ class OpenAI
                 $full_response .= $delta_content;
                 $line .= $delta_content;
                 $line_char_count = strlen($line);
+                $debug_info = [
+                    "full_response" => $full_response,
+                    "line" => $line,
+                    "line_char_count" => $line_char_count,
+                    "delta_content" => $delta_content,
+                ];
+                echo ("debug 1: " . print_r($debug_info, true) . "\n");
                 if (strpos($line, "\n") !== false) {
                     $line = substr($line, strrpos($line, "\n") + 1);
                     $line_char_count = strlen($line);
                 }
+                $debug_info = [
+                    "full_response" => $full_response,
+                    "line" => $line,
+                    "line_char_count" => $line_char_count,
+                    "delta_content" => $delta_content,
+                ];
+                echo ("debug 2: " . print_r($debug_info, true) . "\n");
                 if ($line_char_count > 64 && substr($line, -1) == " ") {
                     echo ("\n(ash) ");
                     $line_char_count = 0;
                     $line = "";
                 }
-                echo ($delta_content);
+                $debug_info = [
+                    "full_response" => $full_response,
+                    "line" => $line,
+                    "line_char_count" => $line_char_count,
+                    "delta_content" => $delta_content,
+                ];
+                echo ("debug 3: " . print_r($debug_info, true) . "\n");
+                //echo ($delta_content);
+                echo ("================================\n");
             }
         }
         if ($function_call) {
