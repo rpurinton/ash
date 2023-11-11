@@ -17,7 +17,6 @@ class Ash
             echo "(ash) Error: This program is for Linux only.\n";
             exit(1);
         }
-        pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         if (!file_exists(__DIR__ . '/conf.d/config.json')) $this->initial_config();
         $this->parse_args();
@@ -116,6 +115,7 @@ class Ash
 
     private function run()
     {
+        pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->set_system_info();
             $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
