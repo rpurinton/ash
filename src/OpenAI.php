@@ -9,6 +9,7 @@ class OpenAI
     private $client = null;
     private $models = [];
     private $model = null;
+    private $max_tokens = null;
     private $history = [];
 
     public function __construct(private $ash)
@@ -17,6 +18,7 @@ class OpenAI
         $models = $this->client->models()->list()->data;
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->select_model();
+        $this->select_max_tokens();
     }
 
     private function select_model()
@@ -34,11 +36,11 @@ class OpenAI
         // Prompt the user to select a model
         while (true) {
             $model_count = count($this->models);
-            $prompt = "Please select an OpenAI GPT model to use:\n";
+            $prompt = "(ash) Please select an OpenAI GPT model to use:\n";
             for ($i = 0; $i < $model_count; $i++) {
                 $prompt .= "[$i] {$this->models[$i]}\n";
             }
-            $prompt .= "Enter the number of the model to use: ";
+            $prompt .= "(ash) Enter the number of the model to use: ";
             $model_index = (int) readline($prompt);
 
             // Check if the selected model is valid
@@ -49,7 +51,32 @@ class OpenAI
                 return;
             }
 
-            echo "Invalid model selected. Please try again.\n";
+            echo "(ash) Invalid model selected. Please try again.\n";
+        }
+    }
+
+    private function select_max_tokens()
+    {
+        // Check if openai_max_tokens is set in the config
+        if (isset($this->ash->config['openai_max_tokens'])) {
+            $this->max_tokens = $this->ash->config['openai_max_tokens'];
+            return;
+        }
+
+        // Prompt the user to select a max_tokens value
+        while (true) {
+            $prompt = "(ash) Please enter the max_tokens value to use (default: 2048): ";
+            $max_tokens = (int) readline($prompt);
+
+            // Check if the selected max_tokens value is valid
+            if ($max_tokens > 2048 && $max_tokens < 131072) {
+                $this->max_tokens = $max_tokens;
+                $this->ash->config['openai_max_tokens'] = $this->max_tokens;
+                $this->ash->save_config();
+                return;
+            }
+
+            echo "(ash) Invalid max_tokens value. Please try again.\n";
         }
     }
 }
