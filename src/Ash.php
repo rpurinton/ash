@@ -15,7 +15,6 @@ class Ash
     {
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         $this->parse_args();
-        $this->set_system_info();
         $this->run();
     }
 
@@ -49,15 +48,16 @@ class Ash
     {
         $this->sys_info = [
             'release' => trim(shell_exec("cat /etc/*release")),
-            'uptime' => trim(shell_exec("uptime")),
             'uname_a' => trim(shell_exec("uname -a")),
             'host_fqdn' => trim(shell_exec("hostname")),
             'host_name' => trim(shell_exec("hostname -s")),
-            'user_id' => trim(shell_exec("whoami")),
-            'working_dir' => trim(shell_exec("pwd")),
-            'home_dir' => trim(shell_exec("echo ~")),
             'ip_addr' => trim(shell_exec("ip addr | grep inet")),
-            'hosts' => trim(shell_exec("cat /etc/hosts")),
+            'etc_hosts' => trim(shell_exec("cat /etc/hosts")),
+            'uptime' => trim(shell_exec("uptime")),
+            'user_id' => trim(shell_exec("whoami")),
+            'home_dir' => trim(shell_exec("echo ~")),
+            'last_dir' => isset($this->sys_info['last_dir']) ? $this->sys_info['last_dir'] : trim(shell_exec("pwd")),
+            'working_dir' => trim(shell_exec("pwd")),
         ];
         $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
         if ($this->debug) echo ("(ash) set_system_info() result: " . print_r($this->sys_info, true) . "\n");
@@ -66,6 +66,7 @@ class Ash
     private function run()
     {
         while (true) {
+            $this->set_system_info();
             $this->prompt = "[{$this->sys_info['user_id']}@{$this->sys_info['host_name']} {$this->sys_info['working_folder']}] (ash)# ";
             $input = readline($this->prompt);
             readline_add_history($input);
@@ -102,19 +103,12 @@ class Ash
 
     private function change_directory($target_dir)
     {
-        if ($target_dir == "~") {
-            $target_dir = $this->sys_info['home_dir'];
-        }
-        if ($target_dir == "-") {
-            $target_dir = $this->sys_info['last_dir'];
-        }
+        if ($target_dir == "~") $target_dir = $this->sys_info['home_dir'];
+        if ($target_dir == "-") $target_dir = $this->sys_info['last_dir'];
         if (is_dir($target_dir)) {
             $this->sys_info['last_dir'] = $this->sys_info['working_dir'];
             chdir($target_dir);
-            $this->set_system_info();
-        } else {
-            echo "(ash) Error: Directory not found: $target_dir\n";
-        }
+        } else echo "(ash) Error: Directory not found: $target_dir\n";
     }
 
     private function execute_command($command)
