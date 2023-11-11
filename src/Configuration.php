@@ -39,6 +39,12 @@ class Configuration
     public function initialConfig()
     {
         echo ("(ash) Initial configuration wizard...\n");
+        $emailAddress = "";
+        while (true) {
+            $emailAddress = readline("(ash) Enter an email for alerts [default: none]: ");
+            if (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) || $emailAddress == "") break;
+            echo "(ash) Error: Invalid email address.\n";
+        }
         $openaiApiKey = "";
         while (true) {
             $openaiApiKey = readline("(ash) Enter your OpenAI API key: ");
@@ -59,6 +65,7 @@ class Configuration
         if ($debug == "y") $debug = true;
         else $debug = false;
         $this->config = [
+            "emailAddress" => $emailAddress,
             "openaiApiKey" => $openaiApiKey,
             "colorSupport" => $color_support,
             "emojiSupport" => $emoji_support,
