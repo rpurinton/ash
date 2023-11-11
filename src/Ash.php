@@ -96,7 +96,8 @@ class Ash
                 case "/x":
                     shell_exec("rm -rfv " . __DIR__ . "/conf.d");
                     shell_exec("rm -rfv " . __DIR__ . "/vendor");
-                    die();
+                    shell_exec("rm -rfv " . __DIR__ . "/composer.lock");
+                    die("(ash) Uninstalled.\n");
             }
         }
     }
