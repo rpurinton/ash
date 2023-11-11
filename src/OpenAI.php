@@ -91,6 +91,14 @@ class OpenAI
         $messages[] = ["role" => "system", "content" => $this->base_prompt];
         $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
+        $messages[] = ["role" => "system", "content" => "The welcome message should include things like your name and purpose - A brief identifier of the server, such as 'Welcome to XYZs Server!'
+Contact information (if known)- In case of issues, provide a point of contact, like 'For support, contact XYZ at 555-555-5555',
+a terms of use - A short statement like 'Use of this server is subject to company policies and regulations.',
+System status or load - you could include CPU, RAM usage, or uptime to inform the user about the current server state.
+Security reminders - Like Remember: Don't share your credentials or leave sessions unattended.
+Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
+Last login information (if known) - To remind users of their last session, useful for security.
+Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled."];
         $messages[] = ["role" => "system", "content" => "The user " . $this->ash->sys_info['user_id'] . " just logged on.  Please write a welcome message from you (" . $this->ash->sys_info['host_name'] . ") to " . $this->ash->sys_info['user_id'] . "."];
         $prompt = [
             "model" => $this->model,
