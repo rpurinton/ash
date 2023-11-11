@@ -21,10 +21,10 @@ class OpenAI
         $this->select_max_tokens();
     }
 
-    private function select_model()
+    public function select_model($force = false)
     {
         // Check if openai_model is set in the config
-        if (isset($this->ash->config['openai_model'])) {
+        if (!$force && isset($this->ash->config['openai_model'])) {
             $model_id = $this->ash->config['openai_model'];
             // Check if the model is in the list of models
             if (in_array($model_id, $this->models)) {
@@ -55,19 +55,19 @@ class OpenAI
         }
     }
 
-    private function select_max_tokens()
+    public function select_max_tokens($force = false)
     {
         // Check if openai_max_tokens is set in the config
-        if (isset($this->ash->config['openai_max_tokens'])) {
+        if (!$force && isset($this->ash->config['openai_max_tokens'])) {
             $this->max_tokens = $this->ash->config['openai_max_tokens'];
             return;
         }
 
         // Prompt the user to select a max_tokens value
         while (true) {
-            $prompt = "(ash) Please enter the max_tokens value to use (default: 2048): ";
+            $prompt = "(ash) Please select the maximum tokens you want use for any single request (default: 4096, range [2048-131072]): ";
             $max_tokens = readline($prompt);
-            if ($max_tokens == "") $max_tokens = 2048;
+            if ($max_tokens == "") $max_tokens = 4096;
 
             // Check if the selected max_tokens value is valid
             if (is_numeric($max_tokens) && $max_tokens >= 2048 && $max_tokens <= 131072) {
@@ -76,6 +76,7 @@ class OpenAI
                 $this->ash->save_config();
                 return;
             }
+
             echo "(ash) Invalid max_tokens value. Please try again.\n";
         }
     }

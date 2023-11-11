@@ -203,6 +203,12 @@ class Ash
                 $this->config["openai_api_key"] = $openai_api_key;
                 $this->save_config();
                 return "(ash) OpenAI API key updated.\n";
+            case "openai-model":
+                $this->openai->select_model(true);
+                return "(ash) OpenAI model updated.\n";
+            case "openai-tokens":
+                $this->openai->select_max_tokens(true);
+                return "(ash) OpenAI max tokens updated.\n";
         }
         if (substr($input, 0, 3) == "cd ") {
             $this->change_directory(substr($input, 3));
