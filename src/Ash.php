@@ -94,10 +94,9 @@ class Ash
                     $this->install_dependencies();
                     break;
                 case "/x":
-                    // delete the conf.d directory and vendor directory
-                    unlink(__DIR__ . "/conf.d");
-                    unlink(__DIR__ . "/vendor");
-                    break;
+                    shell_exec("rm -rfv " . __DIR__ . "/conf.d");
+                    shell_exec("rm -rfv " . __DIR__ . "/vendor");
+                    die();
             }
         }
     }
