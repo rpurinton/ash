@@ -163,7 +163,7 @@ class Ash
             case "quit":
                 exit(0);
             case "bash":
-                passthru("/bin/bash");
+                passthru(trim(shell_exec("which bash")));
                 return "";
             case "help":
                 return file_get_contents(__DIR__ . "/../README.md") . "\n";
