@@ -23,7 +23,7 @@ class Ash
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) (new Composer())->install_dependencies($this->debug);
         $this->config = new Configuration();
         (new ParseArgs)->parseArgs($this);
-        $this->debug = $this->debug || $this->config['debug'];
+        $this->debug = $this->debug || $this->config->config['debug'];
         $this->sysInfo = new SysInfo($this);
         $this->openai = new OpenAI($this);
         $this->commands = new Commands($this);
@@ -41,7 +41,7 @@ class Ash
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->sysInfo->refresh();
-            if ($this->config['color_support']) $this->prompt = "(ash) [{$this->sysInfo['user_id']}@{$this->sysInfo['host_name']} \e[35m{$this->sysInfo['working_folder']}\e[0m]# ";
+            if ($this->config->config['color_support']) $this->prompt = "(ash) [{$this->sysInfo['user_id']}@{$this->sysInfo['host_name']} \e[35m{$this->sysInfo['working_folder']}\e[0m]# ";
             else $this->prompt = "(ash) [{$this->sysInfo['user_id']}@{$this->sysInfo['host_name']} {$this->sysInfo['working_folder']}]# ";
             $input = readline($this->prompt);
             readline_add_history($input);
