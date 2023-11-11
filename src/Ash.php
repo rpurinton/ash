@@ -8,6 +8,7 @@ class Ash
     private array $sys_info = [];
     private bool $debug = false;
     private $running_process = null;
+    private $openai = null;
 
     public function __construct()
     {
@@ -15,10 +16,11 @@ class Ash
             echo "(ash) Error: This program is for Linux only.\n";
             exit(1);
         }
-        if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
-        require_once(__DIR__ . "/OpenAI.php");
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
+        if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         $this->parse_args();
+        require_once(__DIR__ . "/OpenAI.php");
+        $this->openai = new OpenAI();
         $this->run();
     }
 

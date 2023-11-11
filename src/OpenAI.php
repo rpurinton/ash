@@ -7,7 +7,7 @@ require_once(__DIR__ . "/vendor/autoload.php");
 class OpenAI
 {
     private $config = [];
-    private $openai = null;
+    private $client = null;
 
     public function __construct()
     {
