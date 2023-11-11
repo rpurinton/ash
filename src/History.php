@@ -4,11 +4,12 @@ namespace Rpurinton\Ash;
 
 class History
 {
-    private $historyFile = shell_exec("echo ~") . "/.ash_history.jsonl";
+    private $historyFile = "";
     private $history = [];
 
     public function __construct(private $util)
     {
+        $this->historyFile = trim(shell_exec("echo ~")) . "/.ash_history.jsonl";
         $this->loadHistory();
     }
 
