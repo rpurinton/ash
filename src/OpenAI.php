@@ -188,10 +188,13 @@ class OpenAI
                     "delta_content" => $delta_content,
                 ];
                 echo ("debug 2: " . print_r($debug_info, true) . "\n");
-                if ($line_char_count > 64 && mb_substr($line, -1) == " ") {
-                    echo ("\n(ash) ");
-                    $line_char_count = 0;
-                    $line = "";
+                if ($line_char_count > 64) {
+                    $space_pos = mb_strrpos($line, " ");
+                    if ($space_pos !== false) {
+                        echo ("\n(ash) ");
+                        $line = mb_substr($line, $space_pos + 1);
+                        $line_char_count = mb_strlen($line);
+                    }
                 }
                 $debug_info = [
                     "full_response" => $full_response,
@@ -200,7 +203,7 @@ class OpenAI
                     "delta_content" => $delta_content,
                 ];
                 echo ("debug 3: " . print_r($debug_info, true) . "\n");
-                //echo ($delta_content);
+                echo ($delta_content);
                 echo ("================================\n");
             }
         }
