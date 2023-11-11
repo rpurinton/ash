@@ -11,6 +11,7 @@ class OpenAI
     private $model = null;
     private $max_tokens = null;
     private $history = [];
+    private $base_prompt = null;
 
     public function __construct(private $ash)
     {
@@ -19,7 +20,10 @@ class OpenAI
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->select_model();
         $this->select_max_tokens();
+        $this->base_prompt = file_get_contents(__DIR__ . "/base_prompt.txt");
+        $this->welcome_message();
     }
+
 
     public function select_model($force = false)
     {
@@ -79,6 +83,40 @@ class OpenAI
             }
 
             echo "(ash) Invalid max_tokens value. Please try again.\n";
+        }
+    }
+
+    public function welcome_message()
+    {
+        $messages[] = ["role" => "system", "content" => $this->base_prompt];
+        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sys_info['host_fqdn'] . ", but people can call you " . $this->ash->sys_info['host_name'] . " for short."];
+        $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sys_info, true)];
+        $messages[] = ["role" => "system", "content" => "The user " . $this->ash->sys_info['user_name'] . " just logged on.  Please write a welcome message."];
+        $prompt = [
+            "model" => $this->model,
+            "messages" => $messages,
+            "max_tokens" => $this->max_tokens,
+            "temperature" => 0.1,
+            "top_p" => 0.1,
+            "frequency_penalty" => 0.0,
+            "presence_penalty" => 0.0,
+        ];
+        $full_response = "";
+        $stream = $this->client->chat()->createStreamed($prompt);
+        foreach ($stream as $response) {
+            $reply = $response->choices[0]->toArray();
+            $finish_reason = $reply["finish_reason"];
+            if (isset($reply["delta"]["function_call"]["name"])) {
+                $function_call = $reply["delta"]["function_call"]["name"];
+                echo ("✅ Running $function_call...\n");
+            }
+            if ($function_call) {
+                if (isset($reply["delta"]["function_call"]["arguments"])) $full_response .= $reply["delta"]["function_call"]["arguments"];
+            } else if (isset($reply["delta"]["content"])) {
+                $delta_content = $reply["delta"]["content"];
+                $full_response .= $delta_content;
+                echo ($delta_content);
+            }
         }
     }
 }
