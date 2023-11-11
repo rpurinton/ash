@@ -2,8 +2,6 @@
 
 namespace Rpurinton\Ash;
 
-require_once(__DIR__ . "/OpenAI.php");
-
 class Ash
 {
     private string $prompt = "";
