@@ -121,7 +121,21 @@ class OpenAI
         $function_call = null;
         if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
         echo ("(ash) ");
-        $stream = $this->client->chat()->createStreamed($prompt);
+        try {
+            $stream = $this->client->chat()->createStreamed($prompt);
+        } catch (\Exception $e) {
+            echo ("(ash) Error: " . $e->getMessage() . "\n");
+            if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            return;
+        } catch (\Error $e) {
+            echo ("(ash) Error: " . $e->getMessage() . "\n");
+            if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            return;
+        } catch (\Throwable $e) {
+            echo ("(ash) Error: " . $e->getMessage() . "\n");
+            if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            return;
+        }
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
             $finish_reason = $reply["finish_reason"];
