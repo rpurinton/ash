@@ -26,7 +26,6 @@ class Ash
             "command" => "composer install",
             "cwd" => __DIR__,
             "env_vars" => [
-                "COMPOSER_HOME" => __DIR__,
                 "COMPOSER_ALLOW_SUPERUSER" => "1",
                 "COMPOSER_NO_INTERACTION" => "1",
             ],
