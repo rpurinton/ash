@@ -206,7 +206,7 @@ class OpenAI
             if ($line != "") {
                 $output = str_replace("\n", "\n(ash)\t", $line);
                 $output = str_replace("\\e", "\e", $output);
-                echo ("$output");
+                echo ($output);
             }
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->history->saveMessage($assistant_message);
