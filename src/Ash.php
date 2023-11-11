@@ -54,7 +54,7 @@ class Ash
                 echo $internal_command_result;
                 continue;
             }
-            $this->openai->user_message($input);
+            $this->openai->userMessage($input);
         }
     }
 }

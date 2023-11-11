@@ -100,12 +100,12 @@ class OpenAI
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));
-        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sysInfo->sysInfo['host_fqdn'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['host_name'] . " for short."];
+        $messages[] = ["role" => "system", "content" => "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short."];
         $messages[] = ["role" => "system", "content" => "Here is the current situation: " . print_r($this->ash->sysInfo, true)];
-        if ($this->ash->config->config['color_support']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
-        if ($this->ash->config->config['emoji_support']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
-        $login_message = "User just started a new ash session from : " . $this->ash->sysInfo->sysInfo["who_u"];
-        $messages[] = ["role" => "system", "content" => $login_message . "\nPlease run any functions you want before we get started then write a welcome message from you (" . $this->ash->sysInfo->sysInfo['host_name'] . ") to " . $this->ash->sysInfo->sysInfo['user_id'] . "."];
+        if ($this->ash->config->config['colorSupport']) $messages[] = ["role" => "system", "content" => "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m"];
+        if ($this->ash->config->config['emojiSupport']) $messages[] = ["role" => "system", "content" => "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣"];
+        $login_message = "User just started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"];
+        $messages[] = ["role" => "system", "content" => $login_message . "\nPlease run any functions you want before we get started then write a welcome message from you (" . $this->ash->sysInfo->sysInfo['hostName'] . ") to " . $this->ash->sysInfo->sysInfo['userId'] . "."];
         $login_message = ["role" => "system", "content" => $login_message];
         $this->history->saveMessage($login_message);
         $messages[] = ["role" => "system", "content" => "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages."];
@@ -144,7 +144,7 @@ class OpenAI
         echo ("\n\n");
     }
 
-    public function user_message($input)
+    public function userMessage($input)
     {
         $user_message = ["role" => "user", "content" => $input];
         $this->history->saveMessage($user_message);
@@ -210,7 +210,7 @@ class OpenAI
         return $result;
     }
 
-    public function proc_exec(array $input): array
+    public function procExec(array $input): array
     {
         if ($this->ash->debug) echo ("(ash) proc_exec(" . print_r($input, true) . ")\n");
         $descriptorspec = [
