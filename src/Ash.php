@@ -59,6 +59,7 @@ class Ash
                     die(shell_exec("cat " . __DIR__ . "/../CREDITS") . "\n");
                 case "/d":
                     $this->debug = true;
+                    echo "(ash) Debug mode enabled.\n";
                     break;
             }
         }
