@@ -19,7 +19,7 @@ class OpenAI
     {
         $this->util = new Util();
         $this->history = new History($this->util);
-        $this->client = \OpenAI::client($this->ash->config->config['openai_api_key']);
+        $this->client = \OpenAI::client($this->ash->config->config['openAIApiKey']);
         $models = $this->client->models()->list()->data;
         foreach ($models as $model) if (substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;
         $this->selectModel();

@@ -44,10 +44,10 @@ class Configuration
     public function initialConfig()
     {
         echo ("(ash) Initial configuration wizard...\n");
-        $openai_api_key = "";
+        $openAIApiKey = "";
         while (true) {
-            $openai_api_key = readline("(ash) Enter your OpenAI API key: ");
-            if (strlen($openai_api_key) == 51 && substr($openai_api_key, 0, 3) == "sk-") break;
+            $openAIApiKey = readline("(ash) Enter your OpenAI API key: ");
+            if (strlen($openAIApiKey) == 51 && substr($openAIApiKey, 0, 3) == "sk-") break;
             echo "(ash) Error: Invalid API key.\n";
         }
         $color_support = readline("(ash) Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
@@ -64,7 +64,7 @@ class Configuration
         if ($debug == "y") $debug = true;
         else $debug = false;
         $this->config = [
-            "openAIApiKey" => $openai_api_key,
+            "openAIApiKey" => $openAIApiKey,
             "colorSupport" => $color_support,
             "emojiSupport" => $emoji_support,
             "debug" => $debug,
@@ -93,7 +93,7 @@ class Configuration
 
     public function setOpenAIKey($openaiApiKey)
     {
-        $this->config['openai_api_key'] = $openaiApiKey;
+        $this->config['openAIApiKey'] = $openaiApiKey;
         $this->saveConfig();
     }
 

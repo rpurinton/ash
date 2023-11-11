@@ -44,13 +44,13 @@ class Commands
                 if ($this->ash->config->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
                 else return "(ash) Emoji support disabled.\n";
             case "openai-key":
-                $openai_api_key = "";
+                $openAIApiKey = "";
                 while (true) {
-                    $openai_api_key = readline("(ash) Enter your OpenAI API key: ");
-                    if (strlen($openai_api_key) == 51 && substr($openai_api_key, 0, 3) == "sk-") break;
+                    $openAIApiKey = readline("(ash) Enter your OpenAI API key: ");
+                    if (strlen($openAIApiKey) == 51 && substr($openAIApiKey, 0, 3) == "sk-") break;
                     echo "(ash) Error: Invalid API key.\n";
                 }
-                $this->ash->config->setOpenAIKey($openai_api_key);
+                $this->ash->config->setOpenAIKey($openAIApiKey);
                 return "(ash) OpenAI API key updated.\n";
             case "openai-model":
                 $this->ash->openai->selectModel(true);
