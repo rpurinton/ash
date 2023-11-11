@@ -21,8 +21,9 @@ class Ash
     private function install_dependencies()
     {
         echo "(ash) Installing dependencies...";
+        $composer = trim(shell_exec("which composer"));
         print_r($this->proc_exec([
-            "command" => "composer install",
+            "command" => $composer . " install",
             "cwd" => __DIR__,
             "env_vars" => [
                 "COMPOSER_ALLOW_SUPERUSER" => "1",
