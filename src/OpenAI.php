@@ -38,7 +38,7 @@ class OpenAI
             $model_count = count($this->models);
             $prompt = "(ash) Please select an OpenAI GPT model to use:\n";
             for ($i = 0; $i < $model_count; $i++) {
-                $prompt .= "[$i] {$this->models[$i]}\n";
+                $prompt .= "(ash) [$i] {$this->models[$i]}\n";
             }
             $prompt .= "(ash) Enter the number of the model to use: ";
             $model_index = (int) readline($prompt);
