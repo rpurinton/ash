@@ -13,9 +13,26 @@ class Ash
 
     public function __construct()
     {
+        if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         $this->parse_args();
         $this->run();
+    }
+
+    private function install_dependencies()
+    {
+        echo "(ash) Installing dependencies...";
+        $this->proc_exec([
+            "command" => "composer install",
+            "cwd" => __DIR__,
+            "env_vars" => [
+                "COMPOSER_HOME" => __DIR__,
+                "COMPOSER_ALLOW_SUPERUSER" => "1",
+                "COMPOSER_NO_INTERACTION" => "1",
+            ],
+            "options" => [],
+        ]);
+        echo "done.\n";
     }
 
     private function ctrl_c($signo)
