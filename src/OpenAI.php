@@ -12,7 +12,7 @@ class OpenAI
     public function __construct(private $ash)
     {
         $this->client = \OpenAI::client($this->ash->config['openai_api_key']);
-        $models = $this->client->models();
+        $models = $this->client->models()->list()->toArray();
         print_r($models);
     }
 }
