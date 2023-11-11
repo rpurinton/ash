@@ -47,7 +47,7 @@ class Ash
     private function set_system_info()
     {
         $this->sys_info = [
-            'release' => trim(shell_exec("cat /etc/*release")),
+            'release' => trim(shell_exec("cat /etc/*release*")),
             'uname_a' => trim(shell_exec("uname -a")),
             'host_fqdn' => trim(shell_exec("hostname")),
             'host_name' => trim(shell_exec("hostname -s")),
