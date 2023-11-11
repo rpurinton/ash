@@ -66,16 +66,16 @@ class OpenAI
         // Prompt the user to select a max_tokens value
         while (true) {
             $prompt = "(ash) Please enter the max_tokens value to use (default: 2048): ";
-            $max_tokens = (int) readline($prompt);
+            $max_tokens = readline($prompt);
+            if ($max_tokens == "") $max_tokens = 2048;
 
             // Check if the selected max_tokens value is valid
-            if ($max_tokens > 2048 && $max_tokens < 131072) {
+            if (is_numeric($max_tokens) && $max_tokens >= 2048 && $max_tokens <= 131072) {
                 $this->max_tokens = $max_tokens;
                 $this->ash->config['openai_max_tokens'] = $this->max_tokens;
                 $this->ash->save_config();
                 return;
             }
-
             echo "(ash) Invalid max_tokens value. Please try again.\n";
         }
     }
