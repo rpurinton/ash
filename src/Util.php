@@ -13,7 +13,6 @@ class Util
 
     public function tokenCount(string $input): int
     {
-        echo ("(ash) token_count input: $input\n");
         try {
             $count = count($this->encoder->encode($input));
         } catch (\Exception $e) {
