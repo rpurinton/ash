@@ -169,7 +169,7 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
             $finish_reason = $reply["finish_reason"];
             if (isset($reply["delta"]["function_call"]["name"])) {
                 $function_call = $reply["delta"]["function_call"]["name"];
-                echo ("✅ Running $function_call...\n");
+                if ($this->ash->debug) echo ("(ash) ✅ Running $function_call...\n");
             }
             if ($function_call) {
                 if (isset($reply["delta"]["function_call"]["arguments"])) $full_response .= $reply["delta"]["function_call"]["arguments"];
@@ -179,7 +179,10 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
                 echo ($delta_content);
             }
         }
-        if ($this->ash->debug) echo ("(ash) Response complete.\n");
+        if ($this->ash->debug) {
+            if ($function_call) echo ("(ash) ✅ Response complete.  Function call: $full_response\n");
+            else echo ("(ash) Response complete.\n");
+        }
         echo ("\n\n");
     }
 
