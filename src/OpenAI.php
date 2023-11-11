@@ -179,8 +179,11 @@ Maintenance schedules or updates - Any upcoming dates when users should expect d
                 echo ($delta_content);
             }
         }
+        if ($function_call) {
+            $arguments = json_decode($full_response, true);
+        }
         if ($this->ash->debug) {
-            if ($function_call) echo ("(ash) ✅ Response complete.  Function call: $full_response\n");
+            if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
             else echo ("(ash) Response complete.\n");
         }
         echo ("\n\n");
