@@ -11,6 +11,10 @@ class Ash
 
     public function __construct()
     {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            echo "(ash) Error: This program is for Linux only.\n";
+            exit(1);
+        }
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) $this->install_dependencies();
         require_once(__DIR__ . "/OpenAI.php");
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
