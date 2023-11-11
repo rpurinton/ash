@@ -39,6 +39,7 @@ class Ash
     private function set_system_info()
     {
         $this->sys_info = [
+            'release' => trim(shell_exec("cat /etc/*release")),
             'uptime' => trim(shell_exec("uptime")),
             'host_fqdn' => trim(shell_exec("hostname")),
             'host_name' => trim(shell_exec("hostname -s")),
@@ -47,9 +48,7 @@ class Ash
             'home_dir' => trim(shell_exec("echo ~")),
         ];
         $this->sys_info['working_folder'] = basename($this->sys_info['working_dir'] == "" ? "/" : basename($this->sys_info['working_dir']));
-        if ($this->debug) {
-            echo "uptime: {$this->sys_info['uptime']}\nhost_fqdn: {$this->sys_info['host_fqdn']}\nhost_name: {$this->sys_info['host_name']}\nuser_id: {$this->sys_info['user_id']}\nworking_dir: {$this->sys_info['working_dir']}\nworking_folder: {$this->sys_info['working_folder']}\n";
-        }
+        if ($this->debug) echo ("(ash) set_system_info() result: " . print_r($this->sys_info, true) . "\n");
     }
 
     private function ctrl_c($signal)
