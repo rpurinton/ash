@@ -115,6 +115,10 @@ class Ash
                 return file_get_contents(__DIR__ . "/../README.md") . "\n";
             case "sys_info":
                 return print_r($this->sys_info, true) . "\n";
+            case "debug":
+                $this->debug = !$this->debug;
+                if ($this->debug) return "(ash) Debug mode enabled.\n";
+                else return "(ash) Debug mode disabled.\n";
         }
         if (substr($input, 0, 3) == "cd ") {
             $this->change_directory(substr($input, 3));
