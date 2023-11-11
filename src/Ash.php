@@ -135,7 +135,7 @@ class Ash
                 "stderr" => $stderr,
                 "exit_code" => $exit_code,
             ];
-            if ($this->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
+            //if ($this->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
             return $result;
         }
         return [
