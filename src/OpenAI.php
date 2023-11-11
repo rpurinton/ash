@@ -108,12 +108,13 @@ class OpenAI
     private function buildPrompt()
     {
         $messages[] = ["role" => "system", "content" => $this->basePrompt];
-        $dynamic_prompt = "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short. Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true);
+        $dynamic_prompt = "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short.\n";
+        $dynamic_prompt .= "Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true);
         if ($this->ash->config->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
         else $dynamic_prompt .= "Emoji support disabled. Do not send emoji!\n";
         if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
         else $dynamic_prompt .= "Terminal color support disabled. Do not send color codes!\n";
-        $dynamic_prompt .= "Be sure to word-wrap your response to 80 characters or less by including line breaks in all messages. Markdown support is disabled, don't include ``` or any other markdown formatting. This is just a text-CLI.\n";
+        $dynamic_prompt .=  "Markdown support is disabled, don't include ``` or any other markdown formatting.\n";
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $response_space = round($this->maxTokens * 0.1, 0);

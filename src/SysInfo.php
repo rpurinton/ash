@@ -29,7 +29,9 @@ class SysInfo
             'uptime' => trim(shell_exec("uptime")),
             'free-mh' => trim(shell_exec("free -mh")),
             'df-h' => trim(shell_exec("df -h")),
+            'emergencyContact' => 'not set',
             'who-u' => trim(shell_exec("who -u")),
+            'ashEmailAddress' => 'not set',
             'termColorSupport' => $this->ash->config->config['colorSupport'] ? "yes" : "no",
             'termEmojiSupport' => $this->ash->config->config['emojiSupport'] ? "✅" : "no",
             'currentDate' => trim(shell_exec("date")),
@@ -40,6 +42,8 @@ class SysInfo
         ];
         $this->sysInfo['workingFolder'] = basename($this->sysInfo['workingDir'] == "" ? "/" : basename($this->sysInfo['workingDir']));
         if ($this->sysInfo['workingDir'] == $this->sysInfo['homeDir']) $this->sysInfo['workingFolder'] = "~";
+        if ($this->ash->config->config['emailAddress'] != "") $this->sysInfo['emergencyContact'] = $this->ash->config->config['emailAddress'];
+        if ($this->ash->config->config['fromAddress'] != "") $this->sysInfo['ashEmailAddress'] = $this->ash->config->config['fromAddress'];
     }
 
     public function setLastDir($dir)

@@ -41,8 +41,14 @@ class Configuration
         echo ("(ash) Initial configuration wizard...\n");
         $emailAddress = "";
         while (true) {
-            $emailAddress = readline("(ash) Enter an email for alerts [default: none]: ");
+            $emailAddress = readline("(ash) Enter an emergency contact email [default: none]: ");
             if (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) || $emailAddress == "") break;
+            echo "(ash) Error: Invalid email address.\n";
+        }
+        $fromAddress = "";
+        while (true) {
+            $fromAddress = readline("(ash) Enter the from email address [default: none]: ");
+            if (filter_var($fromAddress, FILTER_VALIDATE_EMAIL) || $fromAddress == "") break;
             echo "(ash) Error: Invalid email address.\n";
         }
         $openaiApiKey = "";
@@ -66,6 +72,7 @@ class Configuration
         else $debug = false;
         $this->config = [
             "emailAddress" => $emailAddress,
+            "fromAddress" => $fromAddress,
             "openaiApiKey" => $openaiApiKey,
             "colorSupport" => $color_support,
             "emojiSupport" => $emoji_support,
