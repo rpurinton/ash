@@ -164,7 +164,6 @@ class OpenAI
             else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         }
-        $line_char_count = 0;
         $line = "";
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
@@ -179,54 +178,19 @@ class OpenAI
                 $delta_content = $reply["delta"]["content"];
                 $full_response .= $delta_content;
                 $line .= $delta_content;
-                $line_char_count = mb_strlen($line);
-                $debug_info = [
-                    "full_response" => $full_response,
-                    "line" => $line,
-                    "line_char_count" => $line_char_count,
-                    "delta_content" => $delta_content,
-                ];
-                //echo ("debug 1: " . print_r($debug_info, true) . "\n");
-                if (strpos($line, "\n") !== false) {
-                    $line = mb_substr($line, mb_strrpos($line, "\n") + 1);
-                    $line_char_count = mb_strlen($line);
+                $wrapped_lines = explode("\n", wordwrap($line, 60, "\n", true));
+                foreach ($wrapped_lines as $wrapped_line) {
+                    $output = trim($wrapped_line);
+                    $output = str_replace("\n", "\n(ash)\t", $output);
+                    $output = str_replace("\\e", "\e", $output);
+                    echo ("$output\n(ash)\t");
                 }
-                $debug_info = [
-                    "full_response" => $full_response,
-                    "line" => $line,
-                    "line_char_count" => $line_char_count,
-                    "delta_content" => $delta_content,
-                ];
-                //echo ("debug 2: " . print_r($debug_info, true) . "\n");
-                if ($line_char_count > 60) {
-                    $space_pos = mb_strrpos($line, " ");
-                    if ($space_pos !== false) {
-                        $full_response .= "\n";
-                        $output = mb_substr($line, 0, $space_pos);
-                        $output = str_replace("\n", "\n(ash)\t", $output);
-                        $output = str_replace("\\e", "\e", $output);
-                        $output = trim($output);
-                        echo ("$output\n(ash)\t");
-                        $line = mb_substr($line, $space_pos + 1);
-                        $line_char_count = mb_strlen($line);
-                    }
-                }
-                $debug_info = [
-                    "full_response" => $full_response,
-                    "line" => $line,
-                    "line_char_count" => $line_char_count,
-                    "delta_content" => $delta_content,
-                ];
-                //echo ("debug 3: " . print_r($debug_info, true) . "\n");
-                //echo ("================================\n");
+                $line = "";
             }
         }
         if ($function_call) {
             $arguments = json_decode($full_response, true);
         } else {
-            $output = str_replace("\n", "\n(ash)\t", $line);
-            $output = str_replace("\\e", "\e", $output);
-            echo ("$output");
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->history->saveMessage($assistant_message);
         }
