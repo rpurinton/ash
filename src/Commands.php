@@ -21,7 +21,7 @@ class Commands
                 return "";
             case "clear":
                 $this->ash->openai->history->clearHistory();
-                passthru("clear");
+                passthru("clear && clear");
                 return "";
             case "help":
                 return file_get_contents(__DIR__ . "/../README.md") . "\n";
