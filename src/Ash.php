@@ -2,6 +2,8 @@
 
 namespace Rpurinton\Ash;
 
+require_once(__DIR__ . "/vendor/autoload.php");
+
 class Ash
 {
     private string $prompt = "";
