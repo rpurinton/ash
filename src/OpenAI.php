@@ -95,7 +95,7 @@ class OpenAI
     {
         $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"]]);
         $messages = $this->buildPrompt();
-        $messages[] = ["role" => "system", "content" => "Run any initial functions you want then write your system login/welcome/motd/banner message here."];
+        $messages[] = ["role" => "system", "content" => "Run any initial functions you want then write a cool login welcome motd banner message here."];
         $this->handlePromptAndResponse($messages);
     }
 
