@@ -4,10 +4,6 @@
     "parameters": {
         "type": "object",
         "properties": {
-            "from": {
-                "type": "string",
-                "description": "The email address of the sender"
-            },
             "to": {
                 "type": "string",
                 "description": "a comma delimited list of the To recipients"

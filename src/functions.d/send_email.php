@@ -3,7 +3,6 @@ $this->functionHandlers['send_email'] = function ($args) {
     if ($this->ash->debug) echo ("debug: sendemail(" . print_r($args, true) . ")\n");
 
     // Extract arguments
-    $from = $args['from'] ?? "";
     $to = $args['to'] ?? "";
     $cc = $args['cc'] ?? "";
     $bcc = $args['bcc'] ?? "";
@@ -17,8 +16,8 @@ $this->functionHandlers['send_email'] = function ($args) {
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
     }
 
-    // Prepare headers
-    $headers = "From: $from\r\n";
+    // Build the email headers
+    $headers = "From: " . $this->ash->config->config["fromAddress"] . "\r\n";
     if (!empty($cc)) {
         $headers .= "Cc: $cc\r\n";
     }
