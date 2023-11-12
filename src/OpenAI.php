@@ -105,7 +105,8 @@ class OpenAI
             Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
             Last login information - To remind users of their last session, useful for security.
             Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled.
-            It's essential to keep it concise to prevent overwhelming the user upon each login."];
+            It's essential to keep it concise to prevent overwhelming the user upon each login.
+            Make your message 'computer-like' as in terse, direct language. Don't try to sound human."];
         $this->handlePromptAndResponse($messages);
     }
 
