@@ -16,7 +16,7 @@ class OpenAI
     public $functionHandlers = [];
     public $modelPicker = null;
 
-    public function __construct(private $ash)
+    public function __construct(public $ash)
     {
         $this->util = new Util();
         $this->history = new History($this->util, $this->ash);
