@@ -224,12 +224,11 @@ class OpenAI
                 $output = str_replace("\n", "\n(ash)\t", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->markdownToEscapeCodes($output);
-                echo trim($output);
+                echo trim($output) . "\n";
             }
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->history->saveMessage($assistant_message);
         }
-        echo ("\n");
         if ($this->ash->debug) {
             if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
             else echo ("(ash) Response complete.\n");
@@ -258,7 +257,6 @@ class OpenAI
 
     private function functionFollowUp($function_call, $result)
     {
-        // {"role": "function", "name": "get_current_weather", "content": "{\"temperature\": "22", \"unit\": \"celsius\", \"description\": \"Sunny\"}"}
         $function_result = ["role" => "function", "name" => $function_call, "content" => json_encode($result)];
         $this->history->saveMessage($function_result);
         $this->handlePromptAndResponse($this->buildPrompt());
