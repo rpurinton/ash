@@ -32,7 +32,6 @@ $this->functionHandlers['linux_commands'] = function ($args) {
                 "stderr" => $stderr,
                 "exitCode" => $exitCode,
             ];
-            echo ("$stdout\n$stderr\n");
             if ($this->ash->debug) echo ("debug: proc_exec() result: " . print_r($result, true) . "\n");
             return $result;
         }
