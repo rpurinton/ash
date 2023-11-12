@@ -42,4 +42,5 @@ $this->functionHandlers['linux_command'] = function ($args) {
     };
     $result = $procExec($args);
     if ($this->ash->debug) echo ("debug: linux_command() result: " . print_r($result, true) . "\n");
+    return $result;
 };
