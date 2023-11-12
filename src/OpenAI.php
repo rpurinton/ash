@@ -224,7 +224,7 @@ class OpenAI
                 $output = str_replace("\n", "\n(ash)\t", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->markdownToEscapeCodes($output);
-                echo ($output);
+                echo trim($output);
             }
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->history->saveMessage($assistant_message);
