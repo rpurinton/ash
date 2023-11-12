@@ -121,50 +121,64 @@ class OpenAI
         $status_ptr = 0;
         $status_chars = ["|", "/", "-", "\\"];
         $first_sent = false;
-        foreach ($stream as $response) {
-            $reply = $response->choices[0]->toArray();
-            $finish_reason = $reply["finish_reason"];
-            if (isset($reply["delta"]["function_call"]["name"])) {
-                $function_call = $reply["delta"]["function_call"]["name"];
-                $functionNameDisplay = str_replace("_", " ", $function_call);
-                echo ("\r✅ Running $functionNameDisplay... %");
-            }
-            if ($function_call) {
-                if (isset($reply["delta"]["function_call"]["arguments"])) {
-                    $status_ptr++;
-                    if ($status_ptr > 3) $status_ptr = 0;
-                    echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
-                    $full_response .= $reply["delta"]["function_call"]["arguments"];
+        try {
+            foreach ($stream as $response) {
+                $reply = $response->choices[0]->toArray();
+                $finish_reason = $reply["finish_reason"];
+                if (isset($reply["delta"]["function_call"]["name"])) {
+                    $function_call = $reply["delta"]["function_call"]["name"];
+                    $functionNameDisplay = str_replace("_", " ", $function_call);
+                    echo ("\r✅ Running $functionNameDisplay... %");
                 }
-            } else if (isset($reply["delta"]["content"])) {
-                if (!$first_sent) {
-                    $first_sent = true;
-                    echo ("\r                       \r");
-                }
-                $delta_content = $reply["delta"]["content"];
-                $full_response .= $delta_content;
-                $line .= $delta_content;
-                $line_break_pos = mb_strrpos($line, "\n");
-                if ($line_break_pos !== false) {
-                    $output = mb_substr($line, 0, $line_break_pos);
-                    $line = mb_substr($line, $line_break_pos + 1);
-                    $output = str_replace("\n", "\n", $output);
-                    $output = str_replace("\\e", "\e", $output);
-                    $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
-                    echo ("$output\n");
-                } else {
-                    if (mb_strlen($line) > $this->ash->sysInfo->sysInfo['terminalColumns']) {
-                        $wrapped_text = wordwrap($line, $this->ash->sysInfo->sysInfo['terminalColumns'], "\n", true);
-                        $line_break_pos = mb_strrpos($wrapped_text, "\n");
-                        $output = mb_substr($wrapped_text, 0, $line_break_pos);
-                        $line = mb_substr($wrapped_text, $line_break_pos + 1);
+                if ($function_call) {
+                    if (isset($reply["delta"]["function_call"]["arguments"])) {
+                        $status_ptr++;
+                        if ($status_ptr > 3) $status_ptr = 0;
+                        echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
+                        $full_response .= $reply["delta"]["function_call"]["arguments"];
+                    }
+                } else if (isset($reply["delta"]["content"])) {
+                    if (!$first_sent) {
+                        $first_sent = true;
+                        echo ("\r                       \r");
+                    }
+                    $delta_content = $reply["delta"]["content"];
+                    $full_response .= $delta_content;
+                    $line .= $delta_content;
+                    $line_break_pos = mb_strrpos($line, "\n");
+                    if ($line_break_pos !== false) {
+                        $output = mb_substr($line, 0, $line_break_pos);
+                        $line = mb_substr($line, $line_break_pos + 1);
                         $output = str_replace("\n", "\n", $output);
                         $output = str_replace("\\e", "\e", $output);
                         $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
                         echo ("$output\n");
+                    } else {
+                        if (mb_strlen($line) > $this->ash->sysInfo->sysInfo['terminalColumns']) {
+                            $wrapped_text = wordwrap($line, $this->ash->sysInfo->sysInfo['terminalColumns'], "\n", true);
+                            $line_break_pos = mb_strrpos($wrapped_text, "\n");
+                            $output = mb_substr($wrapped_text, 0, $line_break_pos);
+                            $line = mb_substr($wrapped_text, $line_break_pos + 1);
+                            $output = str_replace("\n", "\n", $output);
+                            $output = str_replace("\\e", "\e", $output);
+                            $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
+                            echo ("$output\n");
+                        }
                     }
                 }
             }
+        } catch (\Exception $e) {
+            if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
+            else echo ("Error: " . $e->getMessage() . "\n");
+            return;
+        } catch (\Error $e) {
+            if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
+            else echo ("Error: " . $e->getMessage() . "\n");
+            return;
+        } catch (\Throwable $e) {
+            if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
+            else echo ("Error: " . $e->getMessage() . "\n");
+            return;
         }
 
         if ($function_call) {
