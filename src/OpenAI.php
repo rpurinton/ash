@@ -144,8 +144,6 @@ class OpenAI
             "presence_penalty" => 0.0,
             "functions" => $this->getFunctions(),
         ];
-        $full_response = "";
-        $function_call = null;
         if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
         echo ("(ash)\t");
         try {
@@ -163,6 +161,13 @@ class OpenAI
             else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         }
+        $this->handleStream($stream);
+    }
+
+    private function handleStream($stream)
+    {
+        $function_call = null;
+        $full_response = "";
         $line = "";
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
@@ -203,6 +208,7 @@ class OpenAI
         }
         if ($function_call) {
             $arguments = json_decode($full_response, true);
+            $this->handleFunctionCall($function_call, $arguments);
         } else {
             if ($line != "") {
                 $output = str_replace("\n", "\n(ash)\t", $line);
@@ -218,6 +224,12 @@ class OpenAI
             if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
             else echo ("(ash) Response complete.\n");
         }
+    }
+
+    private function handleFunctionCall($function_call, $arguments)
+    {
+        if ($this->ash->debug) echo ("(ash) handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
+        return;
     }
 
     private function markdownToEscapeCodes($text)
