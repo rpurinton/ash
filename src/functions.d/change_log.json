@@ -1,0 +1,16 @@
+{
+    "name": "change_log",
+    "description": "Append an entry to the system changelog located in /var/log/changelog.  Please use this function after you make any changes to the system.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "changes": {
+                "type": "string",
+                "description": "Describe the changes you made to the system"
+            }
+        },
+        "required": [
+            "changes"
+        ]
+    }
+}
