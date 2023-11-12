@@ -170,7 +170,7 @@ class OpenAI
 
     private function handleStream($stream)
     {
-        echo ("\r");
+        echo ("\r                                                                           \r");
         $function_call = null;
         $full_response = "";
         $line = "";
