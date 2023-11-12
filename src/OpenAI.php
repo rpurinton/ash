@@ -234,19 +234,19 @@ class OpenAI
 
     private function markdownToEscapeCodes($text)
     {
+        $text = str_replace("\\e", "\e", $text);
+        $text = str_replace("```", "", $text);
         if ($this->ash->config->config['colorSupport']) {
-            // look for text wrapped in ** xxx **
+            // look for text wrapped in **xxx**
             $text = preg_replace("/\*\*(.*?)\*\*/", "\e[1m$1\e[0m", $text);
-            // look for text wrapped in * xxx *
+            // look for text wrapped in *xxx*
             $text = preg_replace("/\*(.*?)\*/", "\e[3m$1\e[0m", $text);
-            // look for text wrapped in _ xxx _
+            // look for text wrapped in _xxx_
             $text = preg_replace("/\_(.*?)\_/", "\e[3m$1\e[0m", $text);
-            // look for text wrapped in ~ xxx ~
+            // look for text wrapped in ~xxx~
             $text = preg_replace("/\~(.*?)\~/", "\e[9m$1\e[0m", $text);
-            // look for text wrapped in ` xxx `
+            // look for text wrapped in `xxx`
             $text = preg_replace("/\`(.*?)\`/", "\e[7m$1\e[0m", $text);
-            // look for text wrapped in ``` xxx ```
-            $text = preg_replace("/\`\`\`(.*?)\`\`\`/", "\e[7m$1\e[0m", $text);
             return $text;
         } else {
             // strip out markdown characters
@@ -255,7 +255,6 @@ class OpenAI
             $text = preg_replace("/\_(.*?)\_/", "$1", $text);
             $text = preg_replace("/\~(.*?)\~/", "$1", $text);
             $text = preg_replace("/\`(.*?)\`/", "$1", $text);
-            $text = preg_replace("/\`\`\`(.*?)\`\`\`/", "$1", $text);
             return $text;
         }
     }
