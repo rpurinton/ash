@@ -119,7 +119,6 @@ class Util
             $text = preg_replace("/\~(.*?)\~/", "\e[9m$1\e[0m", $text);
             // look for text wrapped in `xxx`
             $text = preg_replace("/\`(.*?)\`/", "\e[7m$1\e[0m", $text);
-            return $text;
         } else {
             // strip out markdown characters
             $text = preg_replace("/\*\*(.*?)\*\*/", "$1", $text);
@@ -127,8 +126,14 @@ class Util
             $text = preg_replace("/\_(.*?)\_/", "$1", $text);
             $text = preg_replace("/\~(.*?)\~/", "$1", $text);
             $text = preg_replace("/\`(.*?)\`/", "$1", $text);
-            return $text;
         }
+
+        // look for text wrapped in [xxx](yyy), delete the xxx and return the yyy underline in light blue
+        $text = preg_replace("/\[(.*?)\]\((.*?)\)/", "\e[94m$2\e[0m", $text);
+
+        // highlight any other urls
+        $text = preg_replace("/(https?:\/\/[^\s]+)/", "\e[94m$1\e[0m", $text);
+
         return $text;
     }
 }
