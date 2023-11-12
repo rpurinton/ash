@@ -1,6 +1,6 @@
 <?php
-$this->functionHandlers['linux_commands'] = function ($args) {
-    if ($this->ash->debug) echo ("debug: linux_command(" . print_r($args, true) . ")\n");
+$this->functionHandlers['proc_open'] = function ($args) {
+    if ($this->ash->debug) echo ("debug: proc_open(" . print_r($args, true) . ")\n");
     $procExec = function (array $input): array {
         if ($this->ash->debug) echo ("debug: proc_exec(" . print_r($input, true) . ")\n");
         if (file_exists("~/.ash_env.json")) {
@@ -48,6 +48,6 @@ $this->functionHandlers['linux_commands'] = function ($args) {
         ];
     };
     $result = $procExec($args);
-    if ($this->ash->debug) echo ("debug: linux_command() result: " . print_r($result, true) . "\n");
+    if ($this->ash->debug) echo ("debug: proc_open() result: " . print_r($result, true) . "\n");
     return $result;
 };
