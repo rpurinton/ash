@@ -64,8 +64,8 @@ class History
                 unset($message["tokens"]);
                 $result[] = $message;
             } else {
-                $token_count -= $message["tokens"] + 10;
-                $result[] = ["role" => $message["role"], "content" => "*an Oversize history message was removed*"];
+                $token_count -= $message["tokens"] + 12;
+                $result[] = ["role" => "system", "content" => "Warning: an Oversize history message was omitted here."];
                 if ($token_count >= $num_tokens) break;
             }
         }
