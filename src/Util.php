@@ -33,18 +33,16 @@ class Util
         $text = str_replace("\\e", "\e", $text);
         $text = str_replace("```", "", $text);
         if ($color_support) {
-            $text = preg_replace("/(?<![^\s.])\*\*(.*?)\*\*(?![^\s.])/", "\e[1m$1\e[0m", $text);
-            $text = preg_replace("/(?<![^\s.])\*(.*?)\*(?![^\s.])/", "\e[3m$1\e[0m", $text);
-            $text = preg_replace("/(?<![^\s.])\_(.*?)\_(?![^\s.])/", "\e[3m$1\e[0m", $text);
-            $text = preg_replace("/(?<![^\s.])\~(.*?)\~(?![^\s.])/", "\e[9m$1\e[0m", $text);
-            $text = preg_replace("/(?<![^\s.])\`(.*?)\`(?![^\s.])/", "\e[7m$1\e[0m", $text);
+            $text = preg_replace('/\*\*(.*?)\*\*/', "\e[1m$1\e[0m", $text); // Bold
+            $text = preg_replace('/\*(.*?)\*/', "\e[3m$1\e[0m", $text); // Italic
+            $text = preg_replace('/_(.*?)_/', "\e[4m$1\e[0m", $text); // Underline
+            $text = preg_replace('/`(.*?)`/', "\e[48;5;226m$1\e[0m", $text); // Highlight
             return $text;
         } else {
-            $text = preg_replace("/(?<![^\s.])\*\*(.*?)\*\*(?![^\s.])/", "$1", $text);
-            $text = preg_replace("/(?<![^\s.])\*(.*?)\*(?![^\s.])/", "$1", $text);
-            $text = preg_replace("/(?<![^\s.])\_(.*?)\_(?![^\s.])/", "$1", $text);
-            $text = preg_replace("/(?<![^\s.])\~(.*?)\~(?![^\s.])/", "$1", $text);
-            $text = preg_replace("/(?<![^\s.])\`(.*?)\`(?![^\s.])/", "$1", $text);
+            $text = preg_replace('/\*\*(.*?)\*\*/', "$1", $text); // Bold
+            $text = preg_replace('/\*(.*?)\*/', "$1", $text); // Italic
+            $text = preg_replace('/_(.*?)_/', "$1", $text); // Underline
+            $text = preg_replace('/`(.*?)`/', "$1", $text); // Highlight
             return $text;
         }
     }
