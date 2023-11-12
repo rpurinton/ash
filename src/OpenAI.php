@@ -230,7 +230,19 @@ class OpenAI
     private function handleFunctionCall($function_call, $arguments)
     {
         if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
+        if (isset($this->functionHandlers[$function_call])) {
+            $handler = $this->functionHandlers[$function_call];
+            $result = $handler($arguments);
+            if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ") result: " . print_r($result, true) . "\n");
+            $this->functionFollowUp($result);
+            return;
+        } else $this->functionFollowUp(["stderr" => "Error (ash): function handler for $function_call not found.", "exitCode" => -1]);
         return;
+    }
+
+    private function functionFollowUp($result)
+    {
+        print_r($result);
     }
 
     private function markdownToEscapeCodes($text)
