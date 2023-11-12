@@ -63,10 +63,7 @@ class History
             if ($token_count <= $num_tokens) {
                 unset($message["tokens"]);
                 $result[] = $message;
-            } else {
-                $token_count -= $message["tokens"];
-                break;
-            }
+            } else $token_count -= $message["tokens"];
         }
         if ($this->ash->debug) echo "debug: getHistory($num_tokens) results: " . count($result) . "\n";
         return array_reverse($result);
