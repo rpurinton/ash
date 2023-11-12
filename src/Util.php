@@ -82,9 +82,7 @@ class Util
         $text = str_replace("```", "", $text);
 
         // Fix escaped characters that should be treated literally
-        $text = str_replace("\\e", "\e", $text);
-        $text = str_replace('\\\\', '\\', $text);
-
+        $text = stripcslashes($text);
         return $text;
     }
 }
