@@ -27,15 +27,15 @@
             "chmod": {
                 "type": "string",
                 "description": "Set the permissions of the file"
-            },
-            "required": [
-                "path",
-                "content",
-                "append",
-                "owner",
-                "group",
-                "chmod"
-            ]
-        }
+            }
+        },
+        "required": [
+            "path",
+            "content",
+            "append",
+            "owner",
+            "group",
+            "chmod"
+        ]
     }
 }
