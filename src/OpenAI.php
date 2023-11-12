@@ -236,15 +236,18 @@ class OpenAI
             $handler = $this->functionHandlers[$function_call];
             $result = $handler($arguments);
             if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ") result: " . print_r($result, true) . "\n");
-            $this->functionFollowUp($result);
+            $this->functionFollowUp($function_call, $result);
             return;
-        } else $this->functionFollowUp(["stderr" => "Error (ash): function handler for $function_call not found.", "exitCode" => -1]);
+        } else $this->functionFollowUp($function_call, ["stderr" => "Error (ash): function handler for $function_call not found.", "exitCode" => -1]);
         return;
     }
 
-    private function functionFollowUp($result)
+    private function functionFollowUp($function_call, $result)
     {
-        print_r($result);
+        // {"role": "function", "name": "get_current_weather", "content": "{\"temperature\": "22", \"unit\": \"celsius\", \"description\": \"Sunny\"}"}
+        $function_result = ["role" => "function", "name" => $function_call, "content" => json_encode($result)];
+        $this->history->saveMessage($function_result);
+        $this->handlePromptAndResponse($this->buildPrompt());
     }
 
     private function markdownToEscapeCodes($text)
