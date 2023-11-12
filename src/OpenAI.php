@@ -4,14 +4,14 @@ namespace Rpurinton\Ash;
 
 class OpenAI
 {
-    private $client = null;
+    public $client = null;
     public $models = [];
     public $model = null;
-    private $maxTokens = null;
-    private $basePrompt = null;
-    private $baseTokens = 0;
+    public $maxTokens = null;
+    public $basePrompt = null;
+    public $baseTokens = 0;
     public $runningProcess = null;
-    private $util = null;
+    public $util = null;
     public $history = null;
     public $functionHandlers = [];
     public $modelPicker = null;
