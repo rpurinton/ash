@@ -6,7 +6,7 @@ class OpenAI
 {
     private $client = null;
     public $models = [];
-    private $model = null;
+    public $model = null;
     private $maxTokens = null;
     private $basePrompt = null;
     private $baseTokens = 0;
