@@ -20,7 +20,7 @@ class History
 
     public function loadHistory()
     {
-        if ($this->ash->debug) echo ("(ash) Loading history from " . $this->historyFile . "\n");
+        if ($this->ash->debug) echo ("debug: Loading history from " . $this->historyFile . "\n");
         if (file_exists($this->historyFile)) {
             $history_jsonl = file_get_contents($this->historyFile);
             $history_jsonl = explode("\n", $history_jsonl);
@@ -32,12 +32,12 @@ class History
         } else {
             $this->history = [];
         }
-        if ($this->ash->debug) echo "(ash) loaded messages: " . count($this->history) . "\n";
+        if ($this->ash->debug) echo "debug: loaded messages: " . count($this->history) . "\n";
     }
 
     public function saveMessage($message)
     {
-        if ($this->ash->debug) echo "(ash) saving message: " . print_r($message, true) . "\n";
+        if ($this->ash->debug) echo "debug: saving message: " . print_r($message, true) . "\n";
         $message["tokens"] = $this->util->tokenCount($message["content"]);
         $this->history[] = $message;
         file_put_contents($this->historyFile, json_encode($message) . "\n", FILE_APPEND);
@@ -45,7 +45,7 @@ class History
 
     public function getHistory($num_tokens)
     {
-        if ($this->ash->debug) echo "(ash) getHistory($num_tokens)\n";
+        if ($this->ash->debug) echo "debug: getHistory($num_tokens)\n";
         if ($this)
             $rev_history = array_reverse($this->history);
         $token_count = 0;
@@ -60,13 +60,13 @@ class History
                 break;
             }
         }
-        if ($this->ash->debug) echo "(ash) getHistory($num_tokens) results: " . count($result) . "\n";
+        if ($this->ash->debug) echo "debug: getHistory($num_tokens) results: " . count($result) . "\n";
         return array_reverse($result);
     }
 
     public function clearHistory()
     {
-        if ($this->ash->debug) echo "(ash) clearing history...\n";
+        if ($this->ash->debug) echo "debug: clearing history...\n";
         $this->history = [];
         file_put_contents($this->historyFile, "");
     }

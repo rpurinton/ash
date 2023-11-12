@@ -30,8 +30,8 @@ class Commands
             case "debug":
                 $this->ash->debug = !$this->ash->debug;
                 $this->ash->config->setDebug($this->ash->debug);
-                if ($this->ash->debug) return "(ash) Debug mode enabled.\n";
-                else return "(ash) Debug mode disabled.\n";
+                if ($this->ash->debug) return "debug: Debug mode enabled.\n";
+                else return "debug: Debug mode disabled.\n";
             case "config":
                 $this->ash->config->initialConfig();
                 return "";

@@ -8,12 +8,12 @@
                 "type": "string",
                 "description": "the exact command line to be executed"
             },
-            "working_directory": {
+            "cwd": {
                 "type": "string",
                 "optional": true,
                 "description": "the full path to the desired working directory where the command will be executed"
             },
-            "environment_vars": {
+            "env": {
                 "type": "array",
                 "items": {
                     "type": "object",

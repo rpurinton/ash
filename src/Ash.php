@@ -47,7 +47,7 @@ class Ash
             $input = readline($this->prompt);
             readline_add_history($input);
             $input = trim($input);
-            if ($this->debug) echo ("(ash) input: $input\n");
+            if ($this->debug) echo ("debug: input: $input\n");
             $internal_command_result = $this->commands->internalCommands($input);
             if ($internal_command_result !== false) {
                 echo $internal_command_result;

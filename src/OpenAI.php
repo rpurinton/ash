@@ -144,20 +144,20 @@ class OpenAI
             "presence_penalty" => 0.0,
             "functions" => $this->getFunctions(),
         ];
-        if ($this->ash->debug) echo ("(ash) Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
+        if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
         echo ("(ash)\t");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
-            if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
             else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         } catch (\Error $e) {
-            if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
             else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         } catch (\Throwable $e) {
-            if ($this->ash->debug) echo ("(ash) Error: " . print_r($e, true) . "\n");
+            if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
             else echo ("(ash) Error: " . $e->getMessage() . "\n");
             return;
         }
@@ -174,7 +174,7 @@ class OpenAI
             $finish_reason = $reply["finish_reason"];
             if (isset($reply["delta"]["function_call"]["name"])) {
                 $function_call = $reply["delta"]["function_call"]["name"];
-                if ($this->ash->debug) echo ("(ash) ✅ Running $function_call...\n");
+                if ($this->ash->debug) echo ("debug: ✅ Running $function_call...\n");
             }
             if ($function_call) {
                 if (isset($reply["delta"]["function_call"]["arguments"])) {
@@ -228,7 +228,7 @@ class OpenAI
 
     private function handleFunctionCall($function_call, $arguments)
     {
-        if ($this->ash->debug) echo ("(ash) handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
+        if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
         return;
     }
 
@@ -265,46 +265,5 @@ class OpenAI
         $result = [];
         foreach ($functions as $function) $result[] = json_decode(file_get_contents($function), true);
         return $result;
-    }
-
-    public function procExec(array $input): array
-    {
-        if ($this->ash->debug) echo ("(ash) proc_exec(" . print_r($input, true) . ")\n");
-        $descriptorspec = [
-            0 => ["pipe", "r"], // stdin
-            1 => ["pipe", "w"], // stdout
-            2 => ["pipe", "w"], // stderr
-        ];
-        $pipes = [];
-        try {
-            $this->runningProcess = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo->sysInfo['working_dir'], $input['env'] ?? []);
-        } catch (\Exception $e) {
-            return [
-                "stdout" => "",
-                "stderr" => "Error (ash): proc_open() failed: " . $e->getMessage(),
-                "exit_code" => -1,
-            ];
-        }
-        if (is_resource($this->runningProcess)) {
-            $stdout = stream_get_contents($pipes[1]);
-            $stderr = stream_get_contents($pipes[2]);
-            fclose($pipes[0]);
-            fclose($pipes[1]);
-            fclose($pipes[2]);
-            $exitCode = proc_close($this->runningProcess);
-            $this->runningProcess = null;
-            $result = [
-                "stdout" => $stdout,
-                "stderr" => $stderr,
-                "exitCode" => $exitCode,
-            ];
-            if ($this->ash->debug) echo ("(ash) proc_exec() result: " . print_r($result, true) . "\n");
-            return $result;
-        }
-        return [
-            "stdout" => "",
-            "stderr" => "Error (ash): proc_open() failed.",
-            "exitCode" => -1,
-        ];
     }
 }
