@@ -230,6 +230,8 @@ class OpenAI
     private function handleFunctionCall($function_call, $arguments)
     {
         if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
+        $function_message = ["role" => "assistant", "content" => null, "function_call" => ["name" => $function_call, "arguments" => json_encode($arguments)]];
+        $this->history->saveMessage($function_message);
         if (isset($this->functionHandlers[$function_call])) {
             $handler = $this->functionHandlers[$function_call];
             $result = $handler($arguments);
