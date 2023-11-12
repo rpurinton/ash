@@ -3,12 +3,18 @@ $this->functionHandlers['proc_open'] = function ($args) {
     if ($this->ash->debug) echo ("debug: proc_open(" . print_r($args, true) . ")\n");
     $procExec = function (array $input): array {
         if ($this->ash->debug) echo ("debug: proc_exec(" . print_r($input, true) . ")\n");
-        if (file_exists("~/.ash_env.json")) {
-            $env = json_decode(file_get_contents("~/.ash_env.json"), true);
-            if ($env !== null) {
-                $input['env'] = array_merge($input['env'] ?? [], $env);
-            }
-        }
+        $env = trim(shell_exec("env"));
+        // parse it into key-value pairs
+        $env = explode("\n", $env);
+        $env = array_map(function ($item) {
+            $item = explode("=", $item);
+            return [$item[0] => $item[1]];
+        }, $env);
+        $env = array_reduce($env, function ($carry, $item) {
+            return array_merge($carry, $item);
+        }, []);
+        $input['env'] = array_merge($env, $input['env'] ?? []);
+        if ($this->ash->debug) echo ("debug: proc_exec() env: " . print_r($input['env'], true) . "\n");
         $descriptorspec = [
             0 => ["pipe", "r"], // stdin
             1 => ["pipe", "w"], // stdout
