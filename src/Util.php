@@ -104,8 +104,7 @@ class Util
             "```yaml" => "YAML:",
             "```zsh" => "Zsh Script:"
         ];
-
-        $text = str_replace("\\e", "\e", $text);
+        $text = stripcslashes($text);
         $text = str_replace(array_keys($replacements), array_values($replacements), $text);
         $text = str_replace("```", "", $text);
 
