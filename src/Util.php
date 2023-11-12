@@ -31,35 +31,35 @@ class Util
     public function markdownToEscapeCodes($text, $color_support = true)
     {
         $replacements = [
-                "```diff" => "Diff:",
-                "```yaml" => "YAML:",
-                "```json" => "JSON:",
-                "```bash" => "Bash Script:",
-                "```javascript" => "JavaScript:",
-                "```html" => "HTML:",
-                "```css" => "CSS:",
-                "```typescript" => "TypeScript:",
-                "```python" => "Python:",
-                "```ruby" => "Ruby:",
-                "```c" => "C:",
-                "```cpp" => "C++:",
-                "```csharp" => "C#:",
-                "```go" => "Go:",
-                "```java" => "Java:",
-                "```kotlin" => "Kotlin:",
-                "```rust" => "Rust:",
-                "```scala" => "Scala:",
-                "```swift" => "Swift:",
-                "```dart" => "Dart:",
-                "```elixir" => "Elixir:",
-                "```erlang" => "Erlang:",
-                "```haskell" => "Haskell:",
-                "```lisp" => "Lisp:",
-                "```lua" => "Lua:",
-                "```ocaml" => "OCaml:",
-                "```php" => "PHP:",
+            "```diff" => "Diff:",
+            "```yaml" => "YAML:",
+            "```json" => "JSON:",
+            "```bash" => "Bash Script:",
+            "```javascript" => "JavaScript:",
+            "```html" => "HTML:",
+            "```css" => "CSS:",
+            "```typescript" => "TypeScript:",
+            "```python" => "Python:",
+            "```ruby" => "Ruby:",
+            "```c" => "C:",
+            "```cpp" => "C++:",
+            "```csharp" => "C#:",
+            "```go" => "Go:",
+            "```java" => "Java:",
+            "```kotlin" => "Kotlin:",
+            "```rust" => "Rust:",
+            "```scala" => "Scala:",
+            "```swift" => "Swift:",
+            "```dart" => "Dart:",
+            "```elixir" => "Elixir:",
+            "```erlang" => "Erlang:",
+            "```haskell" => "Haskell:",
+            "```lisp" => "Lisp:",
+            "```lua" => "Lua:",
+            "```ocaml" => "OCaml:",
+            "```php" => "PHP:",
         ];
-    
+
         if ($color_support) {
             // Handle nested markdown by replacing from the innermost to the outermost
             $text = preg_replace('/(?<!\\\\)\\`(.*?)\\`/', "\e[7m$1\e[0m", $text); // Inline code
@@ -73,18 +73,18 @@ class Util
             $text = preg_replace('/\*(.*?)\*/s', "$1", $text);
             $text = preg_replace('/~~(.*?)~~/', "$1", $text);
         }
-    
+
         // Handle URLs separately
         $text = preg_replace('/\[(.*?)\]\((.*?)\)/', "\e[34;4m$1\e[0m", $text);
-    
+
         // Add any missing replacements here
         $text = str_replace(array_keys($replacements), array_values($replacements), $text);
-        $text = str_replace("```","", $text);
-    
+        $text = str_replace("```", "", $text);
+
         // Fix escaped characters that should be treated literally
         $text = str_replace("\\e", "\e", $text);
         $text = str_replace('\\\\', '\\', $text);
-    
+
         return $text;
     }
-    
+}
