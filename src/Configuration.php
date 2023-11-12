@@ -57,10 +57,10 @@ class Configuration
             if (strlen($openaiApiKey) == 51 && substr($openaiApiKey, 0, 3) == "sk-") break;
             echo "Error: Invalid API key.\n";
         }
-        $color_support = readline("Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
-        $color_support = strtolower(substr($color_support, 0, 1));
-        if ($color_support == "y" || $color_support == "") $color_support = true;
-        else $color_support = false;
+        $colorSupport = readline("Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
+        $colorSupport = strtolower(substr($colorSupport, 0, 1));
+        if ($colorSupport == "y" || $colorSupport == "") $colorSupport = true;
+        else $colorSupport = false;
         $emojiSupport = readline("Enable emoji support? ✅ [Y/n]: ");
         $emojiSupport = strtolower(substr($emojiSupport, 0, 1));
         if ($emojiSupport == "y" || $emojiSupport == "") $emojiSupport = true;
@@ -74,7 +74,7 @@ class Configuration
             "emailAddress" => $emailAddress,
             "fromAddress" => $fromAddress,
             "openaiApiKey" => $openaiApiKey,
-            "colorSupport" => $color_support,
+            "colorSupport" => $colorSupport,
             "emojiSupport" => $emojiSupport,
             "debug" => $debug,
         ];

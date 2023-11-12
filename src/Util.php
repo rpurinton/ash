@@ -28,7 +28,7 @@ class Util
         return $count;
     }
 
-    public function markdownToEscapeCodes($text, $color_support = true)
+    public function markdownToEscapeCodes($text, $colorSupport = true)
     {
         $replacements = [
             "```antlr" => "ANTLR:",
@@ -105,7 +105,7 @@ class Util
             "```zsh" => "Zsh Script:"
         ];
 
-        if ($color_support) {
+        if ($colorSupport) {
             // Handle nested markdown by replacing from the innermost to the outermost
             $text = preg_replace('/(?<!\\\\)\\`(.*?)\\`/', "\e[7m$1\e[0m", $text); // Inline code
             $text = preg_replace('/__(.*?)__/', "\e[4m$1\e[0m", $text); // Underline

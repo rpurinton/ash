@@ -36,8 +36,8 @@ class Commands
                 $this->ash->config->initialConfig();
                 return "";
             case "color":
-                $this->ash->config->setColorSupport(!$this->ash->config->config["color_support"]);
-                if ($this->ash->config->config["color_support"]) return "Color support enabled.\n";
+                $this->ash->config->setColorSupport(!$this->ash->config->config["colorSupport"]);
+                if ($this->ash->config->config["colorSupport"]) return "Color support enabled.\n";
                 else return "Color support disabled.\n";
             case "emoji":
                 $this->ash->config->setEmojiSupport(!$this->ash->config->config["emojiSupport"]);
