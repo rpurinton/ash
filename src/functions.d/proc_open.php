@@ -7,9 +7,11 @@ $this->functionHandlers['proc_open'] = function ($args) {
         // parse it into key-value pairs
         $env = explode("\n", $env);
         $env = array_map(function ($item) {
-            $item = explode("=", $item);
-            if (isset($item[1])) return [$item[0] => $item[1]];
-            else return [];
+            $eq_pos = strpos($item, "=");
+            if ($eq_pos === false) return [];
+            $item0 = substr($item, 0, $eq_pos);
+            $item1 = substr($item, $eq_pos + 1);
+            return [$item0 => $item1];
         }, $env);
         $env = array_reduce($env, function ($carry, $item) {
             return array_merge($carry, $item);
