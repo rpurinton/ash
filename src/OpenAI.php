@@ -132,7 +132,6 @@ class OpenAI
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));
-        $messages[] = ["role" => "system", "content" => "(reminder to ash) Do not try to sound human. Make sure your message is 'computer-like' as in terse, direct, precise language."];
         return $messages;
     }
 
