@@ -96,6 +96,7 @@ class OpenAI
     {
         $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"]]);
         $messages = $this->buildPrompt();
+        /*
         $messages[] = ["role" => "system", "content" => "Write a welcome or login banner for SSH that can contain several helpful elements for users when they log in. You might include the following information:
 
             System name and purpose - A brief identifier of the server, such as Welcome to the Acme Corporation's production server.
@@ -107,6 +108,7 @@ class OpenAI
             Last login information - To remind users of their last session, useful for security.
             Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled.
             It's essential to keep it concise to prevent overwhelming the user upon each login."];
+        */
         $this->handlePromptAndResponse($messages);
     }
 
@@ -130,7 +132,6 @@ class OpenAI
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));
-        $messages[] = ["role" => "system", "content" => "(reminder to ash) Do not try to sound human. Make sure your message is 'computer-like' as in terse, direct, precise language."];
         return $messages;
     }
 
@@ -146,7 +147,7 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("(ash)\t");
+        echo ("(ash)\t ...");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
@@ -167,18 +168,25 @@ class OpenAI
 
     private function handleStream($stream)
     {
+        echo ("\r(ash)\t");
         $function_call = null;
         $full_response = "";
         $line = "";
+        $status_ptr = 0;
+        $status_chars = ["|", "/", "-", "\\"];
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
             $finish_reason = $reply["finish_reason"];
             if (isset($reply["delta"]["function_call"]["name"])) {
                 $function_call = $reply["delta"]["function_call"]["name"];
-                if ($this->ash->debug) echo ("debug: ✅ Running $function_call...\n");
+                $functionNameDisplay = str_replace("_", " ", $function_call);
+                echo ("\r(ash) ✅ Running $functionNameDisplay... %");
             }
             if ($function_call) {
                 if (isset($reply["delta"]["function_call"]["arguments"])) {
+                    $status_ptr++;
+                    if ($status_ptr > 3) $status_ptr = 0;
+                    echo ("\r(ash) ✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
                     $full_response .= $reply["delta"]["function_call"]["arguments"];
                 }
             } else if (isset($reply["delta"]["content"])) {
@@ -212,37 +220,46 @@ class OpenAI
             $this->handleFunctionCall($function_call, $arguments);
         } else {
             if ($line != "") {
-                $output = str_replace("\n", "\n(ash)\t", $line);
+                $output = wordwrap($line, 70, "\n", true);
+                $output = str_replace("\n", "\n(ash)\t", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->markdownToEscapeCodes($output);
-                echo ($output);
+                echo trim($output) . "\n";
             }
             $assistant_message = ["role" => "assistant", "content" => $full_response];
             $this->history->saveMessage($assistant_message);
         }
-        echo ("\n");
         if ($this->ash->debug) {
             if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
             else echo ("(ash) Response complete.\n");
         }
     }
 
+    private function functionNameDisplay($function_call)
+    {
+        return str_replace("_", " ", $function_call);
+    }
+
     private function handleFunctionCall($function_call, $arguments)
     {
         if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
+        $function_message = ["role" => "assistant", "content" => null, "function_call" => ["name" => $function_call, "arguments" => json_encode($arguments)]];
+        $this->history->saveMessage($function_message);
         if (isset($this->functionHandlers[$function_call])) {
             $handler = $this->functionHandlers[$function_call];
             $result = $handler($arguments);
             if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ") result: " . print_r($result, true) . "\n");
-            $this->functionFollowUp($result);
+            $this->functionFollowUp($function_call, $result);
             return;
-        } else $this->functionFollowUp(["stderr" => "Error (ash): function handler for $function_call not found.", "exitCode" => -1]);
+        } else $this->functionFollowUp($function_call, ["stderr" => "Error (ash): function handler for $function_call not found.", "exitCode" => -1]);
         return;
     }
 
-    private function functionFollowUp($result)
+    private function functionFollowUp($function_call, $result)
     {
-        print_r($result);
+        $function_result = ["role" => "function", "name" => $function_call, "content" => json_encode($result)];
+        $this->history->saveMessage($function_result);
+        $this->handlePromptAndResponse($this->buildPrompt());
     }
 
     private function markdownToEscapeCodes($text)

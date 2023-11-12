@@ -21,8 +21,8 @@ class Commands
                 return "";
             case "clear":
                 $this->ash->openai->history->clearHistory();
-                passthru("clear && clear");
-                return "";
+                passthru("clear");
+                return "\r";
             case "help":
                 return file_get_contents(__DIR__ . "/../README.md") . "\n";
             case "sysinfo":
@@ -61,10 +61,10 @@ class Commands
         }
         if (substr($input, 0, 3) == "cd ") {
             $targetDir = substr($input, 3);
-            if ($targetDir == "~") $target_dir = $this->ash->sysInfo['home_dir'];
-            if ($target_dir == "-") $target_dir = $this->ash->sysInfo['last_dir'];
+            if ($targetDir == "~") $target_dir = $this->ash->sysInfo->sysInfo['homeDir'];
+            if ($target_dir == "-") $target_dir = $this->ash->sysInfo->sysInfo['lastDir'];
             if (is_dir($target_dir)) {
-                $this->ash->sysInfo->setLastDir($this->ash->sysInfo['working_dir']);
+                $this->ash->sysInfo->setLastDir($this->ash->sysInfo->sysInfo['workingDir']);
                 chdir($target_dir);
             } else echo "(ash) Error: Directory not found: $target_dir\n";
             return "";

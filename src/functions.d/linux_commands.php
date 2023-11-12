@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['linux_command'] = function ($args) {
+$this->functionHandlers['linux_commands'] = function ($args) {
     if ($this->ash->debug) echo ("debug: linux_command(" . print_r($args, true) . ")\n");
     $procExec = function (array $input): array {
         if ($this->ash->debug) echo ("debug: proc_exec(" . print_r($input, true) . ")\n");
@@ -10,7 +10,8 @@ $this->functionHandlers['linux_command'] = function ($args) {
         ];
         $pipes = [];
         try {
-            $this->runningProcess = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo->sysInfo['working_dir'], $input['env'] ?? []);
+            echo ("$ " . $input['command'] . "\n");
+            $this->runningProcess = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo->sysInfo['workingDir'], $input['env'] ?? []);
         } catch (\Exception $e) {
             return [
                 "stdout" => "",
