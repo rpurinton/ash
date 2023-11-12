@@ -147,7 +147,9 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("|\r/\r-\r\\\r%");
+        if (!$this->ash->config->config["emojiSupport"]) echo ("Thinking...");
+        else echo ("🧠 Thinking...");
+
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
