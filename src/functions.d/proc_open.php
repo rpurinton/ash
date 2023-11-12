@@ -9,7 +9,6 @@ $this->functionHandlers['proc_open'] = function ($args) {
         $env = array_map(function ($item) {
             $item = explode("=", $item);
             if (isset($item[1])) return [$item[0] => $item[1]];
-            return [$item[0] => ""];
         }, $env);
         $env = array_reduce($env, function ($carry, $item) {
             return array_merge($carry, $item);
