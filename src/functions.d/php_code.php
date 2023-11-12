@@ -37,6 +37,7 @@ $this->functionHandlers['php_code'] = function ($args) {
         fclose($pipes[2]);
         $exitCode = proc_close($process);
     }
+    unlink($random_file);
     $result = ["stdout" => $stdOut, "stderr" => $sdtErr, "exit_code" => $exitCode];
     if ($this->ash->debug) echo ("debug: php_code() result: " . print_r($result, true) . "\n");
     return $result;
