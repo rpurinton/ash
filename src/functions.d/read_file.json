@@ -1,0 +1,16 @@
+{
+    "name": "read_file",
+    "description": "Read the contents of a file and return the contents as a string.  Supports any plain text format, code, etc.  PDF and EPUB files will be converted to text.  Image formats will be OCR'd and converted to text. Not for use with binary files.  Do not read files more than 64KB in size or it wont fit in the context window.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "path": {
+                "type": "string",
+                "description": "The path to the file to be read"
+            }
+        },
+        "required": [
+            "path"
+        ]
+    }
+}
