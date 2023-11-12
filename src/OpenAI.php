@@ -105,8 +105,7 @@ class OpenAI
             Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
             Last login information - To remind users of their last session, useful for security.
             Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled.
-            It's essential to keep it concise to prevent overwhelming the user upon each login.
-            Make your message 'computer-like' as in terse, direct language. Don't try to sound human."];
+            It's essential to keep it concise to prevent overwhelming the user upon each login."];
         $this->handlePromptAndResponse($messages);
     }
 
@@ -125,12 +124,12 @@ class OpenAI
         else $dynamic_prompt .= "Emoji support disabled. Do not send emoji!\n";
         if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Terminal  \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
         else $dynamic_prompt .= "Terminal color support disabled. Do not send color codes!\n";
-        $dynamic_prompt .=  "Markdown support is disabled, don't include ``` or any other markdown formatting.\n";
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));
+        $messages[] = ["role" => "system", "content" => "Make sure your message 'computer-like' as in terse, direct language. Don't try to sound human."];
         return $messages;
     }
 
