@@ -61,10 +61,10 @@ class Commands
         }
         if (substr($input, 0, 3) == "cd ") {
             $targetDir = substr($input, 3);
-            if ($targetDir == "~") $target_dir = $this->ash->sysInfo['home_dir'];
-            if ($target_dir == "-") $target_dir = $this->ash->sysInfo['last_dir'];
+            if ($targetDir == "~") $target_dir = $this->ash->sysInfo->sysInfo['home_dir'];
+            if ($target_dir == "-") $target_dir = $this->ash->sysInfo->sysInfo['last_dir'];
             if (is_dir($target_dir)) {
-                $this->ash->sysInfo->setLastDir($this->ash->sysInfo['working_dir']);
+                $this->ash->sysInfo->setLastDir($this->ash->sysInfo->sysInfo['working_dir']);
                 chdir($target_dir);
             } else echo "(ash) Error: Directory not found: $target_dir\n";
             return "";
