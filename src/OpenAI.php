@@ -147,7 +147,7 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("(ash)\t %");
+        echo ("(ash)\t ...");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
@@ -168,7 +168,7 @@ class OpenAI
 
     private function handleStream($stream)
     {
-        echo ("\b");
+        echo ("\b\b\b");
         $function_call = null;
         $full_response = "";
         $line = "";
