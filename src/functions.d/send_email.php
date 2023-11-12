@@ -10,7 +10,7 @@ $this->functionHandlers['send_email'] = function ($args) {
     $body = $args['body'] ?? "";
 
     // Basic validation
-    if (empty($from) || empty($to) || empty($subject) || empty($body)) {
+    if (empty($to) || empty($subject) || empty($body)) {
         $error = "Error (ash): Missing required fields.";
         if ($this->ash->debug) echo ("debug: send_email() error: $error\n");
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
