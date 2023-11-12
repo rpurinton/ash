@@ -218,7 +218,6 @@ class OpenAI
         if ($function_call) {
             $arguments = json_decode($full_response, true);
             $this->handleFunctionCall($function_call, $arguments);
-            echo ("\r(ash) ✅ Running $functionNameDisplay... done.\n");
         } else {
             if ($line != "") {
                 $output = wordwrap($line, 70, "\n", true);
