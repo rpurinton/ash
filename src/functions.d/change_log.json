@@ -6,7 +6,7 @@
         "properties": {
             "changes": {
                 "type": "string",
-                "description": "Describe the changes you made to the system"
+                "description": "Describe the changes you made to the system.  A timestamp will be appended to the beginning of the string, you do not need to provide it. Use markdown formatting if helpful."
             }
         },
         "required": [
