@@ -53,10 +53,10 @@ class Commands
                 $this->ash->config->setOpenAIKey($openaiApiKey);
                 return "OpenAI API key updated.\n";
             case "openai-model":
-                $this->ash->openai->selectModel(true);
+                $this->ash->openai->modelPicker->selectModel(true);
                 return "OpenAI model updated.\n";
             case "openai-tokens":
-                $this->ash->openai->selectMaxTokens(true);
+                $this->ash->openai->modelPicker->selectMaxTokens(true);
                 return "OpenAI max tokens updated.\n";
         }
         if (substr($input, 0, 3) == "cd ") {
