@@ -1,0 +1,16 @@
+{
+    "name": "shell_exec",
+    "description": "run any safe linux command using shell_exec",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "command": {
+                "type": "string",
+                "description": "the exact command line to be executed"
+            }
+        },
+        "required": [
+            "command"
+        ]
+    }
+}
