@@ -3,7 +3,7 @@ $this->functionHandlers['proc_open'] = function ($args) {
     if ($this->ash->debug) echo ("debug: proc_open(" . print_r($args, true) . ")\n");
     $procExec = function (array $input): array {
         if ($this->ash->debug) echo ("debug: proc_exec(" . print_r($input, true) . ")\n");
-        $env = trim(shell_exec("env"));
+        $env = trim(shell_exec("env | grep -v '^BASH_FUNC_'"));
         // parse it into key-value pairs
         $env = explode("\n", $env);
         $env = array_map(function ($item) {
