@@ -70,8 +70,8 @@ class OpenAI
         $dynamic_prompt .= "Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true);
         if ($this->ash->config->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
         else $dynamic_prompt .= "Emoji support disabled. Do not send emoji!\n";
-        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Use copious amounts of escape codes! Feel free to use them gratuitously in the future to add more style and emphasis to all your outputs including combinations of colors, bold, underline, and italics!\n";
-        else $dynamic_prompt .= "Terminal color support disabled. Do not send color codes!\n";
+        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Instead of Markdown, Use ANSI escape codes to add more style and emphasis to all your outputs including combinations of \e[95mcolors\e[0m, \e[1mbold\e[0m, \e[3mitalic\e[0m, \e[4munderline\e[0m, \e[9mstrikethrough\e[0m, \e[7minverted\e[0m, and \e[4;9;7mcombinations\e[0m!\n";
+        else $dynamic_prompt .= "Terminal color support disabled. Do not send ANSI color/style codes!\n";
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $response_space = round($this->maxTokens * 0.1, 0);
