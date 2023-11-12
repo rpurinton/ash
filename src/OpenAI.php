@@ -186,7 +186,7 @@ class OpenAI
                 if (isset($reply["delta"]["function_call"]["arguments"])) {
                     $status_ptr++;
                     if ($status_ptr > 3) $status_ptr = 0;
-                    echo ("\r(ash) Running $functionNameDisplay... " . $status_chars[$status_ptr]);
+                    echo ("\r(ash) ✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
                     $full_response .= $reply["delta"]["function_call"]["arguments"];
                 }
             } else if (isset($reply["delta"]["content"])) {
