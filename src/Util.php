@@ -130,13 +130,6 @@ class Util
             $text = preg_replace("/\`(.*?)\`/", "$1", $text);
             return $text;
         }
-        // Handle URLs separately
-        $text = preg_replace('/\[(.*?)\]\((.*?)\)/', "\e[34;4m$1\e[0m", $text);
-
-        // Add any missing replacements here
-
-
-        // Fix escaped characters that should be treated literally
         return $text;
     }
 }
