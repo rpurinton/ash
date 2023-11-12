@@ -5,7 +5,7 @@ namespace Rpurinton\Ash;
 class OpenAI
 {
     private $client = null;
-    private $models = [];
+    public $models = [];
     private $model = null;
     private $maxTokens = null;
     private $basePrompt = null;
