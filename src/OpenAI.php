@@ -146,7 +146,7 @@ class OpenAI
                     $line = mb_substr($line, $line_break_pos + 1);
                     $output = str_replace("\n", "\n", $output);
                     $output = str_replace("\\e", "\e", $output);
-                    $output = $this->markdownToEscapeCodes($output);
+                    $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
                     echo ("$output\n");
                 } else {
                     if (mb_strlen($line) > $this->ash->sysInfo->sysInfo['terminalColumns']) {
@@ -156,7 +156,7 @@ class OpenAI
                         $line = mb_substr($wrapped_text, $line_break_pos + 1);
                         $output = str_replace("\n", "\n", $output);
                         $output = str_replace("\\e", "\e", $output);
-                        $output = $this->markdownToEscapeCodes($output);
+                        $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
                         echo ("$output\n");
                     }
                 }
@@ -171,7 +171,7 @@ class OpenAI
                 $output = wordwrap($line, $this->ash->sysInfo->sysInfo['terminalColumns'], "\n", true);
                 $output = str_replace("\n", "\n", $output);
                 $output = str_replace("\\e", "\e", $output);
-                $output = $this->markdownToEscapeCodes($output);
+                $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
                 echo trim($output) . "\n";
             }
             $assistant_message = ["role" => "assistant", "content" => $full_response];
@@ -203,33 +203,6 @@ class OpenAI
         $function_result = ["role" => "function", "name" => $function_call, "content" => json_encode($result)];
         $this->history->saveMessage($function_result);
         $this->handlePromptAndResponse($this->buildPrompt());
-    }
-
-    private function markdownToEscapeCodes($text)
-    {
-        $text = str_replace("\\e", "\e", $text);
-        $text = str_replace("```", "", $text);
-        if ($this->ash->config->config['colorSupport']) {
-            // look for text wrapped in **xxx**
-            $text = preg_replace("/\*\*(.*?)\*\*/", "\e[1m$1\e[0m", $text);
-            // look for text wrapped in *xxx*
-            $text = preg_replace("/\*(.*?)\*/", "\e[3m$1\e[0m", $text);
-            // look for text wrapped in _xxx_
-            $text = preg_replace("/\_(.*?)\_/", "\e[3m$1\e[0m", $text);
-            // look for text wrapped in ~xxx~
-            $text = preg_replace("/\~(.*?)\~/", "\e[9m$1\e[0m", $text);
-            // look for text wrapped in `xxx`
-            $text = preg_replace("/\`(.*?)\`/", "\e[7m$1\e[0m", $text);
-            return $text;
-        } else {
-            // strip out markdown characters
-            $text = preg_replace("/\*\*(.*?)\*\*/", "$1", $text);
-            $text = preg_replace("/\*(.*?)\*/", "$1", $text);
-            $text = preg_replace("/\_(.*?)\_/", "$1", $text);
-            $text = preg_replace("/\~(.*?)\~/", "$1", $text);
-            $text = preg_replace("/\`(.*?)\`/", "$1", $text);
-            return $text;
-        }
     }
 
     private function getFunctions()
