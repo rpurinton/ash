@@ -147,7 +147,7 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("(ash)\t");
+        echo ("(ash)\t %");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
@@ -171,15 +171,20 @@ class OpenAI
         $function_call = null;
         $full_response = "";
         $line = "";
+        $status_ptr = 0;
+        $status_chars = ["|", "/", "-", "\\"];
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
             $finish_reason = $reply["finish_reason"];
             if (isset($reply["delta"]["function_call"]["name"])) {
                 $function_call = $reply["delta"]["function_call"]["name"];
-                if ($this->ash->debug) echo ("debug: ✅ Running $function_call...\n");
+                echo ("\b✅ Running $function_call... %\n");
             }
             if ($function_call) {
                 if (isset($reply["delta"]["function_call"]["arguments"])) {
+                    $status_ptr++;
+                    if ($status_ptr > 3) $status_ptr = 0;
+                    echo ("\b" . $status_chars[$status_ptr]);
                     $full_response .= $reply["delta"]["function_call"]["arguments"];
                 }
             } else if (isset($reply["delta"]["content"])) {
@@ -211,6 +216,7 @@ class OpenAI
         if ($function_call) {
             $arguments = json_decode($full_response, true);
             $this->handleFunctionCall($function_call, $arguments);
+            echo ("\bdone.");
         } else {
             if ($line != "") {
                 $output = str_replace("\n", "\n(ash)\t", $line);
