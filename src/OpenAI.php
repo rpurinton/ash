@@ -94,7 +94,7 @@ class OpenAI
 
     public function welcomeMessage()
     {
-        $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"]]);
+        $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"] . "\n Please greet them!"]);
         $messages = $this->buildPrompt();
         /*
         $messages[] = ["role" => "system", "content" => "Write a welcome or login banner for SSH that can contain several helpful elements for users when they log in. You might include the following information:
