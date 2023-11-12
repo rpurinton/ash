@@ -115,12 +115,12 @@ class OpenAI
 
     private function handleStream($stream)
     {
-        echo ("\r                                                                           \r");
         $function_call = null;
         $full_response = "";
         $line = "";
         $status_ptr = 0;
         $status_chars = ["|", "/", "-", "\\"];
+        $first_sent = false;
         foreach ($stream as $response) {
             $reply = $response->choices[0]->toArray();
             $finish_reason = $reply["finish_reason"];
@@ -137,6 +137,10 @@ class OpenAI
                     $full_response .= $reply["delta"]["function_call"]["arguments"];
                 }
             } else if (isset($reply["delta"]["content"])) {
+                if (!$first_sent) {
+                    $first_sent = true;
+                    echo ("\r                       \r");
+                }
                 $delta_content = $reply["delta"]["content"];
                 $full_response .= $delta_content;
                 $line .= $delta_content;
