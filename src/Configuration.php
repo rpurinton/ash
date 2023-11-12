@@ -61,10 +61,10 @@ class Configuration
         $color_support = strtolower(substr($color_support, 0, 1));
         if ($color_support == "y" || $color_support == "") $color_support = true;
         else $color_support = false;
-        $emoji_support = readline("Enable emoji support? ✅ [Y/n]: ");
-        $emoji_support = strtolower(substr($emoji_support, 0, 1));
-        if ($emoji_support == "y" || $emoji_support == "") $emoji_support = true;
-        else $emoji_support = false;
+        $emojiSupport = readline("Enable emoji support? ✅ [Y/n]: ");
+        $emojiSupport = strtolower(substr($emojiSupport, 0, 1));
+        if ($emojiSupport == "y" || $emojiSupport == "") $emojiSupport = true;
+        else $emojiSupport = false;
 
         $debug = readline("Enable debug mode? [y/N]: ");
         $debug = strtolower(substr($debug, 0, 1));
@@ -75,7 +75,7 @@ class Configuration
             "fromAddress" => $fromAddress,
             "openaiApiKey" => $openaiApiKey,
             "colorSupport" => $color_support,
-            "emojiSupport" => $emoji_support,
+            "emojiSupport" => $emojiSupport,
             "debug" => $debug,
         ];
         if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
