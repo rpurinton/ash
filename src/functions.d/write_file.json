@@ -6,7 +6,7 @@
         "properties": {
             "path": {
                 "type": "string",
-                "description": "The path to the file to be read"
+                "description": "The path to the file to be written"
             },
             "content": {
                 "type": "string",
