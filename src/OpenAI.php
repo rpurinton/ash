@@ -50,11 +50,11 @@ class OpenAI
         // Prompt the user to select a model
         while (true) {
             $model_count = count($this->models);
-            $prompt = "(ash) Please select an OpenAI GPT model to use:\n";
+            $prompt = "Please select an OpenAI GPT model to use:\n";
             for ($i = 0; $i < $model_count; $i++) {
-                $prompt .= "(ash) [$i] {$this->models[$i]}\n";
+                $prompt .= "[$i] {$this->models[$i]}\n";
             }
-            $prompt .= "(ash) Enter the number of the model to use (default: 0 ({$this->models[0]})): ";
+            $prompt .= "Enter the number of the model to use (default: 0 ({$this->models[0]})): ";
             $model_index = readline($prompt);
             if ($model_index == "") $model_index = 0;
 
@@ -65,7 +65,7 @@ class OpenAI
                 return;
             }
 
-            echo "(ash) Invalid model selected. Please try again.\n";
+            echo "Invalid model selected. Please try again.\n";
         }
     }
 
@@ -78,7 +78,7 @@ class OpenAI
         }
 
         while (true) {
-            $prompt = "(ash) Please select the maximum tokens you want use for any single request (default: 4096, range [2048-131072]): ";
+            $prompt = "Please select the maximum tokens you want use for any single request (default: 4096, range [2048-131072]): ";
             $max_tokens = readline($prompt);
             if ($max_tokens == "") $max_tokens = 4096;
 
@@ -88,7 +88,7 @@ class OpenAI
                 return;
             }
 
-            echo "(ash) Invalid max tokens value. Please try again.\n";
+            echo "Invalid max tokens value. Please try again.\n";
         }
     }
 
@@ -147,20 +147,20 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        echo ("(ash)\t ...");
+        echo (" ...");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
             if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
-            else echo ("(ash) Error: " . $e->getMessage() . "\n");
+            else echo ("Error: " . $e->getMessage() . "\n");
             return;
         } catch (\Error $e) {
             if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
-            else echo ("(ash) Error: " . $e->getMessage() . "\n");
+            else echo ("Error: " . $e->getMessage() . "\n");
             return;
         } catch (\Throwable $e) {
             if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
-            else echo ("(ash) Error: " . $e->getMessage() . "\n");
+            else echo ("Error: " . $e->getMessage() . "\n");
             return;
         }
         $this->handleStream($stream);
@@ -168,7 +168,7 @@ class OpenAI
 
     private function handleStream($stream)
     {
-        echo ("\r(ash)\t");
+        echo ("\r");
         $function_call = null;
         $full_response = "";
         $line = "";
@@ -180,13 +180,13 @@ class OpenAI
             if (isset($reply["delta"]["function_call"]["name"])) {
                 $function_call = $reply["delta"]["function_call"]["name"];
                 $functionNameDisplay = str_replace("_", " ", $function_call);
-                echo ("\r(ash) ✅ Running $functionNameDisplay... %");
+                echo ("\r✅ Running $functionNameDisplay... %");
             }
             if ($function_call) {
                 if (isset($reply["delta"]["function_call"]["arguments"])) {
                     $status_ptr++;
                     if ($status_ptr > 3) $status_ptr = 0;
-                    echo ("\r(ash) ✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
+                    echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
                     $full_response .= $reply["delta"]["function_call"]["arguments"];
                 }
             } else if (isset($reply["delta"]["content"])) {
@@ -197,20 +197,20 @@ class OpenAI
                 if ($line_break_pos !== false) {
                     $output = mb_substr($line, 0, $line_break_pos);
                     $line = mb_substr($line, $line_break_pos + 1);
-                    $output = str_replace("\n", "\n(ash)\t", $output);
+                    $output = str_replace("\n", "\n", $output);
                     $output = str_replace("\\e", "\e", $output);
                     $output = $this->markdownToEscapeCodes($output);
-                    echo ("$output\n(ash)\t");
+                    echo ("$output\n");
                 } else {
                     if (mb_strlen($line) > 70) {
                         $wrapped_text = wordwrap($line, 70, "\n", true);
                         $line_break_pos = mb_strrpos($wrapped_text, "\n");
                         $output = mb_substr($wrapped_text, 0, $line_break_pos);
                         $line = mb_substr($wrapped_text, $line_break_pos + 1);
-                        $output = str_replace("\n", "\n(ash)\t", $output);
+                        $output = str_replace("\n", "\n", $output);
                         $output = str_replace("\\e", "\e", $output);
                         $output = $this->markdownToEscapeCodes($output);
-                        echo ("$output\n(ash)\t");
+                        echo ("$output\n");
                     }
                 }
             }
@@ -221,7 +221,7 @@ class OpenAI
         } else {
             if ($line != "") {
                 $output = wordwrap($line, 70, "\n", true);
-                $output = str_replace("\n", "\n(ash)\t", $output);
+                $output = str_replace("\n", "\n", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->markdownToEscapeCodes($output);
                 echo trim($output) . "\n";
@@ -230,8 +230,8 @@ class OpenAI
             $this->history->saveMessage($assistant_message);
         }
         if ($this->ash->debug) {
-            if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
-            else echo ("(ash) Response complete.\n");
+            if ($function_call) echo ("✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
+            else echo ("Response complete.\n");
         }
     }
 

@@ -37,27 +37,27 @@ class Commands
                 return "";
             case "color":
                 $this->ash->config->setColorSupport(!$this->ash->config->config["color_support"]);
-                if ($this->ash->config->config["color_support"]) return "(ash) Color support enabled.\n";
-                else return "(ash) Color support disabled.\n";
+                if ($this->ash->config->config["color_support"]) return "Color support enabled.\n";
+                else return "Color support disabled.\n";
             case "emoji":
                 $this->ash->config->setEmojiSupport(!$this->ash->config->config["emoji_support"]);
-                if ($this->ash->config->config["emoji_support"]) return "(ash) Emoji support enabled 🙂\n";
-                else return "(ash) Emoji support disabled.\n";
+                if ($this->ash->config->config["emoji_support"]) return "Emoji support enabled 🙂\n";
+                else return "Emoji support disabled.\n";
             case "openai-key":
                 $openaiApiKey = "";
                 while (true) {
-                    $openaiApiKey = readline("(ash) Enter your OpenAI API key: ");
+                    $openaiApiKey = readline("Enter your OpenAI API key: ");
                     if (strlen($openaiApiKey) == 51 && substr($openaiApiKey, 0, 3) == "sk-") break;
-                    echo "(ash) Error: Invalid API key.\n";
+                    echo "Error: Invalid API key.\n";
                 }
                 $this->ash->config->setOpenAIKey($openaiApiKey);
-                return "(ash) OpenAI API key updated.\n";
+                return "OpenAI API key updated.\n";
             case "openai-model":
                 $this->ash->openai->selectModel(true);
-                return "(ash) OpenAI model updated.\n";
+                return "OpenAI model updated.\n";
             case "openai-tokens":
                 $this->ash->openai->selectMaxTokens(true);
-                return "(ash) OpenAI max tokens updated.\n";
+                return "OpenAI max tokens updated.\n";
         }
         if (substr($input, 0, 3) == "cd ") {
             $targetDir = substr($input, 3);
@@ -66,7 +66,7 @@ class Commands
             if (is_dir($target_dir)) {
                 $this->ash->sysInfo->setLastDir($this->ash->sysInfo->sysInfo['workingDir']);
                 chdir($target_dir);
-            } else echo "(ash) Error: Directory not found: $target_dir\n";
+            } else echo "Error: Directory not found: $target_dir\n";
             return "";
         }
         return false;

@@ -9,7 +9,7 @@ class SysInfo
     public function __construct(private $ash)
     {
         $this->refresh();
-        if ($ash->debug) echo "(ash) sysInfo: " . print_r($this->sysInfo, true) . "\n";
+        if ($ash->debug) echo "sysInfo: " . print_r($this->sysInfo, true) . "\n";
     }
 
     public function __toArray()

@@ -14,7 +14,7 @@ class Ash
     public function __construct()
     {
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            echo "(ash) Error: This program is for Linux only.\n";
+            echo "Error: This program is for Linux only.\n";
             exit(1);
         }
         if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
@@ -42,8 +42,8 @@ class Ash
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->sysInfo->refresh();
-            if ($this->config->config['colorSupport']) $this->prompt = "(ash) [{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} \e[35m{$this->sysInfo->sysInfo['workingFolder']}\e[0m]# ";
-            else $this->prompt = "(ash) [{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} {$this->sysInfo->sysInfo['workingFolder']}]# ";
+            if ($this->config->config['colorSupport']) $this->prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} \e[35m{$this->sysInfo->sysInfo['workingFolder']}\e[0m]# ";
+            else $this->prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} {$this->sysInfo->sysInfo['workingFolder']}]# ";
             $input = readline($this->prompt);
             readline_add_history($input);
             $input = trim($input);

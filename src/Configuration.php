@@ -28,7 +28,7 @@ class Configuration
         } else {
             $this->config = json_decode(file_get_contents($this->configFilePath), true);
         }
-        if ($this->config['debug']) echo "(ash) config: " . print_r($this->config, true) . "\n";
+        if ($this->config['debug']) echo "config: " . print_r($this->config, true) . "\n";
     }
 
     public function saveConfig()
@@ -38,35 +38,35 @@ class Configuration
 
     public function initialConfig()
     {
-        echo ("(ash) Initial configuration wizard...\n");
+        echo ("Initial configuration wizard...\n");
         $emailAddress = "";
         while (true) {
-            $emailAddress = readline("(ash) Enter an emergency contact email [default: none]: ");
+            $emailAddress = readline("Enter an emergency contact email [default: none]: ");
             if (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) || $emailAddress == "") break;
-            echo "(ash) Error: Invalid email address.\n";
+            echo "Error: Invalid email address.\n";
         }
         $fromAddress = "";
         while (true) {
-            $fromAddress = readline("(ash) Enter the from email address [default: none]: ");
+            $fromAddress = readline("Enter the from email address [default: none]: ");
             if (filter_var($fromAddress, FILTER_VALIDATE_EMAIL) || $fromAddress == "") break;
-            echo "(ash) Error: Invalid email address.\n";
+            echo "Error: Invalid email address.\n";
         }
         $openaiApiKey = "";
         while (true) {
-            $openaiApiKey = readline("(ash) Enter your OpenAI API key: ");
+            $openaiApiKey = readline("Enter your OpenAI API key: ");
             if (strlen($openaiApiKey) == 51 && substr($openaiApiKey, 0, 3) == "sk-") break;
-            echo "(ash) Error: Invalid API key.\n";
+            echo "Error: Invalid API key.\n";
         }
-        $color_support = readline("(ash) Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
+        $color_support = readline("Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ");
         $color_support = strtolower(substr($color_support, 0, 1));
         if ($color_support == "y" || $color_support == "") $color_support = true;
         else $color_support = false;
-        $emoji_support = readline("(ash) Enable emoji support? ✅ [Y/n]: ");
+        $emoji_support = readline("Enable emoji support? ✅ [Y/n]: ");
         $emoji_support = strtolower(substr($emoji_support, 0, 1));
         if ($emoji_support == "y" || $emoji_support == "") $emoji_support = true;
         else $emoji_support = false;
 
-        $debug = readline("(ash) Enable debug mode? [y/N]: ");
+        $debug = readline("Enable debug mode? [y/N]: ");
         $debug = strtolower(substr($debug, 0, 1));
         if ($debug == "y") $debug = true;
         else $debug = false;

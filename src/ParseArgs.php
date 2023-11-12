@@ -20,7 +20,7 @@ class ParseArgs
                     break;
                 case "/d":
                     $ash->debug = true;
-                    echo "(ash) Debug mode enabled.\n";
+                    echo "Debug mode enabled.\n";
                     break;
                 case "/r":
                     (new Composer())->install_dependencies($ash->debug);
@@ -29,7 +29,7 @@ class ParseArgs
                     shell_exec("rm -rfv " . __DIR__ . "/conf.d");
                     shell_exec("rm -rfv " . __DIR__ . "/vendor");
                     shell_exec("rm -rfv " . __DIR__ . "/composer.lock");
-                    die("(ash) Uninstalled.\n");
+                    die("Uninstalled.\n");
             }
         }
     }
