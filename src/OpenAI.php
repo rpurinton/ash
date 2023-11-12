@@ -13,6 +13,7 @@ class OpenAI
     public $runningProcess = null;
     private $util = null;
     public $history = null;
+    public $functionHandlers = [];
 
     public function __construct(private $ash)
     {
@@ -263,7 +264,13 @@ class OpenAI
     {
         exec('ls ' . __DIR__ . '/functions.d/*.json', $functions);
         $result = [];
-        foreach ($functions as $function) $result[] = json_decode(file_get_contents($function), true);
+        foreach ($functions as $function) {
+            $handlerFile = str_replace(".json", ".php", $function);
+            if (file_exists($handlerFile)) {
+                include($handlerFile);
+                $result[] = json_decode(file_get_contents($function), true);
+            }
+        }
         return $result;
     }
 }
