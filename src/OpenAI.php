@@ -168,7 +168,7 @@ class OpenAI
 
     private function handleStream($stream)
     {
-        echo ("\b\b\b");
+        echo ("\r(ash)\t");
         $function_call = null;
         $full_response = "";
         $line = "";
@@ -179,13 +179,14 @@ class OpenAI
             $finish_reason = $reply["finish_reason"];
             if (isset($reply["delta"]["function_call"]["name"])) {
                 $function_call = $reply["delta"]["function_call"]["name"];
-                echo ("\b✅ Running $function_call... %\n");
+                $functionNameDisplay = str_replace("_", " ", $function_call);
+                echo ("\r(ash) ✅ Running $functionNameDisplay... %");
             }
             if ($function_call) {
                 if (isset($reply["delta"]["function_call"]["arguments"])) {
                     $status_ptr++;
                     if ($status_ptr > 3) $status_ptr = 0;
-                    echo ("\b" . $status_chars[$status_ptr]);
+                    echo ("\r(ash) Running $functionNameDisplay... " . $status_chars[$status_ptr]);
                     $full_response .= $reply["delta"]["function_call"]["arguments"];
                 }
             } else if (isset($reply["delta"]["content"])) {
@@ -217,10 +218,11 @@ class OpenAI
         if ($function_call) {
             $arguments = json_decode($full_response, true);
             $this->handleFunctionCall($function_call, $arguments);
-            echo ("\bdone.");
+            echo ("\r(ash) ✅ Running $functionNameDisplay... done.\n");
         } else {
             if ($line != "") {
-                $output = str_replace("\n", "\n(ash)\t", $line);
+                $output = wordwrap($line, 70, "\n", true);
+                $output = str_replace("\n", "\n(ash)\t", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->markdownToEscapeCodes($output);
                 echo ($output);
@@ -233,6 +235,11 @@ class OpenAI
             if ($function_call) echo ("(ash) ✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
             else echo ("(ash) Response complete.\n");
         }
+    }
+
+    private function functionNameDisplay($function_call)
+    {
+        return str_replace("_", " ", $function_call);
     }
 
     private function handleFunctionCall($function_call, $arguments)
