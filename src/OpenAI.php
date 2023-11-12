@@ -96,6 +96,7 @@ class OpenAI
     {
         $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"]]);
         $messages = $this->buildPrompt();
+        /*
         $messages[] = ["role" => "system", "content" => "Write a welcome or login banner for SSH that can contain several helpful elements for users when they log in. You might include the following information:
 
             System name and purpose - A brief identifier of the server, such as Welcome to the Acme Corporation's production server.
@@ -107,6 +108,7 @@ class OpenAI
             Last login information - To remind users of their last session, useful for security.
             Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled.
             It's essential to keep it concise to prevent overwhelming the user upon each login."];
+        */
         $this->handlePromptAndResponse($messages);
     }
 
