@@ -63,7 +63,11 @@ class History
             if ($token_count <= $num_tokens) {
                 unset($message["tokens"]);
                 $result[] = $message;
-            } else $token_count -= $message["tokens"];
+            } else {
+                $token_count -= $message["tokens"] + 10;
+                $result[] = ["role" => $message["role"], "content" => "*an Oversize history message was removed*"];
+                if ($token_count >= $num_tokens) break;
+            }
         }
         if ($this->ash->debug) echo "debug: getHistory($num_tokens) results: " . count($result) . "\n";
         return array_reverse($result);
