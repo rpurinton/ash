@@ -204,8 +204,8 @@ class OpenAI
                     $output = $this->markdownToEscapeCodes($output);
                     echo ("$output\n");
                 } else {
-                    if (mb_strlen($line) > 70) {
-                        $wrapped_text = wordwrap($line, 70, "\n", true);
+                    if (mb_strlen($line) > $this->ash->sysInfo->sysInfo['terminalColumns']) {
+                        $wrapped_text = wordwrap($line, $this->ash->sysInfo->sysInfo['terminalColumns'], "\n", true);
                         $line_break_pos = mb_strrpos($wrapped_text, "\n");
                         $output = mb_substr($wrapped_text, 0, $line_break_pos);
                         $line = mb_substr($wrapped_text, $line_break_pos + 1);
@@ -222,7 +222,7 @@ class OpenAI
             $this->handleFunctionCall($function_call, $arguments);
         } else {
             if ($line != "") {
-                $output = wordwrap($line, 70, "\n", true);
+                $output = wordwrap($line, $this->ash->sysInfo->sysInfo['terminalColumns'], "\n", true);
                 $output = str_replace("\n", "\n", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->markdownToEscapeCodes($output);

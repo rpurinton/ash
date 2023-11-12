@@ -36,6 +36,8 @@ class SysInfo
             'ashEmailAddress' => 'not set',
             'termColorSupport' => $this->ash->config->config['colorSupport'] ? "yes" : "no",
             'termEmojiSupport' => $this->ash->config->config['emojiSupport'] ? "✅" : "no",
+            'terminalLines' => trim(shell_exec("tput lines")),
+            'terminalColumns' => trim(shell_exec("tput cols")),
             'currentDate' => trim(shell_exec("date")),
             'userId' => trim(shell_exec("whoami")),
             'homeDir' => trim(shell_exec("echo ~")),
