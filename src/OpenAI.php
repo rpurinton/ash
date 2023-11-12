@@ -125,7 +125,7 @@ class OpenAI
         $dynamic_prompt .= "Here is the current situation: " . print_r($this->ash->sysInfo->sysInfo, true);
         if ($this->ash->config->config['emojiSupport']) $dynamic_prompt .= "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n";
         else $dynamic_prompt .= "Emoji support disabled. Do not send emoji!\n";
-        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Terminal \e[31mcolor \e[32msupport\e[0m enabled! use it to highlight keywords and such.  for example use purple for directory or folder names, green for commands, and red for errors, blue for symlinks, gray for data files etc. blue for URLs, etc. You can also use alternating colors when displaying tables of information to make them easier to read.  \e[31mred \e[32mgreen \e[33myellow \e[34mblue \e[35mpurple \e[36mcyan \e[37mgray \e[0m.  Don't send the escape codes, send the actual unescaped color control symbols.\n";
+        if ($this->ash->config->config['colorSupport']) $dynamic_prompt .= "Use copious amounts of escape codes! Feel free to use them gratuitously in the future to add more style and emphasis to all your outputs including combinations of colors, bold, underline, and italics!\n";
         else $dynamic_prompt .= "Terminal color support disabled. Do not send color codes!\n";
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
