@@ -95,7 +95,7 @@ class OpenAI
     {
         $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"]]);
         $messages = $this->buildPrompt();
-        $messages[] = ["role" => "system", "content" => "A welcome or login banner for SSH can contain several helpful elements for users when they log in. You might include the following information:
+        $messages[] = ["role" => "system", "content" => "Write a welcome or login banner for SSH that can contain several helpful elements for users when they log in. You might include the following information:
 
             System name and purpose - A brief identifier of the server, such as Welcome to the Acme Corporation's production server.
             Contact information - In case of issues, provide a point of contact, like an email address or phone number.
@@ -129,7 +129,7 @@ class OpenAI
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));
-        $messages[] = ["role" => "system", "content" => "Make sure your message 'computer-like' as in terse, direct language. Don't try to sound human."];
+        $messages[] = ["role" => "system", "content" => "Make sure your message is 'computer-like' as in terse, direct language. Don't try to sound human."];
         return $messages;
     }
 
