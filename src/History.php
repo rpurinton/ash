@@ -38,7 +38,15 @@ class History
     public function saveMessage($message)
     {
         if ($this->ash->debug) echo "debug: saving message: " . print_r($message, true) . "\n";
-        $message["tokens"] = $this->util->tokenCount($message["content"]);
+        if ($message["role"] == "assistant" && isset($message["function_call"])) {
+            $message["tokens"] = $this->util->tokenCount($message["function_call"]["arguments"]);
+        } else if ($message["role"] == "function") {
+            $message["tokens"] = $this->util->tokenCount($message["content"]);
+        } else if ($message["role"] == "assistant" || $message["role"] == "user" || $message["role"] == "system") {
+            $message["tokens"] = $this->util->tokenCount($message["content"]);
+        } else {
+            $message["tokens"] = 0;
+        }
         $this->history[] = $message;
         file_put_contents($this->historyFile, json_encode($message) . "\n", FILE_APPEND);
     }
