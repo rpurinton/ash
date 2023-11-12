@@ -33,18 +33,18 @@ class Util
         $text = str_replace("\\e", "\e", $text);
         $text = str_replace("```", "", $text);
         if ($color_support) {
-            $text = preg_replace("/(?<!\S)\*\*(.*?)\*\*(?!\S)/", "\e[1m$1\e[0m", $text);
-            $text = preg_replace("/(?<!\S)\*(.*?)\*(?!\S)/", "\e[3m$1\e[0m", $text);
-            $text = preg_replace("/(?<!\S)\_(.*?)\_(?!\S)/", "\e[3m$1\e[0m", $text);
-            $text = preg_replace("/(?<!\S)\~(.*?)\~(?!\S)/", "\e[9m$1\e[0m", $text);
-            $text = preg_replace("/(?<!\S)\`(.*?)\`(?!\S)/", "\e[7m$1\e[0m", $text);
+            $text = preg_replace("/(?<![^\s.])\*\*(.*?)\*\*(?![^\s.])/", "\e[1m$1\e[0m", $text);
+            $text = preg_replace("/(?<![^\s.])\*(.*?)\*(?![^\s.])/", "\e[3m$1\e[0m", $text);
+            $text = preg_replace("/(?<![^\s.])\_(.*?)\_(?![^\s.])/", "\e[3m$1\e[0m", $text);
+            $text = preg_replace("/(?<![^\s.])\~(.*?)\~(?![^\s.])/", "\e[9m$1\e[0m", $text);
+            $text = preg_replace("/(?<![^\s.])\`(.*?)\`(?![^\s.])/", "\e[7m$1\e[0m", $text);
             return $text;
         } else {
-            $text = preg_replace("/(?<!\S)\*\*(.*?)\*\*(?!\S)/", "$1", $text);
-            $text = preg_replace("/(?<!\S)\*(.*?)\*(?!\S)/", "$1", $text);
-            $text = preg_replace("/(?<!\S)\_(.*?)\_(?!\S)/", "$1", $text);
-            $text = preg_replace("/(?<!\S)\~(.*?)\~(?!\S)/", "$1", $text);
-            $text = preg_replace("/(?<!\S)\`(.*?)\`(?!\S)/", "$1", $text);
+            $text = preg_replace("/(?<![^\s.])\*\*(.*?)\*\*(?![^\s.])/", "$1", $text);
+            $text = preg_replace("/(?<![^\s.])\*(.*?)\*(?![^\s.])/", "$1", $text);
+            $text = preg_replace("/(?<![^\s.])\_(.*?)\_(?![^\s.])/", "$1", $text);
+            $text = preg_replace("/(?<![^\s.])\~(.*?)\~(?![^\s.])/", "$1", $text);
+            $text = preg_replace("/(?<![^\s.])\`(.*?)\`(?![^\s.])/", "$1", $text);
             return $text;
         }
     }
