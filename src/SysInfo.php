@@ -12,11 +12,6 @@ class SysInfo
         if ($ash->debug) echo "sysInfo: " . print_r($this->sysInfo, true) . "\n";
     }
 
-    public function __toArray()
-    {
-        return $this->sysInfo;
-    }
-
     public function refresh()
     {
         $this->sysInfo = [
