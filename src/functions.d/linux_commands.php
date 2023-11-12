@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['linux_command'] = function ($args) {
+$this->functionHandlers['linux_commands'] = function ($args) {
     if ($this->ash->debug) echo ("debug: linux_command(" . print_r($args, true) . ")\n");
     $procExec = function (array $input): array {
         if ($this->ash->debug) echo ("debug: proc_exec(" . print_r($input, true) . ")\n");
