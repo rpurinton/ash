@@ -9,6 +9,14 @@ class Configuration
 
     public function __construct()
     {
+        require_once(__DIR__ . "/vendor/autoload.php");
+        require_once(__DIR__ . "/Util.php");
+        require_once(__DIR__ . "/OpenAI.php");
+        require_once(__DIR__ . "/History.php");
+        require_once(__DIR__ . "/Commands.php");
+        require_once(__DIR__ . "/ParseArgs.php");
+        require_once(__DIR__ . "/SysInfo.php");
+        require_once(__DIR__ . "/ModelPicker.php");
         $this->configFilePath = __DIR__ . '/conf.d/config.json';
         $this->loadConfig();
     }
