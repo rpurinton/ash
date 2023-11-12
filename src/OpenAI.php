@@ -217,6 +217,7 @@ class OpenAI
                 }
             }
         }
+
         if ($function_call) {
             $arguments = json_decode($full_response, true);
             $this->handleFunctionCall($function_call, $arguments);
@@ -237,11 +238,6 @@ class OpenAI
         }
     }
 
-    private function functionNameDisplay($function_call)
-    {
-        return str_replace("_", " ", $function_call);
-    }
-
     private function handleFunctionCall($function_call, $arguments)
     {
         if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ")\n");
@@ -253,7 +249,7 @@ class OpenAI
             if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ") result: " . print_r($result, true) . "\n");
             $this->functionFollowUp($function_call, $result);
             return;
-        } else $this->functionFollowUp($function_call, ["stderr" => "Error (ash): function handler for $function_call not found.", "exitCode" => -1]);
+        } else $this->functionFollowUp($function_call, ["stdout" => "", "stderr" => "Error (ash): function handler for $function_call not found.  Does ash/src/functions.d/$function_call.php exist?", "exitCode" => -1]);
         return;
     }
 
@@ -296,10 +292,10 @@ class OpenAI
         exec('ls ' . __DIR__ . '/functions.d/*.json', $functions);
         $result = [];
         foreach ($functions as $function) {
+            $result[] = json_decode(file_get_contents($function), true);
             $handlerFile = str_replace(".json", ".php", $function);
             if (file_exists($handlerFile)) {
                 include($handlerFile);
-                $result[] = json_decode(file_get_contents($function), true);
             }
         }
         return $result;
