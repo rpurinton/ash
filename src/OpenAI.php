@@ -17,7 +17,7 @@ class OpenAI
     public function __construct(private $ash)
     {
         $this->util = new Util();
-        $this->history = new History($this->util);
+        $this->history = new History($this->util, $this->ash);
         $this->client = \OpenAI::client($this->ash->config->config['openaiApiKey']);
         $models = $this->client->models()->list()->data;
         foreach ($models as $model) if (mb_substr($model->id, 0, 3) == 'gpt') $this->models[] = $model->id;

@@ -7,7 +7,7 @@ class History
     private $historyFile = "";
     private $history = [];
 
-    public function __construct(private $util)
+    public function __construct(private $util, private $ash)
     {
         $this->historyFile = trim(shell_exec("echo ~")) . "/.ash_history.jsonl";
         $this->loadHistory();
@@ -20,6 +20,7 @@ class History
 
     public function loadHistory()
     {
+        if ($this->ash->debug) echo ("(ash) Loading history from " . $this->historyFile . "\n");
         if (file_exists($this->historyFile)) {
             $history_jsonl = file_get_contents($this->historyFile);
             $history_jsonl = explode("\n", $history_jsonl);
@@ -31,10 +32,12 @@ class History
         } else {
             $this->history = [];
         }
+        if ($this->ash->debug) echo "(ash) loaded messages: " . count($this->history) . "\n";
     }
 
     public function saveMessage($message)
     {
+        if ($this->ash->debug) echo "(ash) saving message: " . print_r($message, true) . "\n";
         $message["tokens"] = $this->util->tokenCount($message["content"]);
         $this->history[] = $message;
         file_put_contents($this->historyFile, json_encode($message) . "\n", FILE_APPEND);
@@ -42,7 +45,9 @@ class History
 
     public function getHistory($num_tokens)
     {
-        $rev_history = array_reverse($this->history);
+        if ($this->ash->debug) echo "(ash) getHistory($num_tokens)\n";
+        if ($this)
+            $rev_history = array_reverse($this->history);
         $token_count = 0;
         $result = [];
         foreach ($rev_history as $message) {
@@ -55,11 +60,13 @@ class History
                 break;
             }
         }
+        if ($this->ash->debug) echo "(ash) getHistory($num_tokens) results: " . count($result) . "\n";
         return array_reverse($result);
     }
 
     public function clearHistory()
     {
+        if ($this->ash->debug) echo "(ash) clearing history...\n";
         $this->history = [];
         file_put_contents($this->historyFile, "");
     }
