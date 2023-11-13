@@ -1,6 +1,6 @@
 {
     "name": "get_sys_info",
-    "description": "Check a whole bunch of information all at once including /etc/release, uname -a, hostname, ip addr, /etc/hosts, uptime, free-mh, df -h systemctl --failed, ss-tunalp, contact info, terminal settings, date, user id, and directory info.",
+    "description": "Check a whole bunch of information all at once including /etc/release, uname -a, hostname, ip addr, /etc/hosts, uptime, free -mh, df -h, systemctl --failed, ss -tunalp, email info, terminal settings, date and time, current user id, home, and working directory info.",
     "parameters": {
         "type": "object",
         "properties": {
