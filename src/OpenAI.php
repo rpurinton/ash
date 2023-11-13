@@ -53,11 +53,15 @@ class OpenAI
 
     private function buildPrompt()
     {
-        $dynamic_prompt = "Please use the last user message text before this as your primary point of context.  The rest of this just for situational awareness.\n";
-        $dynamic_prompt .= "Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short.\n";
-        $dynamic_prompt .= "Current System Info: " . print_r($this->ash->sysInfo->sysInfo, true);
-        $dynamic_prompt .= $this->ash->config->config['emojiSupport'] ? "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n" : "Emoji support disabled. Do not send emoji!\n";
-        $dynamic_prompt .= $this->ash->config->config['colorSupport'] ? "Instead of Markdown, Use ANSI escape codes to add more style and emphasis to all your outputs including combinations of \e[95mcolors\e[0m, \e[1mbold\e[0m, \e[3mitalic\e[0m, \e[4munderline\e[0m, \e[9mstrikethrough\e[0m, \e[7minverted\e[0m, and \e[4;9;7mcombinations\e[0m!\nAlways prefer the 'light' variant like 'light blue' over 'blue' to ensure maximum compatibility with all terminal color schemes.\n" : "Terminal color support disabled. Do not send ANSI color/style codes!\n";
+        $dynamic_prompt = "SYSTEM: Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short.\n";
+        $dynamic_prompt .= "SYSTEM: Current System Info: " . print_r($this->ash->sysInfo->sysInfo, true);
+        $dynamic_prompt .= "SYSTEM: " . ($this->ash->config->config['emojiSupport'] ? "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n" : "Emoji support disabled. Do not send emoji!\n");
+        $dynamic_prompt .= "SYSTEM: " . ($this->ash->config->config['colorSupport'] ? "Instead of Markdown, Use ANSI escape codes to add more style and emphasis to all your outputs including combinations of \e[95mcolors\e[0m, \e[1mbold\e[0m, \e[3mitalic\e[0m, \e[4munderline\e[0m, \e[9mstrikethrough\e[0m, \e[7minverted\e[0m, and \e[4;9;7mcombinations\e[0m!\nAlways prefer the 'light' variant like 'light blue' over 'blue' to ensure maximum compatibility with all terminal color schemes.\n" : "Terminal color support disabled. Do not send ANSI color/style codes!\n");
+        $dynamic_prompt .= "SYSTEM: Please do as much as you can to make sure the user has a good experience.  Take the lead in running any functions that may be needed, without prompting the user too much.  Assume they may be a novice.\n";
+        $dynamic_prompt .= "SYSTEM: If problems arise, please iterate on the issue.  Example, update config, restart service, check logs, update the config again, restart the service again, check the logs again, etc. Until it gets resolved or until you have exhausted all options.\n";
+        $dynamic_prompt .= "SYSTEM: Please use the last USER message text before this as your primary point of context.";
+        $dynamic_prompt .= "ASSISTANT: ";
+        $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $messages[] = ["role" => "system", "content" => $this->basePrompt];
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
