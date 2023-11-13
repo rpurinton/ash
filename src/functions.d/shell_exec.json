@@ -1,6 +1,6 @@
 {
     "name": "shell_exec",
-    "description": "run any safe linux command using shell_exec",
+    "description": "run any safe linux command using shell_exec.  Use proc_open instead preferably, but you can try this as a failback if proc_open isn't working.  use ssh_exec instead to run commands on another host.",
     "parameters": {
         "type": "object",
         "properties": {
