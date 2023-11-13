@@ -64,9 +64,7 @@ class History
                 unset($message["tokens"]);
                 $result[] = $message;
             } else {
-                $token_count -= $message["tokens"] + 12;
-                $result[] = ["role" => "system", "content" => "Warning: an Oversize history message was omitted here."];
-                if ($token_count >= $num_tokens) break;
+                $token_count -= $message["tokens"];
             }
         }
         if ($this->ash->debug) echo "debug: getHistory($num_tokens) results: " . count($result) . "\n";
