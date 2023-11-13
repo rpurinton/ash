@@ -119,7 +119,7 @@ class OpenAI
                     $function_call = $reply["delta"]["function_call"]["name"];
                     $functionNameDisplay = str_replace("_", " ", $function_call);
                     if ($shell) echo ("\r");
-                    echo ("✅ Running $functionNameDisplay... %");
+                    echo ("✅ Running $functionNameDisplay... % ");
                 }
                 if ($function_call) {
                     if (isset($reply["delta"]["function_call"]["arguments"])) {
