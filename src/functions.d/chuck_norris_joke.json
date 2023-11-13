@@ -1,0 +1,14 @@
+{
+    "name": "chuck_norris_joke",
+    "description": "Fetch a random Chuck Norris joke from the Chuck Norris API.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "rand_int": {
+                "type": "integer",
+                "description": "A random integer to help prevent caching."
+            },
+            "required": []
+        }
+    }
+}
