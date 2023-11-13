@@ -57,14 +57,4 @@ class Ash
             $this->openai->userMessage($input);
         }
     }
-
-    public function run_once($input)
-    {
-        $internal_command_result = $this->commands->internalCommands($input);
-        if ($internal_command_result !== false) {
-            echo $internal_command_result;
-            return;
-        }
-        $this->openai->userMessage($input);
-    }
 }
