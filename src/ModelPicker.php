@@ -24,13 +24,12 @@ class ModelPicker
         // Prompt the user to select a model
         while (true) {
             $model_count = count($this->openai->models);
-            $prompt = "Please select an OpenAI GPT model to use:" . PHP_EOL;
+            $prompt = "Please select an OpenAI GPT model to use:\001\n\002";
             for ($i = 0; $i < $model_count; $i++) {
-                $prompt .= "[$i] {$this->openai->models[$i]}" . PHP_EOL;
+                $prompt .= "[$i] {$this->openai->models[$i]}\001\n\002";
             }
             $prompt .= "Enter the number of the model to use (default: 0 ({$this->openai->models[0]})): ";
-            echo $prompt;
-            $model_index = readline("");
+            $model_index = readline($prompt);
             if ($model_index == "") $model_index = 0;
 
             // Check if the selected model is valid

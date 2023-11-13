@@ -57,8 +57,7 @@ class Configuration
             if (strlen($openaiApiKey) == 51 && substr($openaiApiKey, 0, 3) == "sk-") break;
             echo "Error: Invalid API key.\n";
         }
-        echo "Enable \e[31mcolor \e[32msupport?\e[0m [Y/n]: ";
-        $colorSupport = readline("");
+        $colorSupport = readline("Enable \001\e[31m\002color \001\e[32m\002support?\001\e[0m\002 [Y/n]: ");
         $colorSupport = strtolower(substr($colorSupport, 0, 1));
         if ($colorSupport == "y" || $colorSupport == "") $colorSupport = true;
         else $colorSupport = false;

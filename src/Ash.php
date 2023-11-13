@@ -43,10 +43,9 @@ class Ash
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->sysInfo->refresh();
-            if ($this->config->config['colorSupport']) $prompt = "[" . $this->sysInfo->sysInfo['userId'] . "@" . $this->sysInfo->sysInfo['hostName'] . " " . "\e[95m" . $this->sysInfo->sysInfo['workingFolder'] . "\e[0m" . "]# ";
+            if ($this->config->config['colorSupport']) $prompt = "[" . $this->sysInfo->sysInfo['userId'] . "@" . $this->sysInfo->sysInfo['hostName'] . " " . "\001\e[95m\002" . $this->sysInfo->sysInfo['workingFolder'] . "\001\e[0m\002" . "]# ";
             else $prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} {$this->sysInfo->sysInfo['workingFolder']}]# ";
-            echo $prompt;
-            $input = readline("");
+            $input = readline($prompt);
             readline_add_history($input);
             $input = trim($input);
             if ($this->debug) echo ("debug: input: $input\n");
