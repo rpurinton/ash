@@ -9,7 +9,7 @@ $this->functionHandlers['ash_exec'] = function ($args) {
     $host = escapeshellarg($host);
     $message = escapeshellarg($message);
     // Use SSH to execute the command on the remote host
-    $sshCommand = "ssh $host \"ash /m '$message'\"";
+    $sshCommand = "ssh $host \"ash /m $message\"";
     exec($sshCommand, $output, $return_var);
 
     $result = [
