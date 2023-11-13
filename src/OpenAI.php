@@ -142,8 +142,8 @@ class OpenAI
                         $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
                         echo ("$output\n");
                     } else {
-                        if (mb_strlen($line) > $this->ash->sysInfo->sysInfo['terminalColumns']) {
-                            $wrapped_text = wordwrap($line, $this->ash->sysInfo->sysInfo['terminalColumns'], "\n", true);
+                        if (mb_strlen($line) > is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 80) {
+                            $wrapped_text = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
                             $line_break_pos = mb_strrpos($wrapped_text, "\n");
                             $output = mb_substr($wrapped_text, 0, $line_break_pos);
                             $line = mb_substr($wrapped_text, $line_break_pos + 1);
