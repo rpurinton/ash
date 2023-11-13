@@ -55,6 +55,7 @@ class Ash
                 echo $internal_command_result;
                 continue;
             }
+            $this->sysInfo->refresh();
             $this->openai->userMessage($input);
         }
     }
