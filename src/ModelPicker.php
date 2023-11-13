@@ -29,7 +29,8 @@ class ModelPicker
                 $prompt .= "[$i] {$this->openai->models[$i]}" . PHP_EOL;
             }
             $prompt .= "Enter the number of the model to use (default: 0 ({$this->openai->models[0]})): ";
-            $model_index = readline($prompt);
+            echo $prompt;
+            $model_index = readline("");
             if ($model_index == "") $model_index = 0;
 
             // Check if the selected model is valid
