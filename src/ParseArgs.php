@@ -24,7 +24,7 @@ class ParseArgs
                     break;
                 case "/m":
                 case "/message":
-                    $ash->openai->userMessage($argv[$key + 1]);
+                    $ash->openai->userMessage($argv[$key + 1], false);
                     die();
                 case "/reconfig":
                     $ash->config->initialConfig();

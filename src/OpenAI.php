@@ -47,7 +47,7 @@ class OpenAI
     public function userMessage($input, $shell = true)
     {
         $this->history->saveMessage(["role" => "user", "content" => $input]);
-        $this->handlePromptAndResponse($this->buildPrompt(), $shell);
+        $this->handlePromptAndResponse($this->buildPrompt($shell), $shell);
     }
 
     private function buildPrompt($shell = true)
@@ -100,7 +100,7 @@ class OpenAI
             else echo ("Error: " . $e->getMessage() . "\n");
             return;
         }
-        $this->handleStream($stream);
+        $this->handleStream($stream, $shell);
     }
 
     private function handleStream($stream, $shell = true)
