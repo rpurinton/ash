@@ -60,7 +60,6 @@ class OpenAI
         $dynamic_prompt .= "SYSTEM: Please do as much as you can to make sure the user has a good experience.  Take the lead in running any functions that may be needed, without prompting the user too much.  Assume they may be a novice.\n";
         $dynamic_prompt .= "SYSTEM: If problems arise, please iterate on the issue.  Example, update config, restart service, check logs, update the config again, restart the service again, check the logs again, etc. Until it gets resolved or until you have exhausted all options.\n";
         $dynamic_prompt .= "SYSTEM: Please use the last USER message text before this as your primary point of context.";
-        $dynamic_prompt .= "ASSISTANT: ";
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $messages[] = ["role" => "system", "content" => $this->basePrompt];
         $messages[] = ["role" => "system", "content" => $dynamic_prompt];
