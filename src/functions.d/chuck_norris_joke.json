@@ -7,8 +7,7 @@
             "rand_int": {
                 "type": "integer",
                 "description": "A random integer to help prevent caching."
-            },
-            "required": []
+            }
         }
     }
 }
