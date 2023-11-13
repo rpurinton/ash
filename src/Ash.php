@@ -4,7 +4,6 @@ namespace Rpurinton\Ash;
 
 class Ash
 {
-    public string $prompt = "";
     public bool $debug = false;
     public $openai = null;
     public $config = null;
@@ -44,9 +43,9 @@ class Ash
         pcntl_signal(SIGINT, [$this, "ctrl_c"]);
         while (true) {
             $this->sysInfo->refresh();
-            if ($this->config->config['colorSupport']) $this->prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} " . "\033[95m" . $this->sysInfo->sysInfo['workingFolder'] . "\033[0m" . "]# ";
-            else $this->prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} {$this->sysInfo->sysInfo['workingFolder']}]# ";
-            echo $this->prompt;
+            if ($this->config->config['colorSupport']) $prompt = "[" . $this->sysInfo->sysInfo['userId'] . "@" . $this->sysInfo->sysInfo['hostName'] . " " . "\e[95m" . $this->sysInfo->sysInfo['workingFolder'] . "\e[0m" . "]# ";
+            else $prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} {$this->sysInfo->sysInfo['workingFolder']}]# ";
+            echo $prompt;
             $input = readline("");
             readline_add_history($input);
             $input = trim($input);
