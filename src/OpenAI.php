@@ -50,8 +50,9 @@ class OpenAI
         $this->handlePromptAndResponse($this->buildPrompt(), $shell);
     }
 
-    private function buildPrompt()
+    private function buildPrompt($shell = true)
     {
+        if (!$shell) $this->ash->config->config['colorSupport'] = false;
         $dynamic_prompt = "SYSTEM: Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short.\n";
         $dynamic_prompt .= "SYSTEM: Current sys info: " . print_r($this->ash->sysInfo->sysInfo, true);
         $dynamic_prompt .= "SYSTEM: " . ($this->ash->config->config['emojiSupport'] ? "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n" : "Emoji support disabled. Do not send emoji!\n");
@@ -80,9 +81,10 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        if (!$this->ash->config->config["emojiSupport"]) echo ("Thinking...");
-        else echo ("🧠 Thinking...");
-        if (!$shell) echo ("\n");
+        if ($shell) {
+            if (!$this->ash->config->config["emojiSupport"]) echo ("Thinking...");
+            else echo ("🧠 Thinking...");
+        }
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
@@ -101,7 +103,7 @@ class OpenAI
         $this->handleStream($stream);
     }
 
-    private function handleStream($stream)
+    private function handleStream($stream, $shell = true)
     {
         $function_call = null;
         $full_response = "";
@@ -116,19 +118,20 @@ class OpenAI
                 if (isset($reply["delta"]["function_call"]["name"])) {
                     $function_call = $reply["delta"]["function_call"]["name"];
                     $functionNameDisplay = str_replace("_", " ", $function_call);
-                    echo ("\r✅ Running $functionNameDisplay... %");
+                    if ($shell) echo ("\r");
+                    echo ("✅ Running $functionNameDisplay... %");
                 }
                 if ($function_call) {
                     if (isset($reply["delta"]["function_call"]["arguments"])) {
                         $status_ptr++;
                         if ($status_ptr > 3) $status_ptr = 0;
-                        echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
+                        if ($shell) echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
                         $full_response .= $reply["delta"]["function_call"]["arguments"];
                     }
                 } else if (isset($reply["delta"]["content"])) {
                     if (!$first_sent) {
                         $first_sent = true;
-                        echo ("\r                       \r");
+                        if ($shell) echo ("\r                       \r");
                     }
                     $delta_content = $reply["delta"]["content"];
                     $full_response .= $delta_content;
