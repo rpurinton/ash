@@ -2,6 +2,7 @@
 $this->functionHandlers['shell_exec'] = function ($args) {
     if ($this->ash->debug) echo ("debug: shell_exec(" . print_r($args, true) . ")\n");
     $command = $args['command'];
+    echo ("$ " . $command . "\n");
     $output = shell_exec($command);
     $result = [
         "stdout" => $output,

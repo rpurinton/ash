@@ -24,9 +24,9 @@ class ModelPicker
         // Prompt the user to select a model
         while (true) {
             $model_count = count($this->openai->models);
-            $prompt = "Please select an OpenAI GPT model to use:\n";
+            $prompt = "Please select an OpenAI GPT model to use:" . PHP_EOL;
             for ($i = 0; $i < $model_count; $i++) {
-                $prompt .= "[$i] {$this->openai->models[$i]}\n";
+                $prompt .= "[$i] {$this->openai->models[$i]}" . PHP_EOL;
             }
             $prompt .= "Enter the number of the model to use (default: 0 ({$this->openai->models[0]})): ";
             $model_index = readline($prompt);
@@ -52,11 +52,11 @@ class ModelPicker
         }
 
         while (true) {
-            $prompt = "Please select the maximum tokens you want use for any single request (default: 4096, range [2048-131072]): ";
+            $prompt = "Enter maximum tokens you want use for in request (default: 16384, range [8192-131072]): ";
             $max_tokens = readline($prompt);
-            if ($max_tokens == "") $max_tokens = 4096;
+            if ($max_tokens == "") $max_tokens = 16384;
 
-            if (is_numeric($max_tokens) && $max_tokens >= 2048 && $max_tokens <= 131072) {
+            if (is_numeric($max_tokens) && $max_tokens >= 8192 && $max_tokens <= 131072) {
                 $this->openai->maxTokens = $max_tokens;
                 $this->openai->ash->config->setOpenAITokens($this->openai->maxTokens);
                 return;

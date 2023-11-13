@@ -1,8 +1,15 @@
 <?php
 $this->functionHandlers['proc_open'] = function ($args) {
     if ($this->ash->debug) echo ("debug: proc_open(" . print_r($args, true) . ")\n");
-    $procExec = function (array $input): array {
+    $procExec = function ($input): array {
         if ($this->ash->debug) echo ("debug: proc_exec(" . print_r($input, true) . ")\n");
+        $command = $input['command'] ?? "<not specified?>";
+        echo ("$ " . $command . "\n"); // display just the main argument
+        if ($command == "<not specified?>") return [
+            "stdout" => "",
+            "stderr" => "Error (ash): Missing required fields (command).",
+            "exitCode" => -1,
+        ];
         $env = trim(shell_exec("env | grep -v '^BASH_FUNC_'"));
         // parse it into key-value pairs
         $env = explode("\n", $env);

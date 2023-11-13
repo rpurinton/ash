@@ -38,6 +38,7 @@ $this->functionHandlers['php_code'] = function ($args) {
         $exitCode = proc_close($process);
     }
     unlink($random_file);
+    echo ("done!\n"); // display just the main argument
     $result = ["stdout" => $stdOut, "stderr" => $sdtErr, "exit_code" => $exitCode];
     if ($this->ash->debug) echo ("debug: php_code() result: " . print_r($result, true) . "\n");
     return $result;

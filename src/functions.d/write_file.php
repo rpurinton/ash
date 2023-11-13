@@ -7,7 +7,7 @@ $this->functionHandlers['write_file'] = function ($args) {
     $owner = $args['owner'] ?? "";
     $group = $args['group'] ?? "";
     $chmod = $args['chmod'] ?? "";
-    echo ("$path\n");
+    echo ("$path\n"); // display just the main argument
     if ($append) $result = file_put_contents($path, $content, FILE_APPEND);
     else $result = file_put_contents($path, $content);
     if (($owner != "") && ($group != "")) {

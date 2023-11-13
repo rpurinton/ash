@@ -4,10 +4,20 @@ $this->functionHandlers['send_email'] = function ($args) {
 
     // Extract arguments
     $to = $args['to'] ?? "";
-    $cc = $args['cc'] ?? "";
-    $bcc = $args['bcc'] ?? "";
     $subject = $args['subject'] ?? "";
     $body = $args['body'] ?? "";
+
+    if (!isset($args['to']) || empty($args['to']) || !isset($args['subject']) || empty($args['subject']) || !isset($args['body']) || empty($args['body'])) {
+        $error = "Error (ash): Missing required fields.";
+        if ($this->ash->debug) echo ("debug: send_email() error: $error\n");
+        return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
+    }
+
+    echo ("$to\n"); // display just the main argument
+
+    // Optional arguments
+    $cc = $args['cc'] ?? "";
+    $bcc = $args['bcc'] ?? "";
 
     // Basic validation
     if (empty($to) || empty($subject) || empty($body)) {
