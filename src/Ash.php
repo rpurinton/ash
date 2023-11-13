@@ -24,11 +24,11 @@ class Ash
         }
         require_once(__DIR__ . "/Configuration.php");
         $this->config = new Configuration();
-        (new ParseArgs)->parseArgs($this);
-        $this->debug = $this->debug || $this->config->config['debug'];
+        $this->debug = $this->config->config['debug'];
         $this->sysInfo = new SysInfo($this);
         $this->openai = new OpenAI($this);
         $this->commands = new Commands($this);
+        (new ParseArgs)->parseArgs($this);
         $this->run();
     }
 
