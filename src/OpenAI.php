@@ -63,10 +63,10 @@ class OpenAI
         $dynamic_prompt .= "ASSISTANT: ";
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
         $messages[] = ["role" => "system", "content" => $this->basePrompt];
+        $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));
-        $messages[] = ["role" => "system", "content" => $dynamic_prompt];
         return $messages;
     }
 
