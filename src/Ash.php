@@ -46,7 +46,8 @@ class Ash
             $this->sysInfo->refresh();
             if ($this->config->config['colorSupport']) $this->prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} " . "\033[95m" . $this->sysInfo->sysInfo['workingFolder'] . "\033[0m" . "]# ";
             else $this->prompt = "[{$this->sysInfo->sysInfo['userId']}@{$this->sysInfo->sysInfo['hostName']} {$this->sysInfo->sysInfo['workingFolder']}]# ";
-            $input = readline($this->prompt);
+            echo $this->prompt;
+            $input = readline("");
             readline_add_history($input);
             $input = trim($input);
             if ($this->debug) echo ("debug: input: $input\n");
