@@ -41,19 +41,7 @@ class OpenAI
     {
         $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"] . "\n Please greet them!"]);
         $messages = $this->buildPrompt();
-        /*
-        $messages[] = ["role" => "system", "content" => "Write a welcome or login banner for SSH that can contain several helpful elements for users when they log in. You might include the following information:
-
-            System name and purpose - A brief identifier of the server, such as Welcome to the Acme Corporation's production server.
-            Contact information - In case of issues, provide a point of contact, like an email address or phone number.
-            Terms of use - A short statement like By logging in, you agree to the terms of use.
-            System status or load - If you have a script to display this, you could include CPU, RAM usage, or uptime to inform the user about the current server state.
-            Security reminders - Like Remember: Don't share your credentials or leave sessions unattended.
-            Motivational or humorous quote - Sometimes a small, light-hearted quote can set a positive tone for the session.
-            Last login information - To remind users of their last session, useful for security.
-            Maintenance schedules or updates - Any upcoming dates when users should expect downtime or when updates are scheduled.
-            It's essential to keep it concise to prevent overwhelming the user upon each login."];
-        */
+        $messages[] = ["role" => "system", "content" => "Run any initial functions you need to then review everything for any potential areas that may need attention, and finally write a short welcome message to the user with a brief assessment of server status/health.\n"];
         $this->handlePromptAndResponse($messages);
     }
 
