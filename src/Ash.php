@@ -29,6 +29,7 @@ class Ash
         $this->openai = new OpenAI($this);
         $this->commands = new Commands($this);
         (new ParseArgs)->parseArgs($this);
+        $this->openai->welcomeMessage();
         $this->run();
     }
 

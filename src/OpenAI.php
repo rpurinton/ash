@@ -26,10 +26,8 @@ class OpenAI
         $this->modelPicker = new ModelPicker($this);
         $this->modelPicker->selectModel();
         $this->modelPicker->selectMaxTokens();
-        if (!$ash->debug) passthru("clear");
         $this->basePrompt = file_get_contents(__DIR__ . "/base_prompt.txt");
         $this->baseTokens = $this->util->tokenCount($this->basePrompt);
-        $this->welcomeMessage();
     }
 
     public function __destruct()
@@ -39,16 +37,17 @@ class OpenAI
 
     public function welcomeMessage()
     {
+        if (!$this->ash->debug) passthru("clear");
         $this->history->saveMessage(["role" => "system", "content" => "User started a new ash session from : " . $this->ash->sysInfo->sysInfo["who-u"] . "\n Please greet them!"]);
         $messages = $this->buildPrompt();
         $messages[] = ["role" => "system", "content" => "Run any initial functions you need to then review everything for any potential areas that may need attention, and finally write a short welcome message to the user with a brief assessment of server status/health.\n"];
         $this->handlePromptAndResponse($messages);
     }
 
-    public function userMessage($input)
+    public function userMessage($input, $shell = true)
     {
         $this->history->saveMessage(["role" => "user", "content" => $input]);
-        $this->handlePromptAndResponse($this->buildPrompt());
+        $this->handlePromptAndResponse($this->buildPrompt(), $shell);
     }
 
     private function buildPrompt()
@@ -69,7 +68,7 @@ class OpenAI
         return $messages;
     }
 
-    private function handlePromptAndResponse($messages)
+    private function handlePromptAndResponse($messages, $shell = true)
     {
         $prompt = [
             "model" => $this->model,
@@ -83,7 +82,7 @@ class OpenAI
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
         if (!$this->ash->config->config["emojiSupport"]) echo ("Thinking...");
         else echo ("🧠 Thinking...");
-
+        if (!$shell) echo ("\n");
         try {
             $stream = $this->client->chat()->createStreamed($prompt);
         } catch (\Exception $e) {
