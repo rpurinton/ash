@@ -2,7 +2,7 @@
 $this->functionHandlers['edit_file'] = function ($args) {
     if ($this->ash->debug) echo ("debug: edit_file(" . print_r($args, true) . ")\n");
     $sed_command = $args['sed_command'] ?? "";
-    echo ("$ " . $sed_command . "\n");
+    echo ("$ " . $sed_command . "\n"); // display just the main argument
     $stdOut = "";
     $sdtErr = "";
     $exitCode = 0;
