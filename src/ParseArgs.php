@@ -17,21 +17,23 @@ class ParseArgs
                     die(shell_exec("cat " . __DIR__ . "/../README.md") . "\n");
                 case "/license":
                     die(shell_exec("cat " . __DIR__ . "/../LICENSE") . "\n");
-                case "/config":
-                    $ash->config->initialConfig();
-                    break;
+                case "/d":
                 case "/debug":
                     $ash->debug = true;
                     echo "Debug mode enabled.\n";
                     break;
-                case "/run":
-                    $ash->run_once($argv[$key + 1]);
+                case "/m":
+                case "/message":
+                    $ash->userMessage($argv[$key + 1]);
                     die();
+                case "/reconfig":
+                    $ash->config->initialConfig();
                     break;
                 case "/reinstall":
                     (new Composer())->install_dependencies($ash->debug);
                     break;
                 case "/uninstall":
+                    shell_exec("rm -rfv ~/.ash_history.jsonl");
                     shell_exec("rm -rfv " . __DIR__ . "/conf.d");
                     shell_exec("rm -rfv " . __DIR__ . "/vendor");
                     shell_exec("rm -rfv " . __DIR__ . "/composer.lock");
