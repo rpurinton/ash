@@ -2,22 +2,25 @@
     "name": "edit_file",
     "description": "Performs in-place editing of a file on the filesystem using a provided sed command. It can simulate changes with a dry run.",
     "parameters": {
-        "file_path": {
-            "description": "The absolute path to the target file to be edited.",
-            "type": "string"
+        "type": "object",
+        "properties": {
+            "file_path": {
+                "description": "The absolute path to the target file to be edited.",
+                "type": "string"
+            },
+            "sed_command": {
+                "description": "The sed expression used for editing the file. Exclude flags and the file path.",
+                "type": "string"
+            },
+            "dry_run": {
+                "description": "If set to true, the function will simulate the edit and return possible changes without modifying the file.",
+                "type": "boolean"
+            }
         },
-        "sed_command": {
-            "description": "The sed expression used for editing the file. Exclude flags and the file path.",
-            "type": "string"
-        },
-        "dry_run": {
-            "description": "If set to true, the function will simulate the edit and return possible changes without modifying the file.",
-            "type": "boolean"
-        }
-    },
-    "required": [
-        "file_path",
-        "sed_command",
-        "dry_run"
-    ]
+        "required": [
+            "file_path",
+            "sed_command",
+            "dry_run"
+        ]
+    }
 }
