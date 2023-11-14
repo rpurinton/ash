@@ -146,7 +146,7 @@ class OpenAI
                         $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
                         echo ("$output\n");
                     } else {
-                        if (mb_strlen($line) > (is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000)) {
+                        if (($this->ash->shell) && (mb_strlen($line) > (is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000))) {
                             $wrapped_text = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
                             $line_break_pos = mb_strrpos($wrapped_text, "\n");
                             $output = mb_substr($wrapped_text, 0, $line_break_pos);
@@ -178,7 +178,7 @@ class OpenAI
             $this->handleFunctionCall($function_call, $arguments);
         } else {
             if ($line != "") {
-                $output = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
+                if ($this->ash->shell) $output = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
                 $output = str_replace("\n", "\n", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
