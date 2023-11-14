@@ -48,6 +48,10 @@ $this->functionHandlers['proc_open'] = function ($args) {
             fclose($pipes[2]);
             $exitCode = proc_close($this->runningProcess);
             $this->runningProcess = null;
+            if ($stdout == "" && $stderr == "" && $exitCode == 0) {
+                $stdout = "Clean exit, no output.";
+            }
+            if ($stderr == "") $stderr = $exitCode == 0 ? "No errors." : "Error (ash): Process exited with non-zero exit code.";
             $result = [
                 "stdout" => $stdout,
                 "stderr" => $stderr,
