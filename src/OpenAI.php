@@ -221,6 +221,11 @@ class OpenAI
         exec('ls ' . __DIR__ . '/functions.d/*.json', $functions);
         $result = [];
         foreach ($functions as $function) {
+            $jsonArray = json_decode(file_get_contents($function), true);
+            if (!$this->validateChatGPTJson($jsonArray)) {
+                if ($this->ash->debug) echo ("debug: Error: Invalid JSON in $function\n");
+                continue;
+            }
             $result[] = json_decode(file_get_contents($function), true);
             $handlerFile = str_replace(".json", ".php", $function);
             if (file_exists($handlerFile)) {
@@ -228,5 +233,25 @@ class OpenAI
             }
         }
         return $result;
+    }
+
+    private function validateChatGPTJson($jsonArray)
+    {
+        $requiredKeys = array("name", "description", "parameters");
+        if (!is_array($jsonArray)) {
+            return false;
+        }
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $jsonArray)) {
+                return false;
+            }
+        }
+        if (!is_string($jsonArray["name"]) || !is_string($jsonArray["description"])) {
+            return false;
+        }
+        if (!is_array($jsonArray["parameters"]) || !array_key_exists("type", $jsonArray["parameters"]) || !array_key_exists("properties", $jsonArray["parameters"])) {
+            return false;
+        }
+        return true;
     }
 }
