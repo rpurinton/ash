@@ -2,4 +2,4 @@ src/conf.d
 src/composer.lock
 src/vendor
 src/prompt.d/custom_prompt.txt
-src/history.d/ash_history.jsonl
+src/history.d/history.jsonl
