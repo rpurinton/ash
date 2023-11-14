@@ -15,6 +15,7 @@ class OpenAI
     public $history = null;
     public $functionHandlers = [];
     public $modelPicker = null;
+    public $functionDepth = 0;
 
     public function __construct(public $ash)
     {
@@ -26,7 +27,7 @@ class OpenAI
         $this->modelPicker = new ModelPicker($this);
         $this->modelPicker->selectModel();
         $this->modelPicker->selectMaxTokens();
-        $this->basePrompt = file_get_contents(__DIR__ . "/base_prompt.txt");
+        $this->basePrompt = file_get_contents(__DIR__ . "/prompt.d/base_prompt.txt") . "\n" . file_get_contents(__DIR__ . "/prompt.d/custom_prompt.txt");
         $this->baseTokens = $this->util->tokenCount($this->basePrompt);
     }
 
