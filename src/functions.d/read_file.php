@@ -12,7 +12,7 @@ $this->functionHandlers['read_file'] = function ($args) {
         if ($this->ash->debug) echo ("debug: read_file() error: file could not be read: \"$path\"\n");
         return ["stdout" => "", "stderr" => "Error (ash): file could not be read: $path", "exit_code" => -1];
     }
-    if ($contents = "") {
+    if ($contents == "") {
         if ($this->ash->debug) echo ("debug: read_file() error: file is empty: \"$path\"\n");
         return ["stdout" => "", "stderr" => "Error (ash): file is empty: $path", "exit_code" => -1];
     }
