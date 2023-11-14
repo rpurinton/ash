@@ -80,9 +80,8 @@ class OpenAI
             "frequency_penalty" => 0.0,
             "presence_penalty" => 0.0,
             "functions" => $this->getFunctions(),
-            "function_call" => "auto",
         ];
-        if ($this->functionDepth > 5) {
+        if ($this->functionDepth > 3) {
             $prompt["function_call"] = "none";
             $prompt["messages"][] = ["role" => "system", "content" => "Function limit reached. Please provide a status update and prompt for confirmation to continue."];
         }
