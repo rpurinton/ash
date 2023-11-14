@@ -1,8 +1,8 @@
 <?php
-$this->functionHandlers['ash_exec'] = function ($args) {
+$this->functionHandlers['ash_remote'] = function ($args) {
     $host = $args['host'] ?? "";
     $message = $args['message'] ?? "";
-    if ($this->ash->debug) echo ("debug: ssh_exec() host: $host, message: $message\n");
+    if ($this->ash->debug) echo ("debug: ash_remote() host: $host, message: $message\n");
 
     echo ("$ " . $host . ": " . $message . "\n"); // display just the main argument
 
@@ -18,6 +18,6 @@ $this->functionHandlers['ash_exec'] = function ($args) {
         "exit_code" => $return_var
     ];
 
-    if ($this->ash->debug) echo ("debug: ssh_exec() result: " . print_r($result, true) . "\n");
+    if ($this->ash->debug) echo ("debug: ash_remote() result: " . print_r($result, true) . "\n");
     return $result;
 };
