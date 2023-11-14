@@ -1,5 +1,5 @@
 {
-    "name": "chuck_norris_joke",
+    "name": "chuck_norris",
     "description": "Fetch a random Chuck Norris joke from the Chuck Norris API.",
     "parameters": {
         "type": "object",

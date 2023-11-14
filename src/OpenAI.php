@@ -44,15 +44,15 @@ class OpenAI
         $this->handlePromptAndResponse($messages);
     }
 
-    public function userMessage($input, $shell = true)
+    public function userMessage($input)
     {
         $this->history->saveMessage(["role" => "user", "content" => $input]);
-        $this->handlePromptAndResponse($this->buildPrompt($shell), $shell);
+        $this->handlePromptAndResponse($this->buildPrompt());
     }
 
-    private function buildPrompt($shell = true)
+    private function buildPrompt()
     {
-        if (!$shell) $this->ash->config->config['colorSupport'] = false;
+        if (!$$this->ash->shell) $this->ash->config->config['colorSupport'] = false;
         $dynamic_prompt = "SYSTEM: Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short.\n";
         $dynamic_prompt .= "SYSTEM: Current sys info: " . print_r($this->ash->sysInfo->sysInfo, true);
         $dynamic_prompt .= "SYSTEM: " . ($this->ash->config->config['emojiSupport'] ? "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n" : "Emoji support disabled. Do not send emoji!\n");
@@ -69,7 +69,7 @@ class OpenAI
         return $messages;
     }
 
-    private function handlePromptAndResponse($messages, $shell = true)
+    private function handlePromptAndResponse($messages)
     {
         $prompt = [
             "model" => $this->model,
@@ -81,7 +81,7 @@ class OpenAI
             "functions" => $this->getFunctions(),
         ];
         if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
-        if ($shell) {
+        if ($this->ash->shell) {
             if (!$this->ash->config->config["emojiSupport"]) echo ("Thinking...");
             else echo ("🧠 Thinking...");
         }
@@ -100,10 +100,10 @@ class OpenAI
             else echo ("Error: " . $e->getMessage() . "\n");
             return;
         }
-        $this->handleStream($stream, $shell);
+        $this->handleStream($stream);
     }
 
-    private function handleStream($stream, $shell = true)
+    private function handleStream($stream)
     {
         $function_call = null;
         $full_response = "";
@@ -118,20 +118,20 @@ class OpenAI
                 if (isset($reply["delta"]["function_call"]["name"])) {
                     $function_call = $reply["delta"]["function_call"]["name"];
                     $functionNameDisplay = str_replace("_", " ", $function_call);
-                    if ($shell) echo ("\r");
-                    echo ("✅ Running $functionNameDisplay... % ");
+                    if ($this->ash->shell) echo ("\r");
+                    echo ("✅ Running $functionNameDisplay... ");
                 }
                 if ($function_call) {
                     if (isset($reply["delta"]["function_call"]["arguments"])) {
                         $status_ptr++;
                         if ($status_ptr > 3) $status_ptr = 0;
-                        if ($shell) echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
+                        if ($this->ash->shell) echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
                         $full_response .= $reply["delta"]["function_call"]["arguments"];
                     }
                 } else if (isset($reply["delta"]["content"])) {
                     if (!$first_sent) {
                         $first_sent = true;
-                        if ($shell) echo ("\r                       \r");
+                        if ($this->ash->shell) echo ("\r                       \r");
                     }
                     $delta_content = $reply["delta"]["content"];
                     $full_response .= $delta_content;

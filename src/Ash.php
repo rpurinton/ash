@@ -9,6 +9,7 @@ class Ash
     public $config = null;
     public $commands = null;
     public $sysInfo = null;
+    public $shell = true;
 
     public function __construct()
     {

@@ -24,7 +24,8 @@ class ParseArgs
                     break;
                 case "/m":
                 case "/message":
-                    $ash->openai->userMessage($argv[$key + 1], false);
+                    $ash->shell = false;
+                    $ash->openai->userMessage($argv[$key + 1]);
                     die();
                 case "/reconfig":
                     $ash->config->initialConfig();
@@ -33,7 +34,7 @@ class ParseArgs
                     (new Composer())->install_dependencies($ash->debug);
                     break;
                 case "/uninstall":
-                    shell_exec("rm -rfv ~/.ash_history.jsonl");
+                    shell_exec("rm -rfv " . __DIR__ . "/.ash_history.jsonl");
                     shell_exec("rm -rfv " . __DIR__ . "/conf.d");
                     shell_exec("rm -rfv " . __DIR__ . "/vendor");
                     shell_exec("rm -rfv " . __DIR__ . "/composer.lock");
