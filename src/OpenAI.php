@@ -179,6 +179,7 @@ class OpenAI
         } else {
             if ($line != "") {
                 if ($this->ash->shell) $output = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
+                else $output = $line;
                 $output = str_replace("\n", "\n", $output);
                 $output = str_replace("\\e", "\e", $output);
                 $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
