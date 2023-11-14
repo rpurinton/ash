@@ -16,6 +16,8 @@ $this->functionHandlers['chuck_norris'] = function ($args) {
         "exit_code" => json_last_error() === JSON_ERROR_NONE ? 0 : 1
     ];
 
+    echo ("done.\n");
+
     if ($this->ash->debug) echo ("debug: chuck_norris_joke() result: " . print_r($result, true) . "\n");
     return $result;
 };
