@@ -1,16 +1,37 @@
 {
     "name": "edit_file",
-    "description": "Edit a file on the local filesystem using a sed command",
+    "description": "Performs in-place editing of a file on the filesystem using a provided sed command. It can simulate changes with a dry run.",
     "parameters": {
+        "file_path": {
+            "description": "The absolute path to the target file to be edited.",
+            "type": "string"
+        },
+        "sed_command": {
+            "description": "The sed expression used for editing the file. Exclude flags and the file path.",
+            "type": "string"
+        },
+        "dry_run": {
+            "description": "If set to true, the function will simulate the edit and return possible changes without modifying the file.",
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "returns": {
+        "description": "The result object containing 'stdout' with the command output or changes, 'stderr' with error messages, and 'exit_code' indicating the success or failure of the command.",
         "type": "object",
         "properties": {
-            "sed_command": {
-                "type": "string",
-                "description": "The complete sed command to be run to edit the file in the desired manner: e.g. \"sed -i 's/old/new/g' /path/to/file\" you can use any options available in sed."
+            "stdout": {
+                "description": "The standard output from the sed command or the changes if dry run is true.",
+                "type": "string"
+            },
+            "stderr": {
+                "description": "The standard error output.",
+                "type": "string"
+            },
+            "exit_code": {
+                "description": "The exit code of the sed command where 0 indicates success.",
+                "type": "integer"
             }
-        },
-        "required": [
-            "sed_command"
-        ]
+        }
     }
 }
