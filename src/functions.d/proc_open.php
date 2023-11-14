@@ -32,7 +32,6 @@ $this->functionHandlers['proc_open'] = function ($args) {
         ];
         $pipes = [];
         try {
-            echo ("$ " . $input['command'] . "\n");
             $this->runningProcess = proc_open($input['command'], $descriptorspec, $pipes, $input['cwd'] ?? $this->ash->sysInfo->sysInfo['workingDir'], $input['env'] ?? []);
         } catch (\Exception $e) {
             return [
