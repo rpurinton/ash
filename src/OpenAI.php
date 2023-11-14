@@ -209,8 +209,10 @@ class OpenAI
             $result = $handler($arguments);
             if ($this->ash->debug) echo ("debug: handleFunctionCall($function_call, " . print_r($arguments, true) . ") result: " . print_r($result, true) . "\n");
             $this->functionFollowUp($function_call, $result);
+            $this->functionDepth--;
             return;
-        } else $this->functionFollowUp($function_call, ["stdout" => "", "stderr" => "Error (ash): function handler for $function_call not found.  Does ash/src/functions.d/$function_call.php exist?", "exitCode" => -1]);
+        }
+        $this->functionFollowUp($function_call, ["stdout" => "", "stderr" => "Error (ash): function handler for $function_call not found.  Does ash/src/functions.d/$function_call.php exist?", "exitCode" => -1]);
         $this->functionDepth--;
         return;
     }
