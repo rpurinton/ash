@@ -33,7 +33,7 @@ class Ash
         $this->run();
     }
 
-    private function ctrl_c($signo)
+    public function ctrl_c($signo)
     {
         if ($this->openai->runningProcess) proc_terminate($this->openai->runningProcess);
         echo "\n";
@@ -41,7 +41,7 @@ class Ash
 
     private function run()
     {
-        pcntl_signal(SIGINT, [$this, "ctrl_c"]);
+        pcntl_signal(SIGINT, $this->ctrl_c(...));
         while (true) {
             $this->sysInfo->refresh();
             if ($this->config->config['colorSupport']) $prompt = "[" . $this->sysInfo->sysInfo['userId'] . "@" . $this->sysInfo->sysInfo['hostName'] . " " . "\001\e[95m\002" . $this->sysInfo->sysInfo['workingFolder'] . "\001\e[0m\002" . "]# ";
