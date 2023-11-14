@@ -15,23 +15,5 @@
             "type": "boolean",
             "default": false
         }
-    },
-    "returns": {
-        "description": "The result object containing 'stdout' with the command output or changes, 'stderr' with error messages, and 'exit_code' indicating the success or failure of the command.",
-        "type": "object",
-        "properties": {
-            "stdout": {
-                "description": "The standard output from the sed command or the changes if dry run is true.",
-                "type": "string"
-            },
-            "stderr": {
-                "description": "The standard error output.",
-                "type": "string"
-            },
-            "exit_code": {
-                "description": "The exit code of the sed command where 0 indicates success.",
-                "type": "integer"
-            }
-        }
     }
 }
