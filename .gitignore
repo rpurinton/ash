@@ -1,3 +1,4 @@
 src/conf.d
 src/composer.lock
 src/vendor
+src/prompt.d/custom_prompt.txt
