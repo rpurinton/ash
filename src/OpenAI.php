@@ -81,10 +81,7 @@ class OpenAI
             "presence_penalty" => 0.0,
             "functions" => $this->getFunctions(),
         ];
-        if ($this->functionDepth > 3) {
-            $prompt["function_call"] = "none";
-            $prompt["messages"][] = ["role" => "system", "content" => "Function limit reached. Please provide a status update and prompt for confirmation to continue."];
-        }
+        if ($this->functionDepth > 3) $prompt["function_call"] = "none";
         //if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
         if ($this->ash->shell) {
             if (!$this->ash->config->config["emojiSupport"]) echo ("Thinking...");
