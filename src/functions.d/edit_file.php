@@ -33,10 +33,14 @@ $this->functionHandlers['edit_file'] = function ($args) {
     if (is_resource($process)) {
         $stdOut = stream_get_contents($pipes[1]);
         fclose($pipes[1]);
-        $sdtErr = stream_get_contents($pipes[2]);
+        $stdErr = stream_get_contents($pipes[2]);
         fclose($pipes[2]);
         $exitCode = proc_close($process);
     }
+    if ($stdOut == "" && $stdErr == "" && $exitCode == 0) {
+        $stdOut = "Clean exit, no output.";
+    }
+    if ($stdErr == "") $stdErr = $exitCode == 0 ? "No errors." : "Error (ash): Process exited with non-zero exit code.";
     $result = ["stdout" => $stdOut, "stderr" => $sdtErr, "exit_code" => $exitCode];
     if ($this->ash->debug) echo ("debug: read_file() result: " . print_r($result, true) . "\n");
     return $result;
