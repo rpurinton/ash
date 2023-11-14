@@ -53,7 +53,7 @@ class OpenAI
 
     private function buildPrompt()
     {
-        if (!$$this->ash->shell) $this->ash->config->config['colorSupport'] = false;
+        if (!$this->ash->shell) $this->ash->config->config['colorSupport'] = false;
         $dynamic_prompt = "SYSTEM: Your full name is " . $this->ash->sysInfo->sysInfo['hostFQDN'] . ", but people can call you " . $this->ash->sysInfo->sysInfo['hostName'] . " for short.\n";
         $dynamic_prompt .= "SYSTEM: Current sys info: " . print_r($this->ash->sysInfo->sysInfo, true);
         $dynamic_prompt .= "SYSTEM: " . ($this->ash->config->config['emojiSupport'] ? "Emoji support enabled!  Use it to express yourself!  🤣🤣🤣\n" : "Emoji support disabled. Do not send emoji!\n");
