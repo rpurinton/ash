@@ -12,8 +12,12 @@
         },
         "dry_run": {
             "description": "If set to true, the function will simulate the edit and return possible changes without modifying the file.",
-            "type": "boolean",
-            "default": false
+            "type": "boolean"
         }
-    }
+    },
+    "required": [
+        "file_path",
+        "sed_command",
+        "dry_run"
+    ]
 }
