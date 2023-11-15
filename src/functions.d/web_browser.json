@@ -24,11 +24,7 @@
                         "value": {
                             "type": "string",
                             "description": "the value of the header"
-                        },
-                        "required": [
-                            "key",
-                            "value"
-                        ]
+                        }
                     },
                     "optional": true,
                     "description": "an array of headers to send with the request"
