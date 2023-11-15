@@ -1,6 +1,6 @@
 {
     "name": "change_log",
-    "description": "Append an entry to the system changelog located in /var/log/changelog.  Please use this function after you make any changes to the system.",
+    "description": "Append an entry to the system changelog located in /var/log/ash.log.  Please use this function after you make any changes to the system.",
     "parameters": {
         "type": "object",
         "properties": {
