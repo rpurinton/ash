@@ -1,7 +1,7 @@
 <?php
 $this->functionHandlers['bash_script'] = function ($args) {
     if ($this->ash->debug) echo ("debug: bash_script(" . print_r($args, true) . ")\n");
-    $bash_script = $args['bash_script'] ?? "";
+    $bash_script = $args['script'] ?? "";
     $stdOut = "";
     $sdtErr = "";
     $exitCode = 0;
