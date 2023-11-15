@@ -1,0 +1,16 @@
+{
+    "name": "bash_script",
+    "description": "run any arbitrary bash script you want! This can be helpful in performing complex calculations, parsing complex files, interacting with APIs, etc.  The code will be executed from the /tmp directory.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "script": {
+                "type": "string",
+                "description": "The bash script contents with the code you want to run."
+            }
+        },
+        "required": [
+            "script"
+        ]
+    }
+}
