@@ -67,6 +67,10 @@ class Commands
             if (is_dir($targetDir)) {
                 $this->ash->sysInfo->setLastDir($this->ash->sysInfo->sysInfo['workingDir']);
                 chdir($targetDir);
+                $this->ash->openai->history->saveMessage([
+                    "role" => "user",
+                    "content" => "User changed current working directory to $targetDir"
+                ]);
             } else echo "Error: Directory not found: $targetDir\n";
             return "";
         }
