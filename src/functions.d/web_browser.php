@@ -9,7 +9,7 @@ $this->functionHandlers['web_browser'] = function ($args) {
     echo ("$url\n"); // display just the main argument
     $method = $args['method'] ?? "GET";
     $headers = $args['headers'] ?? [];
-    $headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36";
+    $headers[] = ["User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"];
     $body = $args['body'] ?? "";
     $responseType = $args['response_type'] ?? "text";
 
