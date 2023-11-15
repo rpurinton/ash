@@ -1,0 +1,50 @@
+{
+    "name": "web_browser",
+    "description": "Use our headless chromium browser to browse/scrape the web. Don't use this for getting JSON from an API or Downloading large files use; shell_exec with curl instead for that.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "url": {
+                "type": "string",
+                "description": "The url to browse"
+            },
+            "method": {
+                "type": "string",
+                "description": "The http method to use (GET, POST, PUT, DELETE, etc)"
+            },
+            "headers": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "type": "string",
+                            "description": "the name of the header"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "the value of the header"
+                        },
+                        "required": [
+                            "key",
+                            "value"
+                        ]
+                    },
+                    "optional": true,
+                    "description": "an array of headers to send with the request"
+                }
+            },
+            "body": {
+                "type": "string",
+                "description": "The body of the request"
+            },
+            "responseType": {
+                "type": "string",
+                "description": "The type of response to return default is 'text' (available options: html, text, text+links, text+images, text+links+images, links, images, links+images, text+links-inline, text+images-inline, text+links+images-inline"
+            },
+            "required": [
+                "url"
+            ]
+        }
+    }
+}
