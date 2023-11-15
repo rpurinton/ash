@@ -14,15 +14,22 @@ $this->functionHandlers['edit_file'] = function ($args) {
     echo ($file_path . "\n"); // display just the main argument
 
     $command = "sed -i '' " . ($dry_run ? "-n 'p' " : "") . "'$sed_command' '$file_path'";
-    exec($command, $output, $exitCode);
-
-    if ($dry_run) {
-        $stdOut = implode("\n", $output);
-    } else {
-        $stdOut = $exitCode === 0 ? "File edited successfully." : "No changes made.";
+    $descriptorspec = [
+        0 => ["pipe", "r"], // stdin
+        1 => ["pipe", "w"], // stdout
+        2 => ["pipe", "w"], // stderr
+    ];
+    $process = proc_open($command, $descriptorspec, $pipes);
+    if (!is_resource($process)) {
+        $error = "Error: Unable to open process.";
+        return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
     }
-
-    $stdErr = $exitCode === 0 ? "No errors." : "Error occurred with exit code: $exitCode";
-
+    $stdOut = stream_get_contents($pipes[1]);
+    $stdErr = stream_get_contents($pipes[2]);
+    fclose($pipes[0]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $exitCode = proc_close($process);
+    if ($stdOut == "" && $stdErr == "" && $exitCode == 0) $stdOut = "Exited cleanly with no output.";
     return ["stdout" => $stdOut, "stderr" => $stdErr, "exit_code" => $exitCode];
 };
