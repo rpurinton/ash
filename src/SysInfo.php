@@ -25,7 +25,7 @@ class SysInfo
             'free-mh' => trim(shell_exec("free -mh")),
             'df-h' => trim(shell_exec("df -h")),
             'failedServices' => trim(shell_exec("systemctl --failed")),
-            'listeningPorts' => trim(shell_exec("ss -tunalp | grep -v chromium-browser")),
+            'listeningPorts' => trim(shell_exec("ss -tunalp | grep -v chromium-browse")),
             'emergencyContact' => 'not set',
             'ashEmailAddress' => 'not set',
             'who-u' => trim(shell_exec("who -u")),
