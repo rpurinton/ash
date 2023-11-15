@@ -36,7 +36,7 @@
             },
             "responseType": {
                 "type": "string",
-                "description": "The type of response to return default is 'text' (available options: html, text, text+links, text+images, text+links+images, links, images, links+images, text+links-inline, text+images-inline, text+links+images-inline"
+                "description": "The type of response to return default is 'text' which will return only the readable text. (other options text, text+links-inline, text+images-inline, text+links+images-inline"
             }
         }
     }
