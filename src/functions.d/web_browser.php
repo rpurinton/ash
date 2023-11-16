@@ -37,7 +37,7 @@ $this->functionHandlers['web_browser'] = function ($args) {
         "method" => $method,
         "headers" => $headers,
         "body" => $body,
-        "response_type" => $responseType
+        "response_type" => "text"
     ];
 
     $response = file_get_contents("https://puppeteer2.discommand.com", false, stream_context_create([
