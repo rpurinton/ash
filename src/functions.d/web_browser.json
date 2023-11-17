@@ -1,6 +1,6 @@
 {
     "name": "web_browser",
-    "description": "Use our headless chromium browser to browse/scrape the web. Don't use this for getting JSON from an API or Downloading large files use; shell_exec with curl instead for that.",
+    "description": "Use our headless chromium browser to browse/scrape the web. Don't use this for getting JSON from an API or Downloading large files use; shell_exec with curl or wget instead for that.",
     "parameters": {
         "type": "object",
         "properties": {
@@ -33,10 +33,6 @@
             "body": {
                 "type": "string",
                 "description": "The body of the request"
-            },
-            "responseType": {
-                "type": "string",
-                "description": "The type of response to return default is 'text' which will return only the readable text. (other options text, text+links-inline, text+images-inline, text+links+images-inline"
             }
         }
     }
