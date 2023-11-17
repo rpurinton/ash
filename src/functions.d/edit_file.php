@@ -8,11 +8,9 @@ $this->functionHandlers['edit_file'] = function ($args) {
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
     }
     echo ($shell_command . "\n"); // display just the main argument
-
-    // if shell command doesn't already start with 'sed -i ', add it
-    if (substr($shell_command, 0, 7) != "sed -i ") {
-        $shell_command = "sed -i " . $shell_command;
-    }
+    
+    // redirect stderr to stdout
+    $shell_command .= " 2>&1";
 
     // run the command
     exec($shell_command, $output, $exitCode);
