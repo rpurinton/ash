@@ -1,30 +1,23 @@
 <?php
 $this->functionHandlers['edit_file'] = function ($args) {
-    $sed_command = $args['sed_command'] ?? null;
-    $stdOut = $stdErr = '';
+    $shell_command = $args['shell_command'] ?? null;
     $exitCode = 0;
 
-    if (!$sed_command) {
-        $error = "Error: 'sed_command' is required.";
+    if (!$shell_command) {
+        $error = "Error: 'shell_command' is required.";
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
     }
-    echo ($sed_command . "\n"); // display just the main argument
-    $descriptorspec = [
-        0 => ["pipe", "r"], // stdin
-        1 => ["pipe", "w"], // stdout
-        2 => ["pipe", "w"], // stderr
-    ];
-    $process = proc_open($sed_command, $descriptorspec, $pipes);
-    if (!is_resource($process)) {
-        $error = "Error: Unable to open process.";
-        return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
+    echo ($shell_command . "\n"); // display just the main argument
+
+    // if shell command doesn't already start with 'sed -i ', add it
+    if (substr($shell_command, 0, 7) != "sed -i ") {
+        $shell_command = "sed -i " . $shell_command;
     }
-    $stdOut = stream_get_contents($pipes[1]);
-    $stdErr = stream_get_contents($pipes[2]);
-    fclose($pipes[0]);
-    fclose($pipes[1]);
-    fclose($pipes[2]);
-    $exitCode = proc_close($process);
-    if ($stdOut == "" && $stdErr == "" && $exitCode == 0) $stdOut = "Exited cleanly with no output.";
-    return ["stdout" => $stdOut, "stderr" => $stdErr, "exit_code" => $exitCode];
+
+    // run the command
+    exec($shell_command, $output, $exitCode);
+    $output = implode("\n", $output);
+
+    if ($output == "" && $exitCode == 0) $output = "Exited cleanly with no output.";
+    return ["stdout+stderr" => $output, "exit_code" => $exitCode];
 };
