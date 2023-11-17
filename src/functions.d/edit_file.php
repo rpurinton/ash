@@ -15,6 +15,9 @@ $this->functionHandlers['edit_file'] = function ($args) {
     // disable stdin
     $shell_command .= " < /dev/null";
 
+    // escape the command
+    $shell_command = escapeshellcmd($shell_command);
+
     // run the command
     exec($shell_command, $output, $exitCode);
     $output = implode("\n", $output);
