@@ -11,10 +11,12 @@ $this->functionHandlers['edit_file'] = function ($args) {
 
     $shell_command = escapeshellcmd($shell_command);
 
-    // redirect stderr to stdout
-    $shell_command .= " 2>&1";
     // disable stdin
     $shell_command .= " < /dev/null";
+
+    // redirect stderr to stdout
+    $shell_command .= " 2>&1";
+
 
     // run the command
     exec($shell_command, $output, $exitCode);
