@@ -8,9 +8,12 @@ $this->functionHandlers['edit_file'] = function ($args) {
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
     }
     echo ($shell_command . "\n"); // display just the main argument
-    
+
     // redirect stderr to stdout
     $shell_command .= " 2>&1";
+
+    // disable stdin
+    $shell_command .= " < /dev/null";
 
     // run the command
     exec($shell_command, $output, $exitCode);
