@@ -1,25 +1,20 @@
 <?php
 $this->functionHandlers['edit_file'] = function ($args) {
-    $file_path = $args['file_path'] ?? null;
     $sed_command = $args['sed_command'] ?? null;
-    $dry_run = $args['dry_run'] ?? false;
     $stdOut = $stdErr = '';
     $exitCode = 0;
 
-    if (!$file_path || !$sed_command) {
-        $error = "Error: 'file_path' and 'sed_command' are required.";
+    if (!$sed_command) {
+        $error = "Error: 'sed_command' is required.";
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
     }
-
-    echo ($file_path . "\n"); // display just the main argument
-
-    $command = "sed -i '' " . ($dry_run ? "-n 'p' " : "") . "'$sed_command' '$file_path'";
+    echo ($sed_command . "\n"); // display just the main argument
     $descriptorspec = [
         0 => ["pipe", "r"], // stdin
         1 => ["pipe", "w"], // stdout
         2 => ["pipe", "w"], // stderr
     ];
-    $process = proc_open($command, $descriptorspec, $pipes);
+    $process = proc_open($sed_command, $descriptorspec, $pipes);
     if (!is_resource($process)) {
         $error = "Error: Unable to open process.";
         return ["stdout" => "", "stderr" => $error, "exit_code" => -1];
