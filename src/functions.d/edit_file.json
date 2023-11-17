@@ -4,23 +4,13 @@
     "parameters": {
         "type": "object",
         "properties": {
-            "file_path": {
-                "description": "The absolute path to the target file to be edited.",
-                "type": "string"
-            },
             "sed_command": {
-                "description": "The sed expression used for editing the file. Exclude flags and the file path.",
+                "description": "The sed command line to edit the file, ex: \"sed -i 's/old/new/g' /path/to/file\"",
                 "type": "string"
-            },
-            "dry_run": {
-                "description": "If set to true, the function will simulate the edit and return possible changes without modifying the file.",
-                "type": "boolean"
             }
         },
         "required": [
-            "file_path",
-            "sed_command",
-            "dry_run"
+            "sed_command"
         ]
     }
 }
