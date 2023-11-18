@@ -108,6 +108,8 @@ class OpenAI
     {
         $function_call = null;
         $full_response = "";
+        $arguments_string = "";
+        $content_string = "";
         $line = "";
         $status_ptr = 0;
         $status_chars = ["|", "/", "-", "\\"];
@@ -122,20 +124,21 @@ class OpenAI
                     if ($this->ash->shell) echo ("\r");
                     echo ("✅ Running $functionNameDisplay... ");
                 }
-                if ($function_call) {
-                    if (isset($reply["delta"]["function_call"]["arguments"])) {
-                        $status_ptr++;
-                        if ($status_ptr > 3) $status_ptr = 0;
-                        if ($this->ash->shell) echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
-                        $full_response .= $reply["delta"]["function_call"]["arguments"];
-                    }
-                } else if (isset($reply["delta"]["content"])) {
+                if (isset($reply["delta"]["function_call"]["arguments"])) {
+                    $status_ptr++;
+                    if ($status_ptr > 3) $status_ptr = 0;
+                    if ($this->ash->shell) echo ("\r✅ Running $functionNameDisplay... " . $status_chars[$status_ptr]);
+                    $arguments_string .= $reply["delta"]["function_call"]["arguments"];
+                    $full_response .= $reply["delta"]["function_call"]["arguments"];
+                }
+                if (isset($reply["delta"]["content"])) {
                     if (!$first_sent) {
                         $first_sent = true;
                         if ($this->ash->shell) echo ("\r                       \r");
                     }
                     $delta_content = $reply["delta"]["content"];
                     $full_response .= $delta_content;
+                    $content_string .= $delta_content;
                     $line .= $delta_content;
                     $line_break_pos = mb_strrpos($line, "\n");
                     if ($line_break_pos !== false) {
@@ -158,6 +161,8 @@ class OpenAI
                         }
                     }
                 }
+                $finish_reason = $reply["finish_reason"];
+                if ($finish_reason == "stop") break;
             }
         } catch (\Exception $e) {
             if ($this->ash->debug) echo ("debug: Error: " . print_r($e, true) . "\n");
@@ -173,23 +178,21 @@ class OpenAI
             return;
         }
 
-        if ($function_call) {
-            $arguments = json_decode($full_response, true);
-            $this->handleFunctionCall($function_call, $arguments);
-        } else {
-            if ($line != "") {
-                if ($this->ash->shell) $output = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
-                else $output = $line;
-                $output = str_replace("\n", "\n", $output);
-                $output = str_replace("\\e", "\e", $output);
-                $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
-                echo trim($output) . "\n";
-            }
-            $assistant_message = ["role" => "assistant", "content" => $full_response];
+        if ($function_call) $this->handleFunctionCall($function_call, json_decode($arguments_string, true));
+        if ($line != "") {
+            if ($this->ash->shell) $output = wordwrap($line, is_numeric($this->ash->sysInfo->sysInfo['terminalColumns']) ? $this->ash->sysInfo->sysInfo['terminalColumns'] : 1000, "\n", true);
+            else $output = $line;
+            $output = str_replace("\n", "\n", $output);
+            $output = str_replace("\\e", "\e", $output);
+            $output = $this->util->markdownToEscapeCodes($output, $this->ash->config->config['colorSupport']);
+            echo trim($output) . "\n";
+        }
+        if ($content_string != "") {
+            $assistant_message = ["role" => "assistant", "content" => $content_string];
             $this->history->saveMessage($assistant_message);
         }
         if ($this->ash->debug) {
-            if ($function_call) echo ("✅ Response complete.  Function call: " . print_r($arguments, true) . "\n");
+            if ($function_call) echo ("✅ Response complete.  Function call: " . print_r($function_call, true) . " Arguments: " . print_r(json_decode($arguments_string, true), true) . "\n");
             else echo ("Response complete.\n");
         }
     }
