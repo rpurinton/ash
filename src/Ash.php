@@ -36,6 +36,8 @@ class Ash
     public function ctrl_c($signo)
     {
         if ($this->openai->runningProcess) proc_terminate($this->openai->runningProcess);
+        if ($this->shell) echo "\n";
+        $this->openai->cancel = true;
         echo "\n";
     }
 

@@ -16,6 +16,7 @@ class OpenAI
     public $functionHandlers = [];
     public $modelPicker = null;
     public $functionDepth = 0;
+    public $cancel = false;
 
     public function __construct(public $ash)
     {
@@ -114,8 +115,14 @@ class OpenAI
         $status_ptr = 0;
         $status_chars = ["|", "/", "-", "\\"];
         $first_sent = false;
+        $this->cancel = false;
         try {
             foreach ($stream as $response) {
+                if ($this->cancel) {
+                    $this->cancel = false;
+                    $stream->cancel();
+                    return;
+                }
                 $reply = $response->choices[0]->toArray();
                 $finish_reason = $reply["finish_reason"];
                 if (isset($reply["delta"]["function_call"]["name"])) {
