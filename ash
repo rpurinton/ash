@@ -1,4 +1,4 @@
-#!/usr/local/bin/php -f
+#!/usr/bin/env php
 <?php
 
 namespace Rpurinton\Ash;
