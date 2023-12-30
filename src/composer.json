@@ -1,6 +1,6 @@
 {
     "require": {
-        "openai-php/client": "^0.7.8",
+        "openai-php/client": "^0.8.1",
         "symfony/http-client": "^6.3",
         "nyholm/psr7": "^1.8",
         "mehrab-wj/tiktoken-php": "^1.0"
