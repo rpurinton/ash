@@ -10,6 +10,8 @@ class History
     public function __construct(private $util, private $ash)
     {
         $this->historyFile = __DIR__ . "/../history.d/history.jsonl";
+        // if the directory doesn't exist create it then if the file doesn't exist create it
+        if (!is_dir(__DIR__ . "/../history.d")) mkdir(__DIR__ . "/../history.d", 0755, true);
         $this->loadHistory();
     }
 
