@@ -26,8 +26,6 @@ class SysInfo
             'df-h' => trim(shell_exec("df -h") ?? ''),
             'failedServices' => trim(shell_exec("systemctl --failed") ?? ''),
             'listeningPorts' => trim(shell_exec("ss -tunalp | grep -v chromium-browse") ?? ''),
-            'emergencyContact' => 'not set',
-            'ashEmailAddress' => 'not set',
             'who-u' => trim(shell_exec("who -u") ?? ''),
             'termColorSupport' => $this->ash->config->config['colorSupport'] ? "\e[32myes\e[0m" : "no",
             'termEmojiSupport' => $this->ash->config->config['emojiSupport'] ? "✅" : "no",
@@ -41,8 +39,6 @@ class SysInfo
         ];
         $this->sysInfo['workingFolder'] = basename($this->sysInfo['workingDir'] == "" ? "/" : basename($this->sysInfo['workingDir']));
         if ($this->sysInfo['workingDir'] == $this->sysInfo['homeDir']) $this->sysInfo['workingFolder'] = "~";
-        if ($this->ash->config->config['emailAddress'] != "") $this->sysInfo['emergencyContact'] = $this->ash->config->config['emailAddress'];
-        if ($this->ash->config->config['fromAddress'] != "") $this->sysInfo['ashEmailAddress'] = $this->ash->config->config['fromAddress'];
     }
 
     public function setLastDir($dir)

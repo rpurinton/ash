@@ -4,11 +4,25 @@ ash is an AI-operated Linux shell that allows users to interact with their opera
 
 ## Usage
 
-To use ash, simply open a terminal and start typing natural language commands. The assistant will interpret your commands and execute the appropriate Linux commands on your behalf. For example, instead of typing `ls -l` to list the contents of a directory, you can simply type "list the files in this directory" and ash will execute the `ls -l` command for you.
+To use ash, simply open a terminal and start typing natural language commands. The assistant will interpret your commands and execute the appropriate Linux commands on your behalf. For example, instead of typing `ls -l` to list the contents of a directory, you can simply type something like "list files" and ash will know to execute the `ls -l` command for you.
 
 ## Installation
 
-To install ash, simply clone this repository and run the `install.sh` script. This will install all necessary dependencies and configure your system to use ash as the default shell.
+Clone the GitHub Repo or extract the ZIP file to your local machine. Navigate to the directory where you have saved the files and run the following commands to initialize composer:
+
+```bash
+composer install
+chmod +x ash
+ln -s ./ash /usr/local/bin/ash
+```
+## Running
+
+To run ash, simply execute the following command in the terminal:
+
+```bash
+ash
+```
+Now begin talking to your AI assistant and watch as it executes your commands for you!
 
 ## Contributing
 

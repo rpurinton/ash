@@ -1,4 +1,4 @@
-src/conf.d
-src/vendor
-src/prompt.d/custom_prompt.txt
-src/history.d/history.jsonl
+conf.d
+vendor
+prompt.d/custom_prompt.txt
+history.d/history.jsonl

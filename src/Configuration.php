@@ -9,15 +9,7 @@ class Configuration
 
     public function __construct()
     {
-        require_once(__DIR__ . "/vendor/autoload.php");
-        require_once(__DIR__ . "/Util.php");
-        require_once(__DIR__ . "/OpenAI.php");
-        require_once(__DIR__ . "/History.php");
-        require_once(__DIR__ . "/Commands.php");
-        require_once(__DIR__ . "/ParseArgs.php");
-        require_once(__DIR__ . "/SysInfo.php");
-        require_once(__DIR__ . "/ModelPicker.php");
-        $this->configFilePath = __DIR__ . '/conf.d/config.json';
+        $this->configFilePath = __DIR__ . '/../conf.d/config.json';
         $this->loadConfig();
     }
 
@@ -39,18 +31,6 @@ class Configuration
     public function initialConfig()
     {
         echo ("Initial configuration wizard...\n");
-        $emailAddress = "";
-        while (true) {
-            $emailAddress = readline("Enter an emergency contact email [default: none]: ");
-            if (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) || $emailAddress == "") break;
-            echo "Error: Invalid email address.\n";
-        }
-        $fromAddress = "";
-        while (true) {
-            $fromAddress = readline("Enter the from email address [default: none]: ");
-            if (filter_var($fromAddress, FILTER_VALIDATE_EMAIL) || $fromAddress == "") break;
-            echo "Error: Invalid email address.\n";
-        }
         $openaiApiKey = "";
         while (true) {
             $openaiApiKey = readline("Enter your OpenAI API key: ");
@@ -68,17 +48,14 @@ class Configuration
 
         $debug = readline("Enable debug mode? [y/N]: ");
         $debug = strtolower(substr($debug, 0, 1));
-        if ($debug == "y") $debug = true;
-        else $debug = false;
+        $debug = ($debug == "y") ? true : false;
         $this->config = [
-            "emailAddress" => $emailAddress,
-            "fromAddress" => $fromAddress,
             "openaiApiKey" => $openaiApiKey,
             "colorSupport" => $colorSupport,
             "emojiSupport" => $emojiSupport,
             "debug" => $debug,
         ];
-        if (!is_dir(__DIR__ . '/conf.d')) mkdir(__DIR__ . '/conf.d', 0755, true);
+        if (!is_dir(__DIR__ . '/../conf.d')) mkdir(__DIR__ . '/../conf.d', 0755, true);
         $this->saveConfig();
     }
 

@@ -28,7 +28,7 @@ class OpenAI
         $this->modelPicker = new ModelPicker($this);
         $this->modelPicker->selectModel();
         $this->modelPicker->selectMaxTokens();
-        $this->basePrompt = file_get_contents(__DIR__ . "/prompt.d/base_prompt.txt") . "\n" . file_get_contents(__DIR__ . "/prompt.d/custom_prompt.txt");
+        $this->basePrompt = file_get_contents(__DIR__ . "/../prompt.d/base_prompt.txt") . "\n" . file_get_contents(__DIR__ . "/../prompt.d/custom_prompt.txt");
         $this->baseTokens = $this->util->tokenCount($this->basePrompt);
     }
 
@@ -62,8 +62,7 @@ class OpenAI
         $dynamic_prompt .= "SYSTEM: If problems arise, please iterate on the issue.  Example, update config, restart service, check logs, update the config again, restart the service again, check the logs again, etc. Until it gets resolved or until you have exhausted all options.\n";
         $dynamic_prompt .= "SYSTEM: Please use the last USER message text before this as your primary point of context.";
         $dynamic_tokens = $this->util->tokenCount($dynamic_prompt);
-        $messages[] = ["role" => "system", "content" => $this->basePrompt];
-        $messages[] = ["role" => "system", "content" => $dynamic_prompt];
+        $messages[] = ["role" => "system", "content" => $this->basePrompt . $dynamic_prompt];
         $response_space = round($this->maxTokens * 0.1, 0);
         $history_space = $this->maxTokens - $this->baseTokens - $dynamic_tokens - $response_space;
         $messages = array_merge($messages, $this->history->getHistory($history_space));

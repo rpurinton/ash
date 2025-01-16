@@ -1,4 +1,6 @@
 {
+    "name": "rpurinton/ash",
+    "description": "A PHP library for interacting with the OpenAI API.",
     "require": {
         "openai-php/client": "^0.8.1",
         "symfony/http-client": "^6.3",
@@ -8,6 +10,11 @@
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Rpurinton\\Ash\\": "src/"
         }
     }
 }

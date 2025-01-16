@@ -9,7 +9,7 @@ class History
 
     public function __construct(private $util, private $ash)
     {
-        $this->historyFile = __DIR__ . "/history.d/history.jsonl";
+        $this->historyFile = __DIR__ . "/../history.d/history.jsonl";
         $this->loadHistory();
     }
 
