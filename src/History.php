@@ -53,21 +53,24 @@ class History
             echo "debug: saving message: " . print_r($message, true) . "\n";
         }
 
-        // Assign token counts based on the role and typical data in the message.
-        if ($message["role"] === "assistant" && isset($message["function_call"])) {
-            // Old function-call style
-            $message["tokens"] = $this->util->tokenCount($message["function_call"]["arguments"]);
-        } else if ($message["role"] === "function") {
-            // Legacy approach
-            $message["tokens"] = $this->util->tokenCount($message["content"]);
-        } else if ($message["role"] === "tool") {
-            // New tool result: the content is typically the tool's response
-            $message["tokens"] = $this->util->tokenCount($message["content"]);
-        } else if (in_array($message["role"], ["assistant", "user", "system"])) {
-            // Normal text from assistant, user, or system
-            $message["tokens"] = $this->util->tokenCount($message["content"]);
+        // Safely extract the content (default to "")
+        $content = $message["content"] ?? "";
+
+        if ($message["role"] === "tool") {
+            // Safely extract the arguments (default to "")
+            $arguments = $message["arguments"] ?? "";
+            // Calculate token count based on arguments
+            $message["tokens"] = $this->util->tokenCount($arguments);
+        } elseif (isset($message["tool_calls"])) {
+            // Handle tool_calls array
+            foreach ($message["tool_calls"] as &$tool_call) {
+                $arguments = $tool_call["function"]["arguments"] ?? "";
+                $tool_call["tokens"] = $this->util->tokenCount($arguments);
+            }
+            $message["tokens"] = array_sum(array_column($message["tool_calls"], "tokens"));
+        } elseif (in_array($message["role"], ["assistant", "user", "system"])) {
+            $message["tokens"] = $this->util->tokenCount($content);
         } else {
-            // Fallback: unknown or custom role
             $message["tokens"] = 0;
         }
 
