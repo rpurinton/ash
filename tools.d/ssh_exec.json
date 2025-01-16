@@ -1,8 +1,14 @@
 {
     "name": "ssh_exec",
     "description": "Execute a command on a remote host as root via SSH. Use the proc_open function instead to run local commands, or use the ash_exec function instead if ash is on the other host.",
+    "strict": true,
     "parameters": {
         "type": "object",
+        "required": [
+            "user",
+            "host",
+            "command"
+        ],
         "properties": {
             "user": {
                 "type": "string",
@@ -17,9 +23,6 @@
                 "description": "The command to execute on the remote host"
             }
         },
-        "required": [
-            "host",
-            "command"
-        ]
+        "additionalProperties": false
     }
 }

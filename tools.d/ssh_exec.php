@@ -1,13 +1,14 @@
 <?php
 $this->toolHandlers['ssh_exec'] = function ($args) {
+    $user = $args['user'] ?? "";
     $host = $args['host'] ?? "";
     $command = $args['command'] ?? "";
     if ($this->ash->debug) echo ("debug: ssh_exec() host: $host, command: $command\n");
 
-    echo ("$ " . $command . "\n"); // display just the main argument
+    echo ("$ [$user@host] $command"); // display just the main argument
 
     // Use SSH to execute the command on the remote host
-    $sshCommand = "ssh " . escapeshellarg($host) . " " . escapeshellarg($command);
+    $sshCommand = "ssh " . escapeshellarg("$user@$host") . " " . escapeshellarg($command);
     exec($sshCommand, $output, $return_var);
 
     $result = [
