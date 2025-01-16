@@ -160,13 +160,15 @@ class OpenAI
         // Keep track of each known tool-call ID so we can append arguments
         $known_call_ids = [];
 
+        $last_call_id = null;
+
         // The typical spinning “thinking” indicators, if desired.
         $status_chars = ["|", "/", "-", "\\"];
         $status_ptr   = 0;
 
         // Clear out any partial "thinking..." line
         if ($this->ash->shell) {
-            echo "\r                \r";
+            echo "\r                                               \r";
         }
 
         try {
@@ -210,8 +212,14 @@ class OpenAI
                 if (isset($delta["tool_calls"]) && is_array($delta["tool_calls"])) {
                     foreach ($delta["tool_calls"] as $call) {
                         $call_id = $call["id"] ?? null;
+                        $last_call_id = $call['id'] ?? $last_call_id;
+
                         // Skip if no "id" field
                         if (!$call_id) {
+                            $call_id = $last_call_id;
+                        }
+
+                        if (!$last_call_id) {
                             continue;
                         }
                         // If we've never seen this call ID, initialize it
@@ -227,9 +235,7 @@ class OpenAI
                             $tool_calls[$call_id]["name"] = $call["function"]["name"];
                             if ($this->ash->shell) {
                                 $status_ptr++;
-                                if ($status_ptr > 3) {
-                                    $status_ptr = 0;
-                                }
+                                if ($status_ptr > 3) $status_ptr = 0;
                                 echo "\r";
                                 echo "Tool call: " . $tool_calls[$call_id]["name"] . " " . $status_chars[$status_ptr];
                             }
@@ -239,9 +245,7 @@ class OpenAI
                             $tool_calls[$call_id]["arguments"] .= $call["function"]["arguments"];
                             if ($this->ash->shell) {
                                 $status_ptr++;
-                                if ($status_ptr > 3) {
-                                    $status_ptr = 0;
-                                }
+                                if ($status_ptr > 3) $status_ptr = 0;
                                 echo "\r";
                                 echo "Tool call: " . $tool_calls[$call_id]["name"] . " " . $status_chars[$status_ptr];
                             }
