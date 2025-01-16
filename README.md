@@ -13,7 +13,7 @@ Clone the GitHub Repo or extract the ZIP file to your local machine. Navigate to
 ```bash
 composer install
 chmod +x ash
-ln -s ./ash /usr/local/bin/ash
+ln -s ./ash /usr/bin/ash
 ```
 ## Running
 
