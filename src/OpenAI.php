@@ -358,7 +358,7 @@ class OpenAI
     {
         // This is the updated version of “getFunctions”,
         // but returning type=function and function=... per the new approach.
-        exec('ls ' . __DIR__ . '/../functions.d/*.json', $functions);
+        exec('ls ' . __DIR__ . '/../tools.d/*.json', $functions);
         $result = [];
         foreach ($functions as $function) {
             $jsonArray = json_decode(file_get_contents($function), true);

@@ -1,5 +1,5 @@
 ash uses a system of ChatGPT function to perform actions.
-all of the function definitions are stored in /var/www/ash/src/functions.d.
+all of the function definitions are stored in /var/www/ash/src/tools.d.
 for each function there is 1 .json file and 1 .php file.
 
 a basic example of a .json would be:
