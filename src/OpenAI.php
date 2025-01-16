@@ -78,7 +78,7 @@ class OpenAI
             "top_p" => 0.25,
             "frequency_penalty" => 0.0,
             "presence_penalty" => 0.0,
-            "functions" => $this->getFunctions(),
+            "tools" => $this->getFunctions(),
         ];
         if ($this->functionDepth > 10) $prompt["function_call"] = "none";
         //if ($this->ash->debug) echo ("debug: Sending prompt to OpenAI: " . print_r($prompt, true) . "\n");
@@ -239,7 +239,7 @@ class OpenAI
                 if ($this->ash->debug) echo ("debug: Error: Invalid JSON in $function\n");
                 continue;
             }
-            $result[] = json_decode(file_get_contents($function), true);
+            $result[] = ['type' => 'function', 'function' => json_decode(file_get_contents($function), true)];
             $handlerFile = str_replace(".json", ".php", $function);
             if (file_exists($handlerFile)) {
                 include($handlerFile);
