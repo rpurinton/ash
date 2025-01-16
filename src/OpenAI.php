@@ -250,7 +250,20 @@ class OpenAI
 
     private function validateChatGPTJson($jsonArray)
     {
-        $requiredKeys = array("name", "description", "parameters");
+        // According to the latest OpenAI function (tool) definition standards with "strict" semantics,
+        // the JSON must include the following top-level fields:
+        //   1. "name"          - string, a valid function name
+        //   2. "description"   - string, a short summary
+        //   3. "parameters"    - object, a JSON Schema describing the function arguments, strictly enforced
+
+        // The "parameters" object should:
+        //   • Have "type" set to "object"
+        //   • Have a "properties" field of type object
+        //   • Ideally have a "required" field (array) if certain properties are required
+        //   • Include "additionalProperties" set to false to enforce strictness
+
+        // Basic required keys check
+        $requiredKeys = ['name', 'description', 'parameters'];
         if (!is_array($jsonArray)) {
             return false;
         }
@@ -259,12 +272,44 @@ class OpenAI
                 return false;
             }
         }
-        if (!is_string($jsonArray["name"]) || !is_string($jsonArray["description"])) {
+
+        // Validate types of 'name' and 'description'
+        if (!is_string($jsonArray['name']) || !is_string($jsonArray['description'])) {
             return false;
         }
-        if (!is_array($jsonArray["parameters"]) || !array_key_exists("type", $jsonArray["parameters"]) || !array_key_exists("properties", $jsonArray["parameters"])) {
+
+        // Validate 'parameters' object
+        if (
+            !is_array($jsonArray['parameters']) ||
+            !array_key_exists('type', $jsonArray['parameters']) ||
+            !array_key_exists('properties', $jsonArray['parameters'])
+        ) {
             return false;
         }
+
+        // Check that 'type' is strictly "object"
+        if ($jsonArray['parameters']['type'] !== 'object') {
+            return false;
+        }
+
+        // Check that 'properties' is present and is an array (associative)
+        if (!is_array($jsonArray['parameters']['properties'])) {
+            return false;
+        }
+
+        // Enforce "additionalProperties" = false for strict argument validation (if omitted, we fail)
+        if (!array_key_exists('additionalProperties', $jsonArray['parameters'])) {
+            return false;
+        }
+        if ($jsonArray['parameters']['additionalProperties'] !== false) {
+            return false;
+        }
+
+        // If "required" is present, ensure it's an array
+        if (array_key_exists('required', $jsonArray['parameters']) && !is_array($jsonArray['parameters']['required'])) {
+            return false;
+        }
+
         return true;
     }
 }
