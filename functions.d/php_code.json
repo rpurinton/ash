@@ -1,16 +1,18 @@
 {
     "name": "php_code",
-    "description": "run any arbitrary php code you want! This can be helpful in performing complex calculations, parsing complex files, interacting with APIs, etc.  The code will be executed from the /tmp directory.",
+    "description": "run any arbitrary php code you want! This can be helpful in performing complex calculations, parsing complex files, interacting with APIs, etc. The code will be executed from the /tmp directory.",
+    "strict": true,
     "parameters": {
         "type": "object",
+        "required": [
+            "php_code"
+        ],
         "properties": {
             "php_code": {
                 "type": "string",
                 "description": "The php file contents with the code you want to run."
             }
         },
-        "required": [
-            "php_code"
-        ]
+        "additionalProperties": false
     }
 }

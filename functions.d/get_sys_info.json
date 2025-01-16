@@ -1,13 +1,18 @@
 {
     "name": "get_sys_info",
     "description": "Check a whole bunch of information all at once including /etc/release, uname -a, hostname, ip addr, /etc/hosts, uptime, free -mh, df -h, systemctl --failed, ss -tunalp, email info, terminal settings, date and time, current user id, home, and working directory info.",
+    "strict": true,
     "parameters": {
         "type": "object",
+        "required": [
+            "rand_int"
+        ],
         "properties": {
             "rand_int": {
                 "type": "integer",
                 "description": "A random integer to help prevent caching."
             }
-        }
+        },
+        "additionalProperties": false
     }
 }

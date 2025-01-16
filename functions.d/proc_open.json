@@ -1,8 +1,14 @@
 {
     "name": "proc_open",
-    "description": "run any safe linux command. You will be able to run subsequent commands on the next go around. Only run commands which terminate for example don't run any commands which run indefinitely or require further human interaction like 'top'  instead use 'top -bn1' to get the output and exit. use -y or -f when appropriate to bypass user prompts like d you want to continue (Y/n) if they are supported by the particular commands.  remember which OS this is and run the right commands.  don't run any commands which would wipe the server or break your operating system! The user can see the output of the command so there's no need to repeat the results back to them, just summarize or continue running other commands as needed. Please pass thru ANSI colors if present.",
+    "description": "run any safe linux command. You will be able to run subsequent commands on the next go around. Only run commands which terminate for example don't run any commands which run indefinitely or require further human interaction like 'top' instead use 'top -bn1' to get the output and exit. use -y or -f when appropriate to bypass user prompts like d you want to continue (Y/n) if they are supported by the particular commands. remember which OS this is and run the right commands. don't run any commands which would wipe the server or break your operating system! The user can see the output of the command so there's no need to repeat the results back to them, just summarize or continue running other commands as needed. Please pass thru ANSI colors if present.",
+    "strict": true,
     "parameters": {
         "type": "object",
+        "required": [
+            "command",
+            "cwd",
+            "env"
+        ],
         "properties": {
             "command": {
                 "type": "string",
@@ -10,11 +16,11 @@
             },
             "cwd": {
                 "type": "string",
-                "optional": true,
                 "description": "the full path to the desired working directory where the command will be executed"
             },
             "env": {
                 "type": "array",
+                "description": "an array of environment variables to set before running the command",
                 "items": {
                     "type": "object",
                     "properties": {
@@ -30,16 +36,11 @@
                     "required": [
                         "key",
                         "value"
-                    ]
-                },
-                "optional": true,
-                "description": "an array of environment variables to set before running the command"
+                    ],
+                    "additionalProperties": false
+                }
             }
         },
-        "required": [
-            "command",
-            "cwd",
-            "env"
-        ]
+        "additionalProperties": false
     }
 }

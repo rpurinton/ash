@@ -4,6 +4,10 @@
     "parameters": {
         "type": "object",
         "properties": {
+            "user": {
+                "type": "string",
+                "description": "The username to use when connecting to the remote host. Default is root."
+            },
             "host": {
                 "type": "string",
                 "description": "The hostname or IP address of the remote host"

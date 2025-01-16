@@ -1,8 +1,15 @@
 {
     "name": "web_browser",
     "description": "Use our headless chromium browser to browse/scrape the web. Don't use this for getting JSON from an API or Downloading large files use; shell_exec with curl or wget instead for that.",
+    "strict": true,
     "parameters": {
         "type": "object",
+        "required": [
+            "url",
+            "method",
+            "headers",
+            "body"
+        ],
         "properties": {
             "url": {
                 "type": "string",
@@ -14,26 +21,31 @@
             },
             "headers": {
                 "type": "array",
+                "description": "An array of headers to send with the request",
                 "items": {
                     "type": "object",
                     "properties": {
                         "key": {
                             "type": "string",
-                            "description": "the name of the header"
+                            "description": "The name of the header"
                         },
                         "value": {
                             "type": "string",
-                            "description": "the value of the header"
+                            "description": "The value of the header"
                         }
                     },
-                    "optional": true,
-                    "description": "an array of headers to send with the request"
+                    "additionalProperties": false,
+                    "required": [
+                        "key",
+                        "value"
+                    ]
                 }
             },
             "body": {
                 "type": "string",
                 "description": "The body of the request"
             }
-        }
+        },
+        "additionalProperties": false
     }
 }

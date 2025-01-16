@@ -231,7 +231,7 @@ class OpenAI
 
     private function getFunctions()
     {
-        exec('ls ' . __DIR__ . '/functions.d/*.json', $functions);
+        exec('ls ' . __DIR__ . '/../functions.d/*.json', $functions);
         $result = [];
         foreach ($functions as $function) {
             $jsonArray = json_decode(file_get_contents($function), true);

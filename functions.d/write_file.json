@@ -1,8 +1,17 @@
 {
     "name": "write_file",
     "description": "Write a file to the local filesystem",
+    "strict": true,
     "parameters": {
         "type": "object",
+        "required": [
+            "path",
+            "content",
+            "append",
+            "owner",
+            "group",
+            "chmod"
+        ],
         "properties": {
             "path": {
                 "type": "string",
@@ -29,13 +38,6 @@
                 "description": "Set the permissions of the file"
             }
         },
-        "required": [
-            "path",
-            "content",
-            "append",
-            "owner",
-            "group",
-            "chmod"
-        ]
+        "additionalProperties": false
     }
 }
