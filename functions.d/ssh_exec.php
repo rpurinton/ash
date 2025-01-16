@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['ssh_exec'] = function ($args) {
+$this->toolHandlers['ssh_exec'] = function ($args) {
     $host = $args['host'] ?? "";
     $command = $args['command'] ?? "";
     if ($this->ash->debug) echo ("debug: ssh_exec() host: $host, command: $command\n");

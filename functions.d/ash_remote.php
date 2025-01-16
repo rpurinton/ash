@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['ash_remote'] = function ($args) {
+$this->toolHandlers['ash_remote'] = function ($args) {
     $host = $args['host'] ?? "";
     $message = $args['message'] ?? "";
     if ($this->ash->debug) echo ("debug: ash_remote() host: $host, message: $message\n");

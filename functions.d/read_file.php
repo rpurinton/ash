@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['read_file'] = function ($args) {
+$this->toolHandlers['read_file'] = function ($args) {
     if ($this->ash->debug) echo ("debug: read_file(" . print_r($args, true) . ")\n");
     $path = $args['path'] ?? "";
     echo ("$path\n"); // display just the main argument

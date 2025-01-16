@@ -25,7 +25,7 @@ a basic example of a .json would be:
 a basic example of a .php file for this function would be:
 ```php
 <?php
-$this->functionHandlers['read_file'] = function ($args) {
+$this->toolHandlers['read_file'] = function ($args) {
     if ($this->ash->debug) echo ("debug: read_file(" . print_r($args, true) . ")\n");
     $path = $args['path'] ?? "";
     echo ("$path\n"); // display just the main argument

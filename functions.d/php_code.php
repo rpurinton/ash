@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['php_code'] = function ($args) {
+$this->toolHandlers['php_code'] = function ($args) {
     if ($this->ash->debug) echo ("debug: php_code(" . print_r($args, true) . ")\n");
     $php_code = $args['php_code'] ?? "";
     $stdOut = "";

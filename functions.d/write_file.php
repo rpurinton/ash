@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['write_file'] = function ($args) {
+$this->toolHandlers['write_file'] = function ($args) {
     if ($this->ash->debug) echo ("debug: write_file(" . $args["path"] ?? "null" . ")\n");
     if (!isset($args['path']) || is_null($args['path'])) return [
         "stderr" => "Error (ash): Missing required field 'path'.",

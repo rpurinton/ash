@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['shell_exec'] = function ($args) {
+$this->toolHandlers['shell_exec'] = function ($args) {
     if ($this->ash->debug) echo ("debug: shell_exec(" . print_r($args, true) . ")\n");
     $command = $args['command'];
     echo ("$ " . $command . "\n"); // display just the main argument

@@ -1,5 +1,5 @@
 <?php
-$this->functionHandlers['web_browser'] = function ($args) {
+$this->toolHandlers['web_browser'] = function ($args) {
     if ($this->ash->debug) echo ("debug: web_browser(" . print_r($args, true) . ")\n");
     if (!isset($args['url']) || is_null($args['url']) || $args['url'] == "") return [
         "stdErr" => "Error (ash): Missing required field 'url'.",
