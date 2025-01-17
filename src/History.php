@@ -120,8 +120,12 @@ class History
             unset($fwd_history[$tool_call[0]]['tool_calls'][$tool_call[1]]);
         }
         foreach ($fwd_history as $message_id => $message) {
-            if (isset($message['tool_calls']) && !count($message['tool_calls'])) {
-                unset($fwd_history[$message_id]);
+            if (isset($message['tool_calls'])) {
+                if (!count($message['tool_calls'])) {
+                    unset($fwd_history[$message_id]);
+                } else {
+                    $fwd_history[$message_id]['tool_calls'] = array_values($message['tool_calls']);
+                }
             }
         }
 
