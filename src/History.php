@@ -125,7 +125,7 @@ class History
             }
         }
 
-        return $fwd_history;
+        return array_values($fwd_history);
     }
 
     public function clearHistory()
