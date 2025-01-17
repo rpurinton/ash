@@ -92,7 +92,6 @@ class History
             } else {
                 // If including this message would exceed our token limit, roll back
                 $token_count -= $message["tokens"];
-                break;
             }
         }
 
