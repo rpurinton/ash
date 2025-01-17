@@ -125,7 +125,11 @@ class History
             }
         }
 
-        return array_values($fwd_history);
+        $final_history = array_values($fwd_history);
+        if ($this->ash->debug) {
+            print_r($final_history);
+        }
+        return $final_history;
     }
 
     public function clearHistory()
