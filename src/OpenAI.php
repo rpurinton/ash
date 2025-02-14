@@ -118,8 +118,6 @@ class OpenAI
             "tools"             => $this->getTools(),
         ];
 
-	file_put_contents("/opt/ash/debug-prompt.json", json_encode($prompt), FILE_APPEND);
-
         // If you want to block repeated calls when there's a loop of function calls, you could:
         // $prompt["function_call"] = "none" if you detect too many calls.
 
@@ -173,8 +171,6 @@ class OpenAI
 
         try {
             foreach ($stream as $response) {
-
-		file_put_contents("/opt/ash/debug-response.json", json_encode($response), FILE_APPEND);
 
                 if ($this->cancel) {
                     $this->cancel = false;
