@@ -229,9 +229,6 @@ class OpenAI
                         // If the assistant gave us a function name
                         if (isset($call["function"]["name"])) {
                             $tool_calls[$call_id]["name"] = $call["function"]["name"];
-                            if ($this->ash->shell) {
-                                echo "\r{$tool_calls[$call_id]["name"]}\n";
-                            }
                         }
                         // If we have function arguments
                         if (isset($call["function"]["arguments"])) {
@@ -239,7 +236,7 @@ class OpenAI
                             if ($this->ash->shell) {
                                 $status_ptr++;
                                 if ($status_ptr > 3) $status_ptr = 0;
-                                echo "\r{$status_chars[$status_ptr]}";
+                                echo "\r{$tool_calls[$call_id]["name"]} {$status_chars[$status_ptr]}";
                             }
                         }
                     }
