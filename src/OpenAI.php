@@ -110,8 +110,8 @@ class OpenAI
         $prompt = [
             "model"             => $this->model,
             "messages"          => $messages,
-            "temperature"       => 0.25,
-            "top_p"             => 0.25,
+            "temperature"       => 0.0,
+            "top_p"             => 0.0,
             "frequency_penalty" => 0.0,
             "presence_penalty"  => 0.0,
             // This is essential for the new function-calling approach:
