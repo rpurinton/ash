@@ -1,5 +1,5 @@
 {
-    "name": "ash_exec",
+    "name": "ash_remote",
     "description": "Send a message to a different ash running on a remote host. This can be a question, information, or instructions. Keep in mind they have the same features and functions as you. You can use this to coordinate troubleshooting or other cool ways. Don't use this to talk to yourself.",
     "strict": true,
     "parameters": {
