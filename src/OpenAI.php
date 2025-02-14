@@ -153,7 +153,6 @@ class OpenAI
         $assistant_reply = "";
         $content_buffer  = ""; // buffer for printing partial lines
         $role           = "assistant";
-        $finish_reason  = null;
 
         // We'll collect all tool calls from the entire message first
         $tool_calls = [];
@@ -182,9 +181,6 @@ class OpenAI
                 $reply = $response->choices[0]->toArray();
                 // We usually get "delta": ...
                 $delta = $reply["delta"] ?? [];
-
-                // The finish_reason can be "stop", "tool_calls", etc.
-                $finish_reason = $reply["finish_reason"] ?? $finish_reason;
 
                 // If the assistant posted new text:
                 if (!empty($delta["role"])) {
@@ -234,10 +230,7 @@ class OpenAI
                         if (isset($call["function"]["name"])) {
                             $tool_calls[$call_id]["name"] = $call["function"]["name"];
                             if ($this->ash->shell) {
-                                $status_ptr++;
-                                if ($status_ptr > 3) $status_ptr = 0;
-                                echo "\r";
-                                echo "Tool call: " . $tool_calls[$call_id]["name"] . " " . $status_chars[$status_ptr];
+                                echo "\r{$tool_calls[$call_id]["name"]}\n";
                             }
                         }
                         // If we have function arguments
@@ -246,8 +239,7 @@ class OpenAI
                             if ($this->ash->shell) {
                                 $status_ptr++;
                                 if ($status_ptr > 3) $status_ptr = 0;
-                                echo "\r";
-                                echo "Tool call: " . $tool_calls[$call_id]["name"] . " " . $status_chars[$status_ptr];
+                                echo "\r{$status_chars[$status_ptr]}";
                             }
                         }
                     }
@@ -331,13 +323,10 @@ class OpenAI
         }
 
         // If the assistant indicated that it has more to say or more tools to call,
-        // the finish_reason will be "tool_calls". In that case, we re-run the prompt
         // one more time with the updated history (rather than recursing for each call).
-        if ($finish_reason === "tool_calls") {
+        if (count($tool_calls)) {
             $this->handlePromptAndResponse($this->buildPrompt());
         }
-
-        // If finish_reason === 'stop' or anything else, we are done.
     }
 
     /**
