@@ -13,7 +13,6 @@ class OpenAI
     public $runningProcess = null;
     public $util = null;
     public $history = null;
-    // Renamed “functionHandlers” to “toolHandlers” for clarity with new usage
     public $toolHandlers = [];
     public $modelPicker = null;
     public $cancel = false;
@@ -119,6 +118,8 @@ class OpenAI
             "tools"             => $this->getTools(),
         ];
 
+	file_put_contents("/opt/ash/debug-prompt.jsonl", json_encode($prompt), FILE_APPEND);
+
         // If you want to block repeated calls when there's a loop of function calls, you could:
         // $prompt["function_call"] = "none" if you detect too many calls.
 
@@ -172,6 +173,9 @@ class OpenAI
 
         try {
             foreach ($stream as $response) {
+
+		file_put_contents("/opt/ash/debug-response.jsonl", json_encode($response), FILE_APPEND);
+
                 if ($this->cancel) {
                     $this->cancel = false;
                     $stream->cancel();
